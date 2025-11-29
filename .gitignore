@@ -48,9 +48,6 @@ lerna-debug.log*
 *.njsproj
 *.sln
 
-# Husky
-.husky/_
-
 # Temporary files
 *.tmp
 *.temp
