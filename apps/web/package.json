@@ -10,7 +10,8 @@
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@gigsafehub/types": "workspace:*",

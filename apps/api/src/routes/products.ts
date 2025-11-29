@@ -16,8 +16,29 @@ export const productsRouter = Router();
  */
 productsRouter.get('/', async (req: Request, res: Response) => {
   try {
+    const { categoryId, country } = req.query;
+
+    // Build where clause
+    const where: any = {
+      robotsIndex: true, // Only return indexable products
+    };
+
+    if (categoryId) {
+      where.categoryId = categoryId as string;
+    }
+
+    if (country) {
+      where.country = country;
+    }
+
     const products = await prisma.financialProduct.findMany({
+      where,
       include: {
+        category: {
+          include: {
+            parent: true,
+          },
+        },
         pros: true,
         cons: true,
         features: true,
@@ -27,22 +48,41 @@ productsRouter.get('/', async (req: Request, res: Response) => {
       },
     });
 
-    // Transform to match the expected format
-    const formattedProducts = products.map((product) => ({
+        // Transform to match the expected format
+        const formattedProducts = products.map((product: any) => ({
       id: product.id,
+      slug: product.slug,
+      slugEn: product.slugEn,
+      slugPt: product.slugPt,
       name: product.name,
-      category: product.category,
+      category: {
+        id: product.category.id,
+        name: product.category.name,
+        slug: product.category.slug,
+        level: product.category.level,
+        parent: product.category.parent ? {
+          id: product.category.parent.id,
+          name: product.category.parent.name,
+          slug: product.category.parent.slug,
+        } : null,
+      },
+      country: product.country,
       rating: product.rating,
       reviewsCount: product.reviewsCount,
       description: product.description,
-      pros: product.pros.map((p) => p.text),
-      cons: product.cons.map((c) => c.text),
+      pros: product.pros.map((p: any) => p.text),
+      cons: product.cons.map((c: any) => c.text),
       fees: product.fees,
-      features: product.features.map((f) => f.text),
+      features: product.features.map((f: any) => f.text),
       affiliateLink: product.affiliateLink,
       safetyScore: product.safetyScore,
       logoUrl: product.logoUrl,
+      logoAlt: product.logoAlt,
     }));
+
+    // SEO headers
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+    res.setHeader('X-Content-Type-Options', 'nosniff');
 
     res.json(formattedProducts);
   } catch (error) {
@@ -69,10 +109,21 @@ productsRouter.get('/', async (req: Request, res: Response) => {
  *       404:
  *         description: Product not found
  */
-productsRouter.get('/:id', async (req: Request, res: Response) => {
+productsRouter.get('/:identifier', async (req: Request, res: Response) => {
   try {
-    const product = await prisma.financialProduct.findUnique({
-      where: { id: req.params.id },
+    const { identifier } = req.params;
+    const { locale = 'en-US' } = req.query;
+
+    // Try to find by ID first, then by slug (localized or default)
+    let product = await prisma.financialProduct.findFirst({
+      where: {
+        OR: [
+          { id: identifier },
+          { slug: identifier },
+          ...(locale === 'pt-BR' ? [{ slugPt: identifier }] : []),
+          ...(locale === 'en-US' ? [{ slugEn: identifier }] : []),
+        ],
+      },
       include: {
         pros: true,
         cons: true,
@@ -80,25 +131,63 @@ productsRouter.get('/:id', async (req: Request, res: Response) => {
       },
     });
 
+    // Fallback: try default slug if not found
+    if (!product) {
+      product = await prisma.financialProduct.findUnique({
+        where: { slug: identifier },
+        include: {
+          pros: true,
+          cons: true,
+          features: true,
+        },
+      });
+    }
+
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
+    // Check if product should be indexed
+    if (!product.robotsIndex) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+
+    // Get the correct slug for the locale
+    const currentSlug =
+      (locale === 'pt-BR' && product.slugPt) ? product.slugPt :
+      (locale === 'en-US' && product.slugEn) ? product.slugEn :
+      product.slug;
+
     const formattedProduct = {
       id: product.id,
+      slug: currentSlug,
+      slugEn: product.slugEn || product.slug,
+      slugPt: product.slugPt || product.slug,
       name: product.name,
       category: product.category,
       rating: product.rating,
       reviewsCount: product.reviewsCount,
       description: product.description,
-      pros: product.pros.map((p) => p.text),
-      cons: product.cons.map((c) => c.text),
+      pros: product.pros.map((p: any) => p.text),
+      cons: product.cons.map((c: any) => c.text),
       fees: product.fees,
-      features: product.features.map((f) => f.text),
+      features: product.features.map((f: any) => f.text),
       affiliateLink: product.affiliateLink,
       safetyScore: product.safetyScore,
       logoUrl: product.logoUrl,
+      logoAlt: product.logoAlt,
+      // SEO fields
+      metaTitle: product.metaTitle,
+      metaDescription: product.metaDescription,
+      canonicalUrl: product.canonicalUrl,
+      structuredData: product.structuredData ? JSON.parse(product.structuredData) : null,
     };
+
+    // SEO headers
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    if (product.lastModified) {
+      res.setHeader('Last-Modified', product.lastModified.toUTCString());
+    }
 
     res.json(formattedProduct);
   } catch (error) {

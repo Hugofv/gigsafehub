@@ -3,18 +3,32 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import ProductCard from '@/components/ProductCard';
-import type { FinancialProduct, ProductCategory } from '@gigsafehub/types';
+import type { FinancialProduct } from '@gigsafehub/types';
+import { ProductCategory } from '@gigsafehub/types';
 
 export default function ReviewsClient({
   products,
-  locale
+  locale,
+  initialCategory,
+  initialType,
+  initialSubcategory
 }: {
   products: FinancialProduct[];
   locale: string;
+  initialCategory?: string;
+  initialType?: string;
+  initialSubcategory?: string;
 }) {
-  const [filter, setFilter] = useState<string>('All');
+  const [filter, setFilter] = useState<string>(initialCategory || 'All');
   const [compareList, setCompareList] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Update filter when initialCategory changes
+  React.useEffect(() => {
+    if (initialCategory) {
+      setFilter(initialCategory);
+    }
+  }, [initialCategory]);
 
   const handleCompareToggle = (id: string) => {
     setCompareList(prev => {
@@ -31,9 +45,32 @@ export default function ReviewsClient({
     return products.filter(p => {
       const matchesCategory = filter === 'All' || p.category === filter;
       const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesCategory && matchesSearch;
+
+      // If type filter is specified for Insurance, filter by insuranceType
+      let matchesType = true;
+      if (initialType && filter === 'Insurance') {
+        // Map query type to enum value
+        const typeMap: Record<string, string> = {
+          'general': 'General',
+          'professional': 'Professional',
+          'health': 'Health',
+          'vehicle': 'Vehicle',
+        };
+        const insuranceType = typeMap[initialType.toLowerCase()];
+        if (insuranceType) {
+          matchesType = (p as any).insuranceType === insuranceType;
+        }
+      }
+
+      // If subcategory filter is specified for Insurance, filter by insuranceSubcategory
+      let matchesSubcategory = true;
+      if (initialSubcategory && filter === 'Insurance') {
+        matchesSubcategory = (p as any).insuranceSubcategory === initialSubcategory;
+      }
+
+      return matchesCategory && matchesSearch && matchesType && matchesSubcategory;
     });
-  }, [products, filter, searchTerm]);
+  }, [products, filter, searchTerm, initialType]);
 
   return (
     <div className="bg-slate-50 min-h-screen py-12">

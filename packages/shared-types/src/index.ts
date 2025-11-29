@@ -8,10 +8,25 @@ export enum ProductCategory {
 export type Locale = 'en-US' | 'pt-BR';
 export type ContentLocale = 'en-US' | 'pt-BR' | 'Both';
 
+export type InsuranceType = 'General' | 'Professional' | 'Health' | 'Vehicle';
+export type InsuranceSubcategory =
+  | 'UberDriver' | 'Driver99' | 'HourlyDriver' | 'EconomicVehicle' | 'AppAccident'
+  | 'MotorcycleDelivery' | 'BikeDelivery' | 'IncomeProtection' | 'DeliveryAccident'
+  | 'IncomeInsurance' | 'EquipmentInsurance' | 'ProfessionalLiability' | 'HealthFreelancer'
+  | 'InternationalHealth' | 'LongStayTravel' | 'CreatorEquipment' | 'RemoteWorker';
+
+export type Country = 'BR' | 'US' | 'UK' | 'CA' | 'AU' | 'DE' | 'FR' | 'ES' | 'PT' | 'MX' | 'AR' | 'CL' | 'CO' | 'Other';
+
 export interface FinancialProduct {
   id: string;
   name: string;
+  slug?: string;
+  slugEn?: string;
+  slugPt?: string;
   category: ProductCategory;
+  insuranceType?: InsuranceType; // Only for Insurance category
+  insuranceSubcategory?: InsuranceSubcategory; // More specific subcategory
+  country?: Country; // Country where product/company operates
   rating: number; // 0 to 5
   reviewsCount: number;
   description: string;
@@ -22,6 +37,7 @@ export interface FinancialProduct {
   affiliateLink: string;
   safetyScore: number; // 0 to 100
   logoUrl: string;
+  logoAlt?: string;
 }
 
 export interface Article {

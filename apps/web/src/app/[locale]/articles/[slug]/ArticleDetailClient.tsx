@@ -6,12 +6,14 @@ import CalculatorWidget from '@/components/CalculatorWidget';
 import ComparisonTable from '@/components/ComparisonTable';
 import type { Article, FinancialProduct } from '@gigsafehub/types';
 
-export default function ArticleDetailClient({ 
-  article, 
-  comparisonProducts 
-}: { 
+export default function ArticleDetailClient({
+  article,
+  comparisonProducts,
+  locale
+}: {
   article: Article;
   comparisonProducts: FinancialProduct[];
+  locale?: string;
 }) {
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
@@ -30,12 +32,12 @@ export default function ArticleDetailClient({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
+
             {/* Main Content */}
             <div className="lg:col-span-8">
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 md:p-10 prose prose-lg prose-slate max-w-none">
                     <p className="lead font-medium text-slate-500 mb-8">{article.excerpt}</p>
-                    
+
                     {/* Render HTML content safely */}
                     <div dangerouslySetInnerHTML={{ __html: article.content }} />
 
@@ -50,7 +52,7 @@ export default function ArticleDetailClient({
                     <div className="mt-12 pt-8 border-t border-slate-100">
                         <h4 className="font-bold text-slate-900 mb-4">Conclusion</h4>
                         <p>
-                            Both options provide solid coverage, but for most gig workers needing a quick certificate, 
+                            Both options provide solid coverage, but for most gig workers needing a quick certificate,
                             Next Insurance wins on speed. If you are in a high-risk consultant role, Hiscox is the better specialist.
                         </p>
                     </div>
@@ -66,7 +68,7 @@ export default function ArticleDetailClient({
                     <div className="mt-8 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                         <h4 className="font-bold text-slate-900 mb-2">Need Help?</h4>
                         <p className="text-slate-600 text-sm mb-4">Our financial experts review dozens of products weekly.</p>
-                        <Link href="/reviews" className="text-brand-600 font-bold hover:underline text-sm">
+                        <Link href={`/${locale || 'en-US'}/reviews`} className="text-brand-600 font-bold hover:underline text-sm">
                             Browse all reviews &rarr;
                         </Link>
                     </div>

@@ -22,6 +22,14 @@ module.exports = {
           900: '#0c4a6e',
         },
       },
+      animation: {
+        'fade-in': 'fade-in 0.6s ease-out',
+        'fade-in-up': 'fade-in-up 0.8s ease-out',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
     },
   },
   plugins: [],

@@ -8,11 +8,62 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-enum ProductCategory {
-  Banking
-  Insurance
-  TaxTools
-  Investment
+enum Country {
+  BR
+  US
+  UK
+  CA
+  AU
+  DE
+  FR
+  ES
+  PT
+  MX
+  AR
+  CL
+  CO
+  Other
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  nameEn      String?   // English name
+  namePt      String?   // Portuguese name
+  slug        String    @unique // Default/English slug
+  slugEn      String?   @unique // English slug
+  slugPt      String?   @unique // Portuguese slug
+  description String?   @db.Text
+  descriptionEn String? @db.Text
+  descriptionPt String? @db.Text
+  level       Int       @default(0) // 0 = root, 1 = first level, etc.
+  parentId    String?   // Reference to parent category
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children    Category[] @relation("CategoryHierarchy")
+  country     Country?  // If null, applies to all countries
+  order       Int       @default(0) // For sorting
+  isActive    Boolean   @default(true)
+  icon        String?   // Icon name or URL
+  metaTitle   String?   @db.Text
+  metaDescription String? @db.Text
+  metaKeywords String? @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  products    FinancialProduct[]
+  articles    Article[]
+  guides      GuidePage[]
+  comparisons ComparisonPage[]
+
+  @@index([slug])
+  @@index([slugEn])
+  @@index([slugPt])
+  @@index([parentId])
+  @@index([level])
+  @@index([country])
+  @@index([isActive])
+  @@map("categories")
 }
 
 enum UserRole {
@@ -56,7 +107,12 @@ model User {
 model FinancialProduct {
   id           String          @id @default(uuid())
   name         String
-  category     ProductCategory
+  slug         String          @unique // Default/English slug (for backward compatibility)
+  slugEn       String?         @unique // English slug
+  slugPt       String?         @unique // Portuguese slug
+  categoryId   String          // Reference to Category
+  category     Category        @relation(fields: [categoryId], references: [id])
+  country      Country?        // Country where the product/company operates
   rating       Float           @default(0)
   reviewsCount Int             @default(0)
   description  String          @db.Text
@@ -64,8 +120,24 @@ model FinancialProduct {
   affiliateLink String
   safetyScore  Int             @default(0)
   logoUrl      String
+  logoAlt      String?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
+
+  // SEO Fields
+  metaTitle       String?       @db.Text
+  metaDescription String?       @db.Text
+  metaKeywords    String?       @db.Text
+  ogTitle         String?       @db.Text
+  ogDescription   String?       @db.Text
+  ogImage         String?
+  canonicalUrl    String?
+  structuredData  String?        @db.Text // JSON-LD
+  lastModified    DateTime?     @updatedAt
+  sitemapPriority Float?        @default(0.8)
+  sitemapChangefreq String?     @default("weekly")
+  robotsIndex     Boolean       @default(true)
+  robotsFollow    Boolean       @default(true)
 
   pros      ProductPro[]
   cons      ProductCon[]
@@ -73,6 +145,12 @@ model FinancialProduct {
   quotes    InsuranceQuote[]
   articles  ArticleProduct[]
 
+  @@index([slug])
+  @@index([slugEn])
+  @@index([slugPt])
+  @@index([categoryId])
+  @@index([country])
+  @@index([lastModified])
   @@map("financial_products")
 }
 
@@ -105,19 +183,49 @@ model ProductFeature {
 
 model Article {
   id              String        @id @default(uuid())
-  slug            String        @unique
+  slug            String        @unique // Default/English slug (for backward compatibility)
+  slugEn           String?       @unique // English slug
+  slugPt           String?       @unique // Portuguese slug
   title           String
   excerpt         String        @db.Text
   content         String        @db.Text
   partnerTag       String
   imageUrl        String
+  imageAlt        String?
   date            DateTime
   locale          ContentLocale
+  articleType     String        @default("blog") // "blog" or "guide"
+  categoryId      String?       // Reference to Category
+  category        Category?     @relation(fields: [categoryId], references: [id])
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
+  // SEO Fields
+  metaTitle       String?       @db.Text
+  metaDescription String?       @db.Text
+  metaKeywords    String?       @db.Text
+  ogTitle         String?       @db.Text
+  ogDescription   String?       @db.Text
+  ogImage         String?
+  canonicalUrl    String?
+  structuredData  String?       @db.Text // JSON-LD
+  lastModified    DateTime?     @updatedAt
+  sitemapPriority Float?        @default(0.9)
+  sitemapChangefreq String?     @default("monthly")
+  robotsIndex     Boolean       @default(true)
+  robotsFollow    Boolean       @default(true)
+  readingTime     Int?          // Estimated reading time in minutes
+
   relatedProducts ArticleProduct[]
 
+  @@index([slug])
+  @@index([slugEn])
+  @@index([slugPt])
+  @@index([locale])
+  @@index([articleType])
+  @@index([categoryId])
+  @@index([date])
+  @@index([lastModified])
   @@map("articles")
 }
 
@@ -174,4 +282,87 @@ model Lead {
   user          User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("leads")
+}
+
+model ComparisonPage {
+  id              String            @id @default(uuid())
+  slug            String            @unique
+  slugEn          String?           @unique
+  slugPt          String?           @unique
+  title           String
+  description     String            @db.Text
+  categoryId      String            // Reference to Category
+  category        Category          @relation(fields: [categoryId], references: [id])
+  locale          ContentLocale
+  productIds      String[]          // Array of product IDs to compare
+  metaTitle       String?           @db.Text
+  metaDescription String?           @db.Text
+  metaKeywords    String?           @db.Text
+  canonicalUrl    String?
+  structuredData  String?           @db.Text
+  lastModified    DateTime?         @updatedAt
+  sitemapPriority Float?            @default(0.8)
+  sitemapChangefreq String?         @default("monthly")
+  robotsIndex     Boolean           @default(true)
+  robotsFollow    Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([slug])
+  @@index([slugEn])
+  @@index([slugPt])
+  @@index([categoryId])
+  @@index([locale])
+  @@map("comparison_pages")
+}
+
+model GuidePage {
+  id              String            @id @default(uuid())
+  slug            String            @unique
+  slugEn          String?           @unique
+  slugPt          String?           @unique
+  title           String
+  excerpt         String            @db.Text
+  content         String            @db.Text
+  categoryId      String            // Reference to Category
+  category        Category          @relation(fields: [categoryId], references: [id])
+  locale          ContentLocale
+  imageUrl        String?
+  imageAlt        String?
+  metaTitle       String?           @db.Text
+  metaDescription String?           @db.Text
+  metaKeywords    String?           @db.Text
+  canonicalUrl    String?
+  structuredData  String?           @db.Text
+  lastModified    DateTime?         @updatedAt
+  sitemapPriority Float?            @default(0.9)
+  sitemapChangefreq String?         @default("monthly")
+  robotsIndex     Boolean           @default(true)
+  robotsFollow    Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([slug])
+  @@index([slugEn])
+  @@index([slugPt])
+  @@index([categoryId])
+  @@index([locale])
+  @@map("guide_pages")
+}
+
+model FAQ {
+  id              String            @id @default(uuid())
+  question        String            @db.Text
+  answer          String            @db.Text
+  category        String?           // e.g., "insurance", "comparison", "guides"
+  locale          ContentLocale
+  order           Int               @default(0)
+  isPublished     Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([category])
+  @@index([locale])
+  @@index([isPublished])
+  @@map("faqs")
 }

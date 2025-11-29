@@ -157,9 +157,15 @@ export const TRANSLATIONS = {
   'en-US': {
     nav: {
       home: 'Home',
-      articles: 'Articles',
-      reviews: 'Reviews',
+      insurance: 'Insurance',
+      insuranceGeneral: 'General Liability',
+      insuranceProfessional: 'Professional Liability',
+      insuranceHealth: 'Health Insurance',
+      insuranceVehicle: 'Vehicle Insurance',
       compare: 'Compare',
+      guides: 'Guides',
+      blog: 'Blog',
+      about: 'About Us',
       getQuote: 'Get Quote',
       admin: 'Admin'
     },
@@ -187,11 +193,18 @@ export const TRANSLATIONS = {
   'pt-BR': {
     nav: {
       home: 'Início',
-      articles: 'Artigos',
-      reviews: 'Análises',
-      compare: 'Comparar',
+      insurance: 'Seguros',
+      insuranceGeneral: 'Responsabilidade Civil',
+      insuranceProfessional: 'Responsabilidade Profissional',
+      insuranceHealth: 'Seguro Saúde',
+      insuranceVehicle: 'Seguro Veículo',
+      compare: 'Comparador',
+      guides: 'Guias',
+      blog: 'Blog',
+      about: 'Sobre Nós',
       getQuote: 'Cotação',
-      admin: 'Admin'
+      admin: 'Admin',
+      faq: 'FAQ'
     },
     home: {
       title: 'Encontre sua',

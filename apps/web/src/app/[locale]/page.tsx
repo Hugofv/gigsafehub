@@ -4,9 +4,12 @@ import HomeClient from './HomeClient';
 
 async function Home({ params }: { params: { locale: string } }) {
   const products = await getProducts();
-  const featuredProducts = products.filter((p) => p.safetyScore > 95).slice(0, 3);
+  const featuredProducts = products.filter(p => p.safetyScore > 95).slice(0, 3);
 
   return <HomeClient locale={params.locale} featuredProducts={featuredProducts} />;
 }
+
+// Enable static generation for better performance
+export const revalidate = 3600; // Revalidate every hour
 
 export default Home;
