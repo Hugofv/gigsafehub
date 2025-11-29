@@ -1,0 +1,58 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 10
+    labels:
+      - 'dependencies'
+      - 'automated'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+
+  - package-ecosystem: 'npm'
+    directory: '/apps/web'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'web'
+      - 'automated'
+
+  - package-ecosystem: 'npm'
+    directory: '/apps/api'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'api'
+      - 'automated'
+
+  - package-ecosystem: 'npm'
+    directory: '/packages/ui'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'ui'
+      - 'automated'
+
+  - package-ecosystem: 'npm'
+    directory: '/packages/shared-types'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'types'
+      - 'automated'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    labels:
+      - 'github-actions'
+      - 'automated'
+

@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum ProductCategory {
+  Banking
+  Insurance
+  TaxTools
+  Investment
+}
+
+enum UserRole {
+  admin
+  user
+}
+
+enum CoverageType {
+  basic
+  standard
+  premium
+}
+
+enum LeadStatus {
+  new
+  contacted
+  converted
+  rejected
+}
+
+enum ContentLocale {
+  en_US
+  pt_BR
+  Both
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  role      UserRole @default(user)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quotes InsuranceQuote[]
+  leads  Lead[]
+
+  @@map("users")
+}
+
+model FinancialProduct {
+  id           String          @id @default(uuid())
+  name         String
+  category     ProductCategory
+  rating       Float           @default(0)
+  reviewsCount Int             @default(0)
+  description  String          @db.Text
+  fees         String
+  affiliateLink String
+  safetyScore  Int             @default(0)
+  logoUrl      String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  pros      ProductPro[]
+  cons      ProductCon[]
+  features  ProductFeature[]
+  quotes    InsuranceQuote[]
+  articles  ArticleProduct[]
+
+  @@map("financial_products")
+}
+
+model ProductPro {
+  id         String          @id @default(uuid())
+  productId  String
+  product    FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  text       String
+
+  @@map("product_pros")
+}
+
+model ProductCon {
+  id         String          @id @default(uuid())
+  productId  String
+  product    FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  text       String
+
+  @@map("product_cons")
+}
+
+model ProductFeature {
+  id         String          @id @default(uuid())
+  productId  String
+  product    FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  text       String
+
+  @@map("product_features")
+}
+
+model Article {
+  id              String        @id @default(uuid())
+  slug            String        @unique
+  title           String
+  excerpt         String        @db.Text
+  content         String        @db.Text
+  partnerTag       String
+  imageUrl        String
+  date            DateTime
+  locale          ContentLocale
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  relatedProducts ArticleProduct[]
+
+  @@map("articles")
+}
+
+model ArticleProduct {
+  id        String          @id @default(uuid())
+  articleId String
+  productId String
+  article   Article         @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  product   FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, productId])
+  @@map("article_products")
+}
+
+model InsuranceQuote {
+  id            String        @id @default(uuid())
+  userId        String
+  productId     String
+  coverageType  CoverageType
+  coverageAmount Float
+  deductible    Float
+  premium       Float
+  expiresAt     DateTime
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product       FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  features      QuoteFeature[]
+
+  @@map("insurance_quotes")
+}
+
+model QuoteFeature {
+  id        String         @id @default(uuid())
+  quoteId   String
+  quote     InsuranceQuote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  text      String
+
+  @@map("quote_features")
+}
+
+model Lead {
+  id            String     @id @default(uuid())
+  userId        String?
+  email         String
+  name          String
+  phone         String?
+  productInterest String
+  status        LeadStatus @default(new)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  user          User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("leads")
+}

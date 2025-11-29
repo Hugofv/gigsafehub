@@ -1,0 +1,40 @@
+{
+  "name": "gigsafehub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GigSafeHub monorepo with Next.js web app and Express API",
+  "scripts": {
+    "dev": "concurrently \"pnpm dev:web\" \"pnpm dev:api\"",
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "pnpm --filter api dev",
+    "build": "pnpm --filter web build && pnpm --filter api build",
+    "build:web": "pnpm --filter web build",
+    "build:api": "pnpm --filter api build",
+    "lint": "pnpm -r --parallel exec pnpm lint",
+    "lint:fix": "pnpm -r --parallel exec pnpm lint:fix",
+    "test": "pnpm -r --parallel exec pnpm test",
+    "test:watch": "pnpm -r --parallel exec pnpm test:watch",
+    "type-check": "pnpm -r --parallel exec pnpm type-check",
+    "clean": "pnpm -r exec rm -rf node_modules dist .next out build",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
+    "concurrently": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}
