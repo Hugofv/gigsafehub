@@ -46,8 +46,13 @@ const Navbar: React.FC = () => {
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      // Don't close if clicking on a link (let navigation happen)
+      if ((target as Element).closest('a')) {
+        return;
+      }
       Object.values(menuRefs).forEach((ref) => {
-        if (ref.current && !ref.current.contains(event.target as Node)) {
+        if (ref.current && !ref.current.contains(target)) {
           setOpenMenu(null);
         }
       });
@@ -78,7 +83,9 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link href={getLink('/')} className="flex-shrink-0 flex items-center">
-              <span className="text-xl sm:text-2xl font-bold text-brand-600 tracking-tight">GigSafeHub</span>
+              <span className="text-xl sm:text-2xl font-bold text-brand-600 tracking-tight">
+                GigSafeHub
+              </span>
             </Link>
 
             {/* Mobile menu button */}
@@ -89,12 +96,32 @@ const Navbar: React.FC = () => {
             >
               <span className="sr-only">Open main menu</span>
               {mobileMenuOpen ? (
-                <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="block h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               ) : (
-                <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <svg
+                  className="block h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 </svg>
               )}
             </button>
@@ -116,11 +143,20 @@ const Navbar: React.FC = () => {
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
                 {openMenu === 'insurance' && (
-                  <InsuranceMegaMenu locale={locale} getLink={getLink} onClose={() => setOpenMenu(null)} />
+                  <InsuranceMegaMenu
+                    locale={locale}
+                    getLink={getLink}
+                    onClose={() => setOpenMenu(null)}
+                  />
                 )}
               </div>
 
@@ -137,11 +173,20 @@ const Navbar: React.FC = () => {
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
                 {openMenu === 'comparison' && (
-                  <ComparisonMegaMenu locale={locale} getLink={getLink} onClose={() => setOpenMenu(null)} />
+                  <ComparisonMegaMenu
+                    locale={locale}
+                    getLink={getLink}
+                    onClose={() => setOpenMenu(null)}
+                  />
                 )}
               </div>
 
@@ -158,11 +203,20 @@ const Navbar: React.FC = () => {
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
                 {openMenu === 'guides' && (
-                  <GuidesMegaMenu locale={locale} getLink={getLink} onClose={() => setOpenMenu(null)} />
+                  <GuidesMegaMenu
+                    locale={locale}
+                    getLink={getLink}
+                    onClose={() => setOpenMenu(null)}
+                  />
                 )}
               </div>
 
@@ -179,11 +233,20 @@ const Navbar: React.FC = () => {
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
                 {openMenu === 'blog' && (
-                  <BlogMegaMenu locale={locale} getLink={getLink} onClose={() => setOpenMenu(null)} />
+                  <BlogMegaMenu
+                    locale={locale}
+                    getLink={getLink}
+                    onClose={() => setOpenMenu(null)}
+                  />
                 )}
               </div>
 
@@ -199,7 +262,9 @@ const Navbar: React.FC = () => {
               <button
                 onClick={() => changeLocale('en-US')}
                 className={`px-2 sm:px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
-                  locale === 'en-US' ? 'bg-white text-brand-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                  locale === 'en-US'
+                    ? 'bg-white text-brand-600 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 EN
@@ -207,7 +272,9 @@ const Navbar: React.FC = () => {
               <button
                 onClick={() => changeLocale('pt-BR')}
                 className={`px-2 sm:px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
-                  locale === 'pt-BR' ? 'bg-white text-brand-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                  locale === 'pt-BR'
+                    ? 'bg-white text-brand-600 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 PT
@@ -221,7 +288,10 @@ const Navbar: React.FC = () => {
               {t('nav.getQuote')}
             </Link>
 
-            <Link href={getLink('/admin')} className="hidden lg:block text-sm text-slate-500 hover:text-slate-900 font-medium">
+            <Link
+              href={getLink('/admin')}
+              className="hidden lg:block text-sm text-slate-500 hover:text-slate-900 font-medium"
+            >
               {t('nav.admin')}
             </Link>
           </div>
@@ -261,7 +331,12 @@ const Navbar: React.FC = () => {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               {mobileSubmenuOpen === 'insurance' && (
@@ -286,7 +361,12 @@ const Navbar: React.FC = () => {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               {mobileSubmenuOpen === 'comparison' && (
@@ -311,7 +391,12 @@ const Navbar: React.FC = () => {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               {mobileSubmenuOpen === 'guides' && (
@@ -336,7 +421,12 @@ const Navbar: React.FC = () => {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               {mobileSubmenuOpen === 'blog' && (

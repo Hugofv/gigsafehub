@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -933,6 +934,454 @@ async function main() {
 
   console.log('✅ Categories seeded successfully!');
   console.log(`   - Created ${await prisma.category.count()} categories`);
+
+  // ============================================
+  // CREATE ADMIN USER
+  // ============================================
+
+  const adminEmail = 'admin@example.com';
+  const adminPassword = 'password123';
+  const hashedPassword = await bcrypt.hash(adminPassword, 10);
+
+  const adminUser = await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: {
+      password: hashedPassword, // Update password in case it changed
+    },
+    create: {
+      email: adminEmail,
+      name: 'Admin User',
+      password: hashedPassword,
+      role: 'admin',
+    },
+  });
+
+  console.log('✅ Admin user created successfully!');
+  console.log(`   - Email: ${adminEmail}`);
+  console.log(`   - Password: ${adminPassword}`);
+  console.log(`   - Role: ${adminUser.role}`);
+
+  // ============================================
+  // CREATE ARTICLES (Blog Posts)
+  // ============================================
+
+  const article1 = await prisma.article.upsert({
+    where: { slug: 'essential-insurance-tips-for-uber-drivers' },
+    update: {},
+    create: {
+      slug: 'essential-insurance-tips-for-uber-drivers',
+      slugEn: 'essential-insurance-tips-for-uber-drivers',
+      slugPt: 'dicas-essenciais-de-seguro-para-motoristas-uber',
+      title: 'Essential Insurance Tips for Uber Drivers',
+      excerpt: 'Learn the most important insurance tips every Uber driver should know to protect themselves and their vehicle.',
+      content: `
+# Essential Insurance Tips for Uber Drivers
+
+As an Uber driver, having the right insurance coverage is crucial for protecting yourself, your passengers, and your vehicle. Here are the essential tips you need to know:
+
+## 1. Understand Uber's Insurance Coverage
+
+Uber provides insurance coverage in three periods:
+- **Period 1**: App is off - Your personal insurance applies
+- **Period 2**: App is on, no ride accepted - Uber provides liability coverage
+- **Period 3**: Ride accepted or in progress - Uber provides comprehensive coverage
+
+## 2. Get Commercial Insurance
+
+Personal auto insurance typically doesn't cover commercial activities. Consider getting:
+- Commercial auto insurance
+- Rideshare insurance endorsement
+- Gap insurance for your vehicle
+
+## 3. Review Your Coverage Regularly
+
+Your insurance needs may change as you drive more or less. Review your policy:
+- Quarterly
+- After major life changes
+- When your driving patterns change
+
+## 4. Document Everything
+
+Keep records of:
+- All insurance policies
+- Claims and incidents
+- Maintenance records
+- Mileage logs
+
+## Conclusion
+
+Protecting yourself with proper insurance is not optional for rideshare drivers. Take the time to understand your coverage and ensure you're adequately protected.
+      `,
+      partnerTag: 'GigSafeHub',
+      imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800',
+      imageAlt: 'Uber driver with insurance documents',
+      date: new Date('2024-01-15'),
+      locale: 'Both',
+      articleType: 'blog',
+      categoryId: blogTips.id,
+      metaTitle: 'Essential Insurance Tips for Uber Drivers | GigSafeHub',
+      metaDescription: 'Learn the most important insurance tips every Uber driver should know to protect themselves and their vehicle.',
+      metaKeywords: 'uber insurance, rideshare insurance, driver insurance tips',
+      ogTitle: 'Essential Insurance Tips for Uber Drivers',
+      ogDescription: 'Learn the most important insurance tips every Uber driver should know.',
+      ogImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200',
+      readingTime: 5,
+    },
+  });
+
+  const article2 = await prisma.article.upsert({
+    where: { slug: 'comparing-top-5-delivery-insurance-plans' },
+    update: {},
+    create: {
+      slug: 'comparing-top-5-delivery-insurance-plans',
+      slugEn: 'comparing-top-5-delivery-insurance-plans',
+      slugPt: 'comparando-os-5-melhores-planos-de-seguro-para-entregadores',
+      title: 'Comparing Top 5 Delivery Insurance Plans',
+      excerpt: 'A comprehensive comparison of the best insurance plans available for delivery workers in 2024.',
+      content: `
+# Comparing Top 5 Delivery Insurance Plans
+
+Finding the right insurance for delivery work can be challenging. We've compared the top 5 plans to help you make an informed decision.
+
+## Plan Comparison
+
+### 1. Plan A - Comprehensive Coverage
+- **Coverage**: Full protection including equipment
+- **Price**: $89/month
+- **Best for**: Full-time delivery workers
+
+### 2. Plan B - Basic Protection
+- **Coverage**: Essential liability coverage
+- **Price**: $49/month
+- **Best for**: Part-time workers
+
+### 3. Plan C - Premium Package
+- **Coverage**: Full coverage + income protection
+- **Price**: $129/month
+- **Best for**: High-volume workers
+
+### 4. Plan D - Equipment Focus
+- **Coverage**: Equipment and vehicle protection
+- **Price**: $69/month
+- **Best for**: Bike/motorcycle delivery
+
+### 5. Plan E - Budget Option
+- **Coverage**: Basic liability
+- **Price**: $29/month
+- **Best for**: Occasional workers
+
+## Conclusion
+
+Choose the plan that best fits your delivery work volume and risk tolerance.
+      `,
+      partnerTag: 'GigSafeHub',
+      imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800',
+      imageAlt: 'Delivery insurance comparison',
+      date: new Date('2024-02-01'),
+      locale: 'Both',
+      articleType: 'blog',
+      categoryId: blogComparisons.id,
+      metaTitle: 'Comparing Top 5 Delivery Insurance Plans | GigSafeHub',
+      metaDescription: 'A comprehensive comparison of the best insurance plans available for delivery workers in 2024.',
+      metaKeywords: 'delivery insurance, insurance comparison, delivery worker insurance',
+      readingTime: 7,
+    },
+  });
+
+  const article3 = await prisma.article.upsert({
+    where: { slug: 'gig-economy-trends-2024' },
+    update: {},
+    create: {
+      slug: 'gig-economy-trends-2024',
+      slugEn: 'gig-economy-trends-2024',
+      slugPt: 'tendencias-da-economia-gig-2024',
+      title: 'Gig Economy Trends in 2024',
+      excerpt: 'Discover the latest trends shaping the gig economy and how they affect insurance needs for workers.',
+      content: `
+# Gig Economy Trends in 2024
+
+The gig economy continues to evolve rapidly. Here are the key trends shaping 2024:
+
+## 1. Increased Regulation
+
+Governments worldwide are implementing new regulations to protect gig workers, including mandatory insurance requirements.
+
+## 2. Technology Integration
+
+New platforms are making it easier for workers to manage their insurance and benefits.
+
+## 3. Worker Classification
+
+The debate over worker classification continues, affecting insurance and benefits eligibility.
+
+## 4. Specialized Insurance Products
+
+Insurance companies are developing products specifically designed for gig workers.
+
+## Conclusion
+
+Stay informed about these trends to ensure you have the right protection.
+      `,
+      partnerTag: 'GigSafeHub',
+      imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800',
+      imageAlt: 'Gig economy trends',
+      date: new Date('2024-03-10'),
+      locale: 'Both',
+      articleType: 'blog',
+      categoryId: blogTrends.id,
+      metaTitle: 'Gig Economy Trends in 2024 | GigSafeHub',
+      metaDescription: 'Discover the latest trends shaping the gig economy and how they affect insurance needs.',
+      readingTime: 6,
+    },
+  });
+
+  console.log('✅ Articles seeded successfully!');
+  console.log(`   - Created ${await prisma.article.count()} articles`);
+
+  // ============================================
+  // CREATE GUIDE PAGES
+  // ============================================
+
+  const guide1 = await prisma.guidePage.upsert({
+    where: { slug: 'what-is-gig-economy-insurance' },
+    update: {},
+    create: {
+      slug: 'what-is-gig-economy-insurance',
+      slugEn: 'what-is-gig-economy-insurance',
+      slugPt: 'o-que-e-seguro-para-economia-gig',
+      title: 'What is Gig Economy Insurance?',
+      excerpt: 'A comprehensive guide explaining what gig economy insurance is and why it matters for independent workers.',
+      content: `
+# What is Gig Economy Insurance?
+
+Gig economy insurance is specialized insurance coverage designed for independent workers who earn income through platforms like Uber, DoorDash, or freelance marketplaces.
+
+## Why Do You Need It?
+
+Traditional insurance policies often exclude commercial activities. Gig economy insurance fills this gap by providing coverage for:
+- Work-related accidents
+- Equipment damage or theft
+- Liability protection
+- Income protection
+
+## Types of Coverage
+
+### 1. Liability Insurance
+Protects you if you're found responsible for damages or injuries.
+
+### 2. Equipment Insurance
+Covers your work equipment (laptop, camera, vehicle, etc.).
+
+### 3. Income Protection
+Provides financial support if you're unable to work due to injury or illness.
+
+### 4. Health Insurance
+Specialized health plans for independent workers.
+
+## How to Choose
+
+Consider:
+- Your work type and volume
+- Your risk tolerance
+- Your budget
+- Platform requirements
+
+## Conclusion
+
+Gig economy insurance is essential for protecting your livelihood as an independent worker.
+      `,
+      categoryId: guideWhatIs.id,
+      locale: 'Both',
+      imageUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800',
+      imageAlt: 'Gig economy insurance guide',
+      metaTitle: 'What is Gig Economy Insurance? | Complete Guide',
+      metaDescription: 'A comprehensive guide explaining what gig economy insurance is and why it matters for independent workers.',
+      metaKeywords: 'gig economy insurance, independent worker insurance, freelancer insurance',
+    },
+  });
+
+  const guide2 = await prisma.guidePage.upsert({
+    where: { slug: 'insurance-costs-by-type' },
+    update: {},
+    create: {
+      slug: 'insurance-costs-by-type',
+      slugEn: 'insurance-costs-by-type',
+      slugPt: 'custos-de-seguro-por-tipo',
+      title: 'Insurance Costs by Type',
+      excerpt: 'Understand the typical costs for different types of insurance coverage for gig workers.',
+      content: `
+# Insurance Costs by Type
+
+Understanding insurance costs helps you budget effectively. Here's a breakdown by type:
+
+## Liability Insurance
+- **Average Cost**: $30-80/month
+- **Factors**: Coverage amount, work type, location
+
+## Equipment Insurance
+- **Average Cost**: $15-50/month
+- **Factors**: Equipment value, deductible
+
+## Income Protection
+- **Average Cost**: $40-120/month
+- **Factors**: Income level, waiting period
+
+## Health Insurance
+- **Average Cost**: $200-500/month
+- **Factors**: Age, location, coverage level
+
+## Tips to Save
+
+1. Bundle policies when possible
+2. Increase deductibles
+3. Shop around annually
+4. Take advantage of discounts
+
+## Conclusion
+
+Plan your budget based on your specific needs and risk profile.
+      `,
+      categoryId: guideCosts.id,
+      locale: 'Both',
+      imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800',
+      imageAlt: 'Insurance costs breakdown',
+      metaTitle: 'Insurance Costs by Type | Pricing Guide',
+      metaDescription: 'Understand the typical costs for different types of insurance coverage for gig workers.',
+    },
+  });
+
+  const guide3 = await prisma.guidePage.upsert({
+    where: { slug: 'how-to-choose-right-insurance-plan' },
+    update: {},
+    create: {
+      slug: 'how-to-choose-right-insurance-plan',
+      slugEn: 'how-to-choose-right-insurance-plan',
+      slugPt: 'como-escolher-o-plano-de-seguro-ideal',
+      title: 'How to Choose the Right Insurance Plan',
+      excerpt: 'Step-by-step guide to selecting the insurance plan that best fits your needs as a gig worker.',
+      content: `
+# How to Choose the Right Insurance Plan
+
+Choosing the right insurance plan requires careful consideration. Follow these steps:
+
+## Step 1: Assess Your Needs
+
+Evaluate:
+- Your work type and frequency
+- Your risk exposure
+- Your financial situation
+- Platform requirements
+
+## Step 2: Research Options
+
+- Compare multiple providers
+- Read reviews and ratings
+- Check coverage details
+- Understand exclusions
+
+## Step 3: Calculate Costs
+
+Consider:
+- Monthly premiums
+- Deductibles
+- Out-of-pocket maximums
+- Long-term affordability
+
+## Step 4: Review Coverage
+
+Ensure coverage includes:
+- Your specific work activities
+- Equipment protection
+- Liability limits
+- Income protection if needed
+
+## Step 5: Make a Decision
+
+Choose the plan that offers:
+- Adequate coverage
+- Reasonable cost
+- Good customer service
+- Flexibility for changes
+
+## Conclusion
+
+Take your time to make an informed decision that protects you without breaking your budget.
+      `,
+      categoryId: guideChoosing.id,
+      locale: 'Both',
+      imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800',
+      imageAlt: 'Choosing insurance plan',
+      metaTitle: 'How to Choose the Right Insurance Plan | Guide',
+      metaDescription: 'Step-by-step guide to selecting the insurance plan that best fits your needs as a gig worker.',
+    },
+  });
+
+  console.log('✅ Guide pages seeded successfully!');
+  console.log(`   - Created ${await prisma.guidePage.count()} guide pages`);
+
+  // ============================================
+  // CREATE COMPARISON PAGES
+  // ============================================
+
+  // Note: These will need product IDs once products are created
+  // For now, we'll create them with empty productIds arrays
+
+  const comparison1 = await prisma.comparisonPage.upsert({
+    where: { slug: 'compare-insurance-for-drivers' },
+    update: {},
+    create: {
+      slug: 'compare-insurance-for-drivers',
+      slugEn: 'compare-insurance-for-drivers',
+      slugPt: 'comparar-seguros-para-motoristas',
+      title: 'Compare Insurance for Drivers',
+      description: 'Side-by-side comparison of the best insurance options for rideshare and delivery drivers.',
+      categoryId: compareDrivers.id,
+      locale: 'Both',
+      productIds: [], // Will be populated when products are created
+      metaTitle: 'Compare Insurance for Drivers | Side-by-Side Comparison',
+      metaDescription: 'Compare the best insurance options for rideshare and delivery drivers.',
+      metaKeywords: 'driver insurance comparison, rideshare insurance compare',
+    },
+  });
+
+  const comparison2 = await prisma.comparisonPage.upsert({
+    where: { slug: 'compare-insurance-for-delivery-workers' },
+    update: {},
+    create: {
+      slug: 'compare-insurance-for-delivery-workers',
+      slugEn: 'compare-insurance-for-delivery-workers',
+      slugPt: 'comparar-seguros-para-entregadores',
+      title: 'Compare Insurance for Delivery Workers',
+      description: 'Compare insurance plans specifically designed for delivery workers.',
+      categoryId: compareDelivery.id,
+      locale: 'Both',
+      productIds: [],
+      metaTitle: 'Compare Insurance for Delivery Workers | Comparison',
+      metaDescription: 'Compare insurance plans specifically designed for delivery workers.',
+    },
+  });
+
+  const comparison3 = await prisma.comparisonPage.upsert({
+    where: { slug: 'compare-income-insurance' },
+    update: {},
+    create: {
+      slug: 'compare-income-insurance',
+      slugEn: 'compare-income-insurance',
+      slugPt: 'comparar-seguros-de-renda',
+      title: 'Compare Income Insurance',
+      description: 'Compare income protection insurance plans for gig workers.',
+      categoryId: compareIncome.id,
+      locale: 'Both',
+      productIds: [],
+      metaTitle: 'Compare Income Insurance | Gig Worker Protection',
+      metaDescription: 'Compare income protection insurance plans for gig workers.',
+    },
+  });
+
+  console.log('✅ Comparison pages seeded successfully!');
+  console.log(`   - Created ${await prisma.comparisonPage.count()} comparison pages`);
+
+  console.log('\n🎉 All content pages seeded successfully!');
 }
 
 main()

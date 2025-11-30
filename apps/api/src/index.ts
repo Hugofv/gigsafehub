@@ -19,6 +19,7 @@ import { comparisonsRouter } from './routes/comparisons';
 import { faqRouter } from './routes/faq';
 import { categoriesRouter } from './routes/categories';
 import { seoRouter } from './routes/seo';
+import { adminRouter } from './routes/admin';
 import { seoHeaders, structuredDataHeaders } from './middleware/seo';
 import { errorHandler } from './middleware/errorHandler';
 import { config } from './config';
@@ -153,6 +154,7 @@ app.use('/api/comparisons', comparisonsRouter);
 app.use('/api/faq', faqRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/', seoRouter); // SEO routes (sitemap.xml, robots.txt, /api/seo/meta)
+app.use('/api/admin', adminRouter);
 
 // Root route
 app.get('/', (req: Request, res: Response) => {

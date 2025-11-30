@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCategories } from '@/contexts/CategoriesContext';
 import type { Category } from '@/services/api';
 
@@ -13,6 +14,7 @@ interface MegaMenuProps {
 
 export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
   const { categories, loading, getByParent, findBySlug, buildPath } = useCategories();
+  const router = useRouter();
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const submenuRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -64,9 +66,12 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
     return children.map((child) => {
       const subChildren = buildAllLevels(child.id, startLevel + 1);
       const { children: _, ...childWithoutChildren } = child;
+      const fullPath = buildPath(child, locale);
+      // Ensure we have a valid path
+      const validPath = fullPath || child.slug || '';
       const menuItem: MenuItem = {
         ...childWithoutChildren,
-        fullPath: buildPath(child, locale),
+        fullPath: validPath,
       };
       if (subChildren.length > 0) {
         menuItem.children = subChildren;
@@ -80,21 +85,27 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
   const sortedLevel1Cats = [...level1Cats].sort((a, b) => (a.order || 0) - (b.order || 0));
 
   // Build sections with all levels
-  const sections = sortedLevel1Cats.map((level1Cat) => {
-    const items = buildAllLevels(level1Cat.id, 2);
+  const sections = sortedLevel1Cats
+    .map((level1Cat) => {
+      const items = buildAllLevels(level1Cat.id, 2);
 
-    return {
-      title: level1Cat.name,
-      items,
-    };
-  }).filter((s) => s.items.length > 0);
+      return {
+        title: level1Cat.name,
+        items,
+      };
+    })
+    .filter((s) => s.items.length > 0);
 
   if (sections.length === 0) {
     return null;
   }
 
   // Component to render menu items with popover for submenus
-  const MenuItemComponent: React.FC<{ item: MenuItem; sectionIdx: number; itemIdx: number }> = ({ item, sectionIdx, itemIdx }) => {
+  const MenuItemComponent: React.FC<{ item: MenuItem; sectionIdx: number; itemIdx: number }> = ({
+    item,
+    sectionIdx,
+    itemIdx,
+  }) => {
     const hasChildren = item.children && item.children.length > 0;
     const itemKey = `${sectionIdx}-${itemIdx}-${item.id}`;
     const isSubmenuOpen = openSubmenu === itemKey;
@@ -103,8 +114,14 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
       <li className="relative group">
         <div className="flex items-center justify-between">
           <Link
-            href={getLink(`/${item.fullPath || item.slug}`)}
-            onClick={onClose}
+            href={getLink(item.fullPath ? `/${item.fullPath}` : item.slug ? `/${item.slug}` : '#')}
+            onClick={(e) => {
+              // Don't prevent default - let Link handle navigation
+              // Close menu after a small delay to allow navigation to start
+              setTimeout(() => {
+                onClose();
+              }, 50);
+            }}
             className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2 px-2 rounded-md whitespace-normal flex-1"
             title={item.name}
           >
@@ -112,6 +129,7 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
           </Link>
           {hasChildren && (
             <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -127,7 +145,12 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           )}
@@ -157,7 +180,10 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
   };
 
   return (
-    <div className="absolute left-0 mt-2 w-full bg-white rounded-lg shadow-xl border border-slate-200 z-50" style={{ width: '44rem' }}>
+    <div
+      className="absolute left-0 mt-2 w-full bg-white rounded-lg shadow-xl border border-slate-200 z-50"
+      style={{ width: '44rem' }}
+    >
       <div className="p-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {sections.map((section, idx) => (
@@ -179,7 +205,13 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
 };
 
 export const ComparisonMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
-  const { categories: allCategories, loading, getByParent, findBySlug, buildPath } = useCategories();
+  const {
+    categories: allCategories,
+    loading,
+    getByParent,
+    findBySlug,
+    buildPath,
+  } = useCategories();
 
   // Find comparison root category
   const comparisonRoot = findBySlug(locale === 'pt-BR' ? 'comparador' : 'comparisons', locale);
@@ -188,10 +220,13 @@ export const ComparisonMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, o
   const comparisonCats = comparisonRoot ? getByParent(comparisonRoot.id) : [];
 
   // Build full paths
-  const categories = comparisonCats.map((cat) => ({
-    ...cat,
-    fullPath: buildPath(cat, locale),
-  }));
+  const categories = comparisonCats.map((cat) => {
+    const fullPath = buildPath(cat, locale);
+    return {
+      ...cat,
+      fullPath: fullPath || cat.slug || '',
+    };
+  });
 
   if (loading) {
     return (
@@ -212,8 +247,13 @@ export const ComparisonMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, o
           {categories.map((item) => (
             <li key={item.id}>
               <Link
-                href={getLink(`/${item.fullPath || item.slug}`)}
-                onClick={onClose}
+                href={getLink(
+                  item.fullPath ? `/${item.fullPath}` : item.slug ? `/${item.slug}` : '#'
+                )}
+onClick={(e) => {
+              // Close menu immediately, navigation will happen via Link
+              onClose();
+            }}
                 className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2.5 px-3 rounded-md"
               >
                 {item.name}
@@ -227,7 +267,13 @@ export const ComparisonMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, o
 };
 
 export const GuidesMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
-  const { categories: allCategories, loading, getByParent, findBySlug, buildPath } = useCategories();
+  const {
+    categories: allCategories,
+    loading,
+    getByParent,
+    findBySlug,
+    buildPath,
+  } = useCategories();
 
   // Find guides root category
   const guidesRoot = findBySlug(locale === 'pt-BR' ? 'guias' : 'guides', locale);
@@ -236,10 +282,13 @@ export const GuidesMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClo
   const guideCats = guidesRoot ? getByParent(guidesRoot.id) : [];
 
   // Build full paths
-  const categories = guideCats.map((cat) => ({
-    ...cat,
-    fullPath: buildPath(cat, locale),
-  }));
+  const categories = guideCats.map((cat) => {
+    const fullPath = buildPath(cat, locale);
+    return {
+      ...cat,
+      fullPath: fullPath || cat.slug || '',
+    };
+  });
 
   if (loading) {
     return (
@@ -260,8 +309,13 @@ export const GuidesMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClo
           {categories.map((item) => (
             <li key={item.id}>
               <Link
-                href={getLink(`/${item.fullPath || item.slug}`)}
-                onClick={onClose}
+                href={getLink(
+                  item.fullPath ? `/${item.fullPath}` : item.slug ? `/${item.slug}` : '#'
+                )}
+onClick={(e) => {
+              // Close menu immediately, navigation will happen via Link
+              onClose();
+            }}
                 className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2.5 px-3 rounded-md"
               >
                 {item.name}
@@ -303,7 +357,10 @@ export const BlogMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose
             <li key={item.id}>
               <Link
                 href={getLink(`/articles/${item.slug}`)}
-                onClick={onClose}
+onClick={(e) => {
+              // Close menu immediately, navigation will happen via Link
+              onClose();
+            }}
                 className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2.5 px-3 rounded-md"
               >
                 {item.name}
@@ -339,16 +396,23 @@ export const MobileInsuranceMenu: React.FC<MegaMenuProps> = ({ locale, getLink, 
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide px-3 py-1">
               {level1Cat.name}
             </div>
-            {sortedChildren.map((child) => (
-              <Link
-                key={child.id}
-                href={getLink(`/${buildPath(child, locale)}`)}
-                onClick={onClose}
-                className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
-              >
-                {child.name}
-              </Link>
-            ))}
+            {sortedChildren.map((child) => {
+              const childPath = buildPath(child, locale);
+              const href = childPath ? `/${childPath}` : child.slug ? `/${child.slug}` : '#';
+              return (
+                <Link
+                  key={child.id}
+                  href={getLink(href)}
+onClick={(e) => {
+              // Close menu immediately, navigation will happen via Link
+              onClose();
+            }}
+                  className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
+                >
+                  {child.name}
+                </Link>
+              );
+            })}
           </div>
         );
       })}
@@ -372,8 +436,16 @@ export const MobileComparisonMenu: React.FC<MegaMenuProps> = ({ locale, getLink,
       {sortedCats.map((cat) => (
         <Link
           key={cat.id}
-          href={getLink(`/${buildPath(cat, locale)}`)}
-          onClick={onClose}
+          href={getLink(
+            (() => {
+              const path = buildPath(cat, locale);
+              return path ? `/${path}` : cat.slug ? `/${cat.slug}` : '#';
+            })()
+          )}
+onClick={(e) => {
+              // Close menu immediately, navigation will happen via Link
+              onClose();
+            }}
           className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
         >
           {cat.name}
@@ -399,8 +471,16 @@ export const MobileGuidesMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onC
       {sortedCats.map((cat) => (
         <Link
           key={cat.id}
-          href={getLink(`/${buildPath(cat, locale)}`)}
-          onClick={onClose}
+          href={getLink(
+            (() => {
+              const path = buildPath(cat, locale);
+              return path ? `/${path}` : cat.slug ? `/${cat.slug}` : '#';
+            })()
+          )}
+onClick={(e) => {
+              // Close menu immediately, navigation will happen via Link
+              onClose();
+            }}
           className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
         >
           {cat.name}
@@ -427,7 +507,10 @@ export const MobileBlogMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClo
         <Link
           key={cat.id}
           href={getLink(`/articles/${cat.slug}`)}
-          onClick={onClose}
+onClick={(e) => {
+              // Close menu immediately, navigation will happen via Link
+              onClose();
+            }}
           className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
         >
           {cat.name}
@@ -436,4 +519,3 @@ export const MobileBlogMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClo
     </div>
   );
 };
-
