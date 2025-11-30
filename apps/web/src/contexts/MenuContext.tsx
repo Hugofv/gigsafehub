@@ -7,6 +7,7 @@ interface MenuStructure {
   insurance: {
     root: any;
     items: any[];
+    menuArticles: any[];
   };
   comparison: {
     root: any;
@@ -56,7 +57,7 @@ export function MenuProvider({
       setError(err instanceof Error ? err : new Error('Failed to load menu'));
       // Set empty menu structure on error
       setMenu({
-        insurance: { root: null, items: [] },
+        insurance: { root: null, items: [], menuArticles: [] },
         comparison: { root: null, items: [] },
         guides: { root: null, items: [], menuArticles: [] },
         blog: { root: null, items: [] },

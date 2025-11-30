@@ -2,19 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { adminArticles, adminCategories, type Article, type Category } from '@/services/admin';
-import ArticleForm from './ArticleForm';
+import { adminArticles, type Article } from '@/services/admin';
 
 export default function ArticlesPage() {
+  const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const toast = useToast();
   const [articles, setArticles] = useState<Article[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
-  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -24,12 +22,8 @@ export default function ArticlesPage() {
 
   const fetchData = async () => {
     try {
-      const [articlesData, categoriesData] = await Promise.all([
-        adminArticles.getAll(),
-        adminCategories.getAll(),
-      ]);
+      const articlesData = await adminArticles.getAll();
       setArticles(articlesData);
-      setCategories(categoriesData);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to fetch data');
@@ -52,27 +46,6 @@ export default function ArticlesPage() {
     }
   };
 
-  const handleFormSuccess = () => {
-    setShowForm(false);
-    setEditingArticle(null);
-    fetchData();
-  };
-
-  const handleFormCancel = () => {
-    setShowForm(false);
-    setEditingArticle(null);
-  };
-
-  const handleCreate = () => {
-    setEditingArticle(null);
-    setShowForm(true);
-  };
-
-  const handleEdit = (article: Article) => {
-    setEditingArticle(article);
-    setShowForm(true);
-  };
-
   if (authLoading || !user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -88,22 +61,13 @@ export default function ArticlesPage() {
           <h1 className="text-3xl font-bold text-slate-900">Articles</h1>
           <p className="text-slate-600 mt-2">Manage blog articles and content</p>
         </div>
-        <button
-          onClick={handleCreate}
+        <Link
+          href="/admin/articles/new"
           className="px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors font-medium"
         >
           + New Article
-        </button>
+        </Link>
       </div>
-
-      {showForm && (
-        <ArticleForm
-          article={editingArticle || undefined}
-          categories={categories}
-          onSuccess={handleFormSuccess}
-          onCancel={handleFormCancel}
-        />
-      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
@@ -136,12 +100,12 @@ export default function ArticlesPage() {
                     {typeof article.date === 'string' ? article.date : new Date(article.date).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(article)}
+                    <Link
+                      href={`/admin/articles/${article.id}/edit`}
                       className="text-brand-600 hover:text-brand-700 mr-4 font-medium"
                     >
                       Edit
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(article.id)}
                       className="text-red-600 hover:text-red-700 ml-4"

@@ -5,15 +5,12 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { adminCategories, type Category } from '@/services/admin';
-import CategoryForm from './CategoryForm';
 
 export default function CategoriesPage() {
   const { user, loading: authLoading } = useAuth();
   const toast = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -47,27 +44,6 @@ export default function CategoriesPage() {
     }
   };
 
-  const handleFormSuccess = () => {
-    setShowForm(false);
-    setEditingCategory(null);
-    fetchCategories();
-  };
-
-  const handleFormCancel = () => {
-    setShowForm(false);
-    setEditingCategory(null);
-  };
-
-  const handleCreate = () => {
-    setEditingCategory(null);
-    setShowForm(true);
-  };
-
-  const handleEdit = (category: Category) => {
-    setEditingCategory(category);
-    setShowForm(true);
-  };
-
   if (authLoading || !user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -83,22 +59,13 @@ export default function CategoriesPage() {
           <h1 className="text-3xl font-bold text-slate-900">Categories</h1>
           <p className="text-slate-600 mt-2">Manage your category hierarchy</p>
         </div>
-        <button
-          onClick={handleCreate}
+        <Link
+          href="/admin/categories/new"
           className="px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors font-medium"
         >
           + New Category
-        </button>
+        </Link>
       </div>
-
-      {showForm && (
-        <CategoryForm
-          category={editingCategory || undefined}
-          categories={categories}
-          onSuccess={handleFormSuccess}
-          onCancel={handleFormCancel}
-        />
-      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
@@ -167,12 +134,12 @@ export default function CategoriesPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(category)}
+                    <Link
+                      href={`/admin/categories/${category.id}/edit`}
                       className="text-brand-600 hover:text-brand-700 mr-4 font-medium"
                     >
                       Edit
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(category.id)}
                       className="text-red-600 hover:text-red-700 ml-4"

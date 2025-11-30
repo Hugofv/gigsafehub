@@ -6,6 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useToast } from '@/contexts/ToastContext';
 import { adminArticles, type Article, type Category } from '@/services/admin';
+import ArticleDetailClient from '@/app/[locale]/articles/[slug]/ArticleDetailClient';
+import { I18nProvider } from '@/contexts/I18nContext';
 
 const articleSchema = yup.object({
   title: yup.string().required('Title is required'),
@@ -39,6 +41,7 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<ArticleFormData>({
@@ -66,6 +69,9 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
         },
   });
 
+  // Watch form values for preview - using watch() directly from useForm
+  const watchedValues = watch();
+
   const onSubmit = async (data: ArticleFormData) => {
     try {
       const formData: Partial<Article> = {
@@ -86,10 +92,16 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
     }
   };
 
+  // Get category name for preview
+  const selectedCategory = categories.find((cat) => cat.id === watchedValues.categoryId);
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+    <div className="mb-8">
       <h2 className="text-xl font-bold mb-4">{isEditing ? 'Edit' : 'Create'} Article</h2>
-      <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-4">
+      <div className="grid grid-cols-2 gap-6">
+        {/* Form Column */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Title *</label>
@@ -258,23 +270,150 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
           </p>
         </div>
 
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="px-6 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? 'Saving...' : isEditing ? 'Update' : 'Create'}
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-6 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors"
-          >
-            Cancel
-          </button>
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? 'Saving...' : isEditing ? 'Update' : 'Create'}
+              </button>
+              <button
+                type="button"
+                onClick={onCancel}
+                className="px-6 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+
+        {/* Preview Column */}
+        <div className="space-y-6 sticky top-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
+          {/* Article Preview */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="p-4 border-b border-slate-200 bg-slate-50">
+              <h3 className="text-lg font-bold text-slate-900">Live Preview</h3>
+              <p className="text-xs text-slate-500 mt-1">Real-time preview of how the article will appear</p>
+            </div>
+
+            <div className="overflow-y-auto bg-slate-50 max-h-[60vh]">
+              {watchedValues.title ? (
+                <I18nProvider>
+                  <div className="transform scale-[0.65] origin-top-left w-[153.85%]">
+                    <ArticleDetailClient
+                      article={{
+                        id: article?.id || 'preview',
+                        title: watchedValues.title || '',
+                        slug: watchedValues.slug || '',
+                        excerpt: watchedValues.excerpt || '',
+                        content: watchedValues.content || '',
+                        imageUrl: watchedValues.imageUrl || undefined,
+                        imageAlt: watchedValues.title || undefined,
+                        date: watchedValues.date || new Date().toISOString(),
+                        partnerTag: watchedValues.partnerTag || undefined,
+                        locale: watchedValues.locale === 'pt_BR' ? 'pt-BR' : watchedValues.locale === 'en_US' ? 'en-US' : 'pt-BR',
+                        category: selectedCategory ? {
+                          id: selectedCategory.id,
+                          name: selectedCategory.name,
+                          slug: selectedCategory.slug,
+                          slugEn: selectedCategory.slugEn,
+                          slugPt: selectedCategory.slugPt,
+                        } : undefined,
+                      }}
+                      locale={watchedValues.locale === 'pt_BR' ? 'pt-BR' : watchedValues.locale === 'en_US' ? 'en-US' : 'pt-BR'}
+                      isComparison={selectedCategory?.name?.toLowerCase().includes('compar') ?? false}
+                    />
+                  </div>
+                </I18nProvider>
+              ) : (
+                <div className="p-8 text-center text-slate-400">
+                  <p className="text-sm">Start typing to see the preview</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* SEO Metadata Preview */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+            <h4 className="text-sm font-semibold text-slate-900 mb-3">SEO Metadata</h4>
+
+            {/* Google Search Result Preview */}
+            <div className="mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="text-xs text-slate-500 mb-1">
+                {watchedValues.slug ? `https://example.com/${watchedValues.slug}` : 'https://example.com/article-slug'}
+              </div>
+              <div className="text-lg text-blue-600 hover:underline mb-1">
+                {watchedValues.metaTitle || watchedValues.title || 'Article Title - GigSafeHub'}
+              </div>
+              <div className="text-sm text-slate-600 line-clamp-2">
+                {watchedValues.metaDescription || watchedValues.excerpt || 'Article description will appear here...'}
+              </div>
+            </div>
+
+            {/* Open Graph Preview */}
+            <div className="mb-4">
+              <h5 className="text-xs font-semibold text-slate-700 mb-2">Open Graph (Social Media)</h5>
+              <div className="border border-slate-200 rounded-lg overflow-hidden">
+                {watchedValues.imageUrl && (
+                  <div className="relative w-full h-32 bg-slate-100">
+                    <img
+                      src={watchedValues.imageUrl}
+                      alt={watchedValues.metaTitle || watchedValues.title || 'Article'}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="p-3 bg-white">
+                  <div className="text-xs text-slate-500 mb-1">GigSafeHub</div>
+                  <div className="text-sm font-semibold text-slate-900 mb-1">
+                    {watchedValues.metaTitle || watchedValues.title || 'Article Title'}
+                  </div>
+                  <div className="text-xs text-slate-600 line-clamp-2">
+                    {watchedValues.metaDescription || watchedValues.excerpt || 'Article description...'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Metadata Info */}
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Meta Title:</span>
+                <span className="text-slate-700 font-medium">
+                  {watchedValues.metaTitle ? '✓ Set' : '⚠ Missing'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Meta Description:</span>
+                <span className="text-slate-700 font-medium">
+                  {watchedValues.metaDescription ? '✓ Set' : '⚠ Missing'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Image:</span>
+                <span className="text-slate-700 font-medium">
+                  {watchedValues.imageUrl ? '✓ Set' : '⚠ Missing'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Category:</span>
+                <span className="text-slate-700 font-medium">
+                  {selectedCategory ? selectedCategory.name : '⚠ Not selected'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Locale:</span>
+                <span className="text-slate-700 font-medium">{watchedValues.locale || 'Not set'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

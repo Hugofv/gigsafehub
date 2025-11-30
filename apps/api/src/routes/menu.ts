@@ -188,14 +188,37 @@ menuRouter.get('/', async (req: Request, res: Response) => {
     // Organize menu by root categories
     const rootCategories = formattedCategories.filter((cat) => cat.level === 0);
 
+    // Filter articles by insurance categories
+    const insuranceRoot = rootCategories.find((cat) =>
+      (locale === 'pt-BR' && cat.slug === 'seguros') ||
+      (locale === 'en-US' && cat.slug === 'insurance') ||
+      cat.slug === 'insurance' || cat.slug === 'seguros'
+    );
+
+    // Get all insurance category IDs (including children)
+    const getAllInsuranceCategoryIds = (parentId: string | null, allCats: any[]): string[] => {
+      if (!parentId) return [];
+      const ids = [parentId];
+      const children = allCats.filter((cat) => cat.parentId === parentId);
+      children.forEach((child) => {
+        ids.push(child.id);
+        ids.push(...getAllInsuranceCategoryIds(child.id, allCats));
+      });
+      return ids;
+    };
+
+    const insuranceCategoryIds = insuranceRoot
+      ? getAllInsuranceCategoryIds(insuranceRoot.id, formattedCategories)
+      : [];
+    const insuranceMenuArticles = formattedMenuArticles.filter((article: any) => {
+      return article.category && insuranceCategoryIds.includes(article.category.id);
+    });
+
     const menuStructure = {
       insurance: {
-        root: rootCategories.find((cat) =>
-          (locale === 'pt-BR' && cat.slug === 'seguros') ||
-          (locale === 'en-US' && cat.slug === 'insurance') ||
-          cat.slug === 'insurance' || cat.slug === 'seguros'
-        ),
+        root: insuranceRoot,
         items: [] as any[],
+        menuArticles: insuranceMenuArticles, // Articles that should appear in insurance menu
       },
       comparison: {
         root: rootCategories.find((cat) =>

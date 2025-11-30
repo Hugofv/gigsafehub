@@ -4,17 +4,13 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { adminProducts, adminCategories, type Product, type Category } from '@/services/admin';
-import ProductForm from './ProductForm';
+import { adminProducts, type Product } from '@/services/admin';
 
 export default function ProductsPage() {
   const { user, loading: authLoading } = useAuth();
   const toast = useToast();
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -24,12 +20,8 @@ export default function ProductsPage() {
 
   const fetchData = async () => {
     try {
-      const [productsData, categoriesData] = await Promise.all([
-        adminProducts.getAll(),
-        adminCategories.getAll(),
-      ]);
+      const productsData = await adminProducts.getAll();
       setProducts(productsData);
-      setCategories(categoriesData);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to fetch data');
@@ -52,27 +44,6 @@ export default function ProductsPage() {
     }
   };
 
-  const handleFormSuccess = () => {
-    setShowForm(false);
-    setEditingProduct(null);
-    fetchData();
-  };
-
-  const handleFormCancel = () => {
-    setShowForm(false);
-    setEditingProduct(null);
-  };
-
-  const handleCreate = () => {
-    setEditingProduct(null);
-    setShowForm(true);
-  };
-
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-    setShowForm(true);
-  };
-
   if (authLoading || !user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -88,22 +59,13 @@ export default function ProductsPage() {
           <h1 className="text-3xl font-bold text-slate-900">Products</h1>
           <p className="text-slate-600 mt-2">Manage financial products and insurance</p>
         </div>
-        <button
-          onClick={handleCreate}
+        <Link
+          href="/admin/products/new"
           className="px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors font-medium"
         >
           + New Product
-        </button>
+        </Link>
       </div>
-
-      {showForm && (
-        <ProductForm
-          product={editingProduct || undefined}
-          categories={categories}
-          onSuccess={handleFormSuccess}
-          onCancel={handleFormCancel}
-        />
-      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
@@ -140,12 +102,12 @@ export default function ProductsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">{product.country || 'All'}</td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(product)}
+                    <Link
+                      href={`/admin/products/${product.id}/edit`}
                       className="text-brand-600 hover:text-brand-700 mr-4 font-medium"
                     >
                       Edit
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(product.id)}
                       className="text-red-600 hover:text-red-700 ml-4"

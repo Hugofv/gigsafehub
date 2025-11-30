@@ -15,6 +15,7 @@ interface MegaMenuProps {
 
 export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
   const { categories, loading, getByParent, findBySlug, buildPath } = useCategories();
+  const { menu: menuData } = useMenu();
   const router = useRouter();
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const submenuRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
@@ -52,11 +53,21 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
     return null;
   }
 
-  // Type for menu items with nested structure
-  type MenuItem = Omit<Category, 'children'> & {
+  // Type for menu items with nested structure (can be category or article)
+  type MenuItem = (Omit<Category, 'children'> & {
     fullPath: string;
     children?: MenuItem[];
+    isArticle?: false;
+  }) | {
+    id: string;
+    name: string;
+    fullPath: string;
+    isArticle: true;
+    titleMenu?: string;
   };
+
+  // Get menu articles that belong to insurance categories
+  const insuranceMenuArticles = menuData?.insurance?.menuArticles || [];
 
   // Recursive function to build nested menu items - get ALL levels
   const buildAllLevels = (parentId: string, startLevel: number = 2): MenuItem[] => {
@@ -73,6 +84,7 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
       const menuItem: MenuItem = {
         ...childWithoutChildren,
         fullPath: validPath,
+        isArticle: false,
       };
       if (subChildren.length > 0) {
         menuItem.children = subChildren;
@@ -85,14 +97,31 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
   const level1Cats = getByParent(insuranceRoot.id);
   const sortedLevel1Cats = [...level1Cats].sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  // Build sections with all levels
+  // Build sections with all levels, including articles
   const sections = sortedLevel1Cats
     .map((level1Cat) => {
-      const items = buildAllLevels(level1Cat.id, 2);
+      const categoryItems = buildAllLevels(level1Cat.id, 2);
+      
+      // Get articles that belong to this level 1 category
+      const categoryArticles = insuranceMenuArticles
+        .filter((article: any) => article.category?.id === level1Cat.id)
+        .map((article: any) => {
+          const articlePath = article.fullPath || `/${article.slug}`;
+          return {
+            id: article.id,
+            name: article.titleMenu || article.title,
+            fullPath: articlePath,
+            isArticle: true as const,
+            titleMenu: article.titleMenu,
+          };
+        });
+
+      // Combine category items and articles, sort by order (articles come after categories)
+      const allItems: MenuItem[] = [...categoryItems, ...categoryArticles];
 
       return {
         title: level1Cat.name,
-        items,
+        items: allItems,
       };
     })
     .filter((s) => s.items.length > 0);
@@ -107,6 +136,27 @@ export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, on
     sectionIdx,
     itemIdx,
   }) => {
+    // Articles don't have children
+    if (item.isArticle) {
+      return (
+        <li>
+          <Link
+            href={getLink(item.fullPath)}
+            onClick={(e) => {
+              setTimeout(() => {
+                onClose();
+              }, 50);
+            }}
+            className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2 px-2 rounded-md whitespace-normal"
+            title={item.name}
+          >
+            {item.name}
+          </Link>
+        </li>
+      );
+    }
+
+    // Categories can have children
     const hasChildren = item.children && item.children.length > 0;
     const itemKey = `${sectionIdx}-${itemIdx}-${item.id}`;
     const isSubmenuOpen = openSubmenu === itemKey;
@@ -384,10 +434,14 @@ onClick={(e) => {
 // Mobile menu components
 export const MobileInsuranceMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
   const { categories, loading, getByParent, findBySlug, buildPath } = useCategories();
+  const { menu: menuData } = useMenu();
 
   const insuranceRoot = findBySlug(locale === 'pt-BR' ? 'seguros' : 'insurance', locale);
   const level1Cats = insuranceRoot ? getByParent(insuranceRoot.id) : [];
   const sortedLevel1Cats = [...level1Cats].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  // Get menu articles that belong to insurance categories
+  const insuranceMenuArticles = menuData?.insurance?.menuArticles || [];
 
   if (loading) {
     return <div className="px-3 py-2 text-sm text-slate-500">Loading...</div>;
@@ -399,11 +453,17 @@ export const MobileInsuranceMenu: React.FC<MegaMenuProps> = ({ locale, getLink, 
         const children = getByParent(level1Cat.id);
         const sortedChildren = [...children].sort((a, b) => (a.order || 0) - (b.order || 0));
 
+        // Get articles that belong to this level 1 category
+        const categoryArticles = insuranceMenuArticles.filter(
+          (article: any) => article.category?.id === level1Cat.id
+        );
+
         return (
           <div key={level1Cat.id} className="pt-2">
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide px-3 py-1">
               {level1Cat.name}
             </div>
+            {/* Category children */}
             {sortedChildren.map((child) => {
               const childPath = buildPath(child, locale);
               const href = childPath ? `/${childPath}` : child.slug ? `/${child.slug}` : '#';
@@ -411,16 +471,29 @@ export const MobileInsuranceMenu: React.FC<MegaMenuProps> = ({ locale, getLink, 
                 <Link
                   key={child.id}
                   href={getLink(href)}
-onClick={(e) => {
-              // Close menu immediately, navigation will happen via Link
-              onClose();
-            }}
+                  onClick={(e) => {
+                    // Close menu immediately, navigation will happen via Link
+                    onClose();
+                  }}
                   className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
                 >
                   {child.name}
                 </Link>
               );
             })}
+            {/* Articles */}
+            {categoryArticles.map((article: any) => (
+              <Link
+                key={article.id}
+                href={getLink(article.fullPath)}
+                onClick={(e) => {
+                  onClose();
+                }}
+                className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
+              >
+                {article.titleMenu || article.title}
+              </Link>
+            ))}
           </div>
         );
       })}
