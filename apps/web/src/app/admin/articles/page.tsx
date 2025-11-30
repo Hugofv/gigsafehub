@@ -203,7 +203,7 @@ export default function ArticlesPage() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Image URL *</label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.imageUrl || ''}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg"

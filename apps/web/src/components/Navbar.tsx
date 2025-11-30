@@ -39,8 +39,8 @@ const Navbar: React.FC = () => {
   const linkClass = (path: string) =>
     `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
       isActive(path)
-        ? 'bg-brand-50 text-brand-700'
-        : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+        ? 'bg-navy-50 text-navy-700'
+        : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
     }`;
 
   // Close menus when clicking outside
@@ -83,15 +83,17 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link href={getLink('/')} className="flex-shrink-0 flex items-center">
-              <span className="text-xl sm:text-2xl font-bold text-brand-600 tracking-tight">
-                GigSafeHub
-              </span>
+              <img
+                src="/logo.png"
+                alt="GigSafeHub"
+                className="h-8 sm:h-10 w-auto"
+              />
             </Link>
 
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="ml-4 lg:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500"
+              className="ml-4 lg:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500"
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
@@ -132,8 +134,8 @@ const Navbar: React.FC = () => {
                   onClick={() => toggleMenu('insurance')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
                     pathname.includes('/reviews') && pathname.includes('Insurance')
-                      ? 'bg-brand-50 text-brand-700'
-                      : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+                      ? 'bg-navy-50 text-navy-700'
+                      : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
                   }`}
                 >
                   {t('nav.insurance')}
@@ -263,7 +265,7 @@ const Navbar: React.FC = () => {
                 onClick={() => changeLocale('en-US')}
                 className={`px-2 sm:px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
                   locale === 'en-US'
-                    ? 'bg-white text-brand-600 shadow-sm'
+                    ? 'bg-white text-navy-600 shadow-sm'
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
@@ -273,7 +275,7 @@ const Navbar: React.FC = () => {
                 onClick={() => changeLocale('pt-BR')}
                 className={`px-2 sm:px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
                   locale === 'pt-BR'
-                    ? 'bg-white text-brand-600 shadow-sm'
+                    ? 'bg-white text-navy-600 shadow-sm'
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
@@ -283,7 +285,7 @@ const Navbar: React.FC = () => {
 
             <Link
               href={getLink('/calculator')}
-              className="hidden sm:block px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold text-white bg-brand-600 rounded-full hover:bg-brand-700 transition shadow-lg shadow-brand-500/30 hover:shadow-xl hover:shadow-brand-500/40 transform hover:-translate-y-0.5"
+              className="hidden sm:block px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold text-white bg-orange-500 rounded-full hover:bg-orange-600 transition shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transform hover:-translate-y-0.5"
             >
               {t('nav.getQuote')}
             </Link>
@@ -300,8 +302,8 @@ const Navbar: React.FC = () => {
               onClick={closeMobileMenu}
               className={`block px-3 py-2 text-sm font-medium rounded-md ${
                 isActive('/')
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+                  ? 'bg-navy-50 text-navy-700'
+                  : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
               }`}
             >
               {t('nav.home')}
@@ -313,8 +315,8 @@ const Navbar: React.FC = () => {
                 onClick={() => toggleMobileSubmenu('insurance')}
                 className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
                   pathname.includes('/reviews')
-                    ? 'bg-brand-50 text-brand-700'
-                    : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+                    ? 'bg-navy-50 text-navy-700'
+                    : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
                 }`}
               >
                 <span>{t('nav.insurance')}</span>
@@ -343,8 +345,8 @@ const Navbar: React.FC = () => {
                 onClick={() => toggleMobileSubmenu('comparison')}
                 className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
                   isActive('/compare')
-                    ? 'bg-brand-50 text-brand-700'
-                    : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+                    ? 'bg-navy-50 text-navy-700'
+                    : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
                 }`}
               >
                 <span>{t('nav.compare')}</span>
@@ -373,8 +375,8 @@ const Navbar: React.FC = () => {
                 onClick={() => toggleMobileSubmenu('guides')}
                 className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
                   isActive('/guides')
-                    ? 'bg-brand-50 text-brand-700'
-                    : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+                    ? 'bg-navy-50 text-navy-700'
+                    : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
                 }`}
               >
                 <span>{t('nav.guides')}</span>
@@ -403,8 +405,8 @@ const Navbar: React.FC = () => {
                 onClick={() => toggleMobileSubmenu('blog')}
                 className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
                   isActive('/articles')
-                    ? 'bg-brand-50 text-brand-700'
-                    : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+                    ? 'bg-navy-50 text-navy-700'
+                    : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
                 }`}
               >
                 <span>{t('nav.blog')}</span>
@@ -432,8 +434,8 @@ const Navbar: React.FC = () => {
               onClick={closeMobileMenu}
               className={`block px-3 py-2 text-sm font-medium rounded-md ${
                 isActive('/about')
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+                  ? 'bg-navy-50 text-navy-700'
+                  : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
               }`}
             >
               {t('nav.about')}
@@ -442,7 +444,7 @@ const Navbar: React.FC = () => {
             <Link
               href={getLink('/calculator')}
               onClick={closeMobileMenu}
-              className="block px-3 py-2 text-sm font-bold text-white bg-brand-600 rounded-md hover:bg-brand-700 transition mt-2 text-center"
+              className="block px-3 py-2 text-sm font-bold text-white bg-orange-500 rounded-md hover:bg-orange-600 transition mt-2 text-center"
             >
               {t('nav.getQuote')}
             </Link>

@@ -24,7 +24,7 @@ export function useI18n() {
 export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const [locale, setLocale] = useState<Locale>('en-US');
+  const [locale, setLocale] = useState<Locale>('pt-BR');
 
   // Extract locale from URL path
   useEffect(() => {
@@ -33,7 +33,7 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (firstSegment === 'pt-BR' || firstSegment === 'en-US') {
       setLocale(firstSegment as Locale);
     } else {
-      setLocale('en-US');
+      setLocale('pt-BR');
     }
   }, [pathname]);
 

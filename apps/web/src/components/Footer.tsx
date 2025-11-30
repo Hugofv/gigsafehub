@@ -152,7 +152,11 @@ const Footer: React.FC = () => {
               </li>
             </ul>
             <div className="mt-6">
-              <span className="text-2xl font-bold text-white tracking-tight">GigSafeHub</span>
+              <img
+                src="/logo.png"
+                alt="GigSafeHub"
+                className="h-8 w-auto brightness-0 invert"
+              />
               <p className="mt-2 text-xs text-slate-500 max-w-xs">
                 {locale === 'pt-BR'
                   ? 'Empoderando a economia gig com dados financeiros transparentes e ferramentas de segurança.'

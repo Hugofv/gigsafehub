@@ -40,7 +40,7 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
  * Get all categories (with cache)
  */
 export async function getAllCategories(
-  locale: string = 'en-US',
+  locale: string = 'pt-BR',
   country?: string
 ): Promise<Category[]> {
   try {
@@ -145,7 +145,7 @@ export function filterCategoriesByParent(
 export function findCategoryBySlug(
   categories: Category[],
   slug: string,
-  locale: string = 'en-US'
+  locale: string = 'pt-BR'
 ): Category | undefined {
   return categories.find((cat) => {
     if (locale === 'pt-BR' && cat.slugPt) {
@@ -164,7 +164,7 @@ export function findCategoryBySlug(
 export function buildCategoryPath(
   category: Category,
   categories: Category[],
-  locale: string = 'en-US'
+  locale: string = 'pt-BR'
 ): string {
   const path: string[] = [];
   let current: Category | undefined = category;
@@ -218,7 +218,7 @@ export async function getCategories(
 
 export async function getCategoryBySlugPath(
   slugPath: string,
-  locale: string = 'en-US'
+  locale: string = 'pt-BR'
 ): Promise<Category | null> {
   try {
     const response = await fetch(
@@ -244,7 +244,7 @@ export async function getCategoryBySlugPath(
 
 export async function getProductsByCategory(
   categoryId: string,
-  locale: string = 'en-US'
+  locale: string = 'pt-BR'
 ): Promise<any[]> {
   const params = new URLSearchParams({
     categoryId,
@@ -264,7 +264,7 @@ export async function getProductsByCategory(
 
 export async function getArticlesByCategory(
   categoryId: string,
-  locale: string = 'en-US'
+  locale: string = 'pt-BR'
 ): Promise<any[]> {
   const params = new URLSearchParams({
     categoryId,
@@ -287,7 +287,7 @@ export async function getArticlesByCategory(
  */
 export async function getLatestArticles(
   limit: number = 6,
-  locale: string = 'en-US'
+  locale: string = 'pt-BR'
 ): Promise<any[]> {
   try {
     const params = new URLSearchParams({
@@ -318,7 +318,7 @@ export async function getLatestArticles(
  */
 export async function getArticleBySlug(
   slug: string,
-  locale: string = 'en-US'
+  locale: string = 'pt-BR'
 ): Promise<any | null> {
   try {
     const response = await fetch(`${API_URL}/api/articles/${slug}?locale=${locale}`, {

@@ -19,7 +19,26 @@ const productSchema = yup.object({
   safetyScore: yup.number().optional().min(0, 'Safety score must be 0 or greater').max(100, 'Safety score must be 100 or less'),
   fees: yup.string().required('Fees is required'),
   affiliateLink: yup.string().url('Must be a valid URL').required('Affiliate link is required'),
-  logoUrl: yup.string().url('Must be a valid URL').required('Logo URL is required'),
+  logoUrl: yup
+    .string()
+    .required('Logo URL is required')
+    .test('is-url-or-path', 'Must be a valid URL or relative path (starting with /)', (value) => {
+      if (!value) return false;
+      // Accept full URLs (http://, https://)
+      if (value.startsWith('http://') || value.startsWith('https://')) {
+        try {
+          new URL(value);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+      // Accept relative paths starting with /
+      if (value.startsWith('/')) {
+        return true;
+      }
+      return false;
+    }),
   logoAlt: yup.string().optional(),
   slugEn: yup.string().optional(),
   slugPt: yup.string().optional(),

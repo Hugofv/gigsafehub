@@ -17,12 +17,32 @@ const articleSchema = yup.object({
   locale: yup.string().oneOf(['en_US', 'pt_BR', 'Both']).required('Locale is required'),
   date: yup.string().required('Date is required'),
   partnerTag: yup.string().required('Partner tag is required'),
-  imageUrl: yup.string().url('Must be a valid URL').required('Image URL is required'),
+  imageUrl: yup
+    .string()
+    .required('Image URL is required')
+    .test('is-url-or-path', 'Must be a valid URL or relative path (starting with /)', (value) => {
+      if (!value) return false;
+      // Accept full URLs (http://, https://)
+      if (value.startsWith('http://') || value.startsWith('https://')) {
+        try {
+          new URL(value);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+      // Accept relative paths starting with /
+      if (value.startsWith('/')) {
+        return true;
+      }
+      return false;
+    }),
   imageAlt: yup.string().optional(),
   slugEn: yup.string().optional(),
   slugPt: yup.string().optional(),
   metaTitle: yup.string().optional(),
   metaDescription: yup.string().optional(),
+  showInMenu: yup.boolean().optional().default(false),
 });
 
 type ArticleFormData = yup.InferType<typeof articleSchema>;
@@ -58,6 +78,7 @@ export default function EditArticlePage() {
       slugPt: '',
       metaTitle: '',
       metaDescription: '',
+      showInMenu: false,
     },
   });
 
@@ -106,6 +127,7 @@ export default function EditArticlePage() {
         slugPt: articleData.slugPt || '',
         metaTitle: articleData.metaTitle || '',
         metaDescription: articleData.metaDescription || '',
+        showInMenu: articleData.showInMenu || false,
       } as any);
     } catch (error) {
       console.error('Error fetching article:', error);
@@ -261,7 +283,7 @@ export default function EditArticlePage() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Image URL *</label>
               <input
-                type="url"
+                type="text"
                 {...register('imageUrl')}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
                   errors.imageUrl ? 'border-red-300' : 'border-slate-300'
@@ -307,6 +329,23 @@ export default function EditArticlePage() {
                 />
               </div>
             </div>
+          </div>
+
+          <div className="border-t pt-4">
+            <h3 className="font-semibold mb-3 text-slate-900">Menu Settings</h3>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                {...register('showInMenu')}
+                className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
+              />
+              <label className="text-sm font-medium text-slate-700">
+                Show in Navigation Menu
+              </label>
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
+              When enabled, this article will appear in the navigation menu (e.g., Guides menu)
+            </p>
           </div>
 
           <div className="flex gap-4 pt-4 border-t border-slate-200">

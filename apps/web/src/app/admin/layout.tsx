@@ -49,8 +49,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 shadow-sm z-40">
         <div className="p-6 border-b border-slate-200">
-          <h1 className="text-2xl font-bold text-brand-600">GigSafeHub</h1>
-          <p className="text-sm text-slate-500 mt-1">Admin Panel</p>
+          <img
+            src="/logo.png"
+            alt="GigSafeHub"
+            className="h-8 w-auto mb-2"
+          />
+          <p className="text-sm text-slate-500">Admin Panel</p>
         </div>
 
         <nav className="p-4 space-y-1">

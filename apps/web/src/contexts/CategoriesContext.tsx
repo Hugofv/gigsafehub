@@ -20,7 +20,7 @@ const CategoriesContext = createContext<CategoriesContextType | undefined>(undef
 
 export function CategoriesProvider({
   children,
-  locale = 'en-US',
+  locale = 'pt-BR',
 }: {
   children: React.ReactNode;
   locale?: string;

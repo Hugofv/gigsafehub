@@ -22,7 +22,7 @@ export const articlesRouter: Router = Router();
  */
 articlesRouter.get('/', async (req: Request, res: Response) => {
   try {
-    const { locale = 'en-US', category, limit, sortBy = 'date', sortOrder = 'desc' } = req.query;
+    const { locale = 'pt-BR', category, limit, sortBy = 'date', sortOrder = 'desc' } = req.query;
     const prismaLocale = locale === 'pt-BR' ? 'pt_BR' : locale === 'en-US' ? 'en_US' : 'Both';
 
     const where: any = {
@@ -77,7 +77,15 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
       ...(limit && { take: parseInt(limit as string, 10) }),
     });
 
-    const formattedArticles = articles.map((article: any) => {
+    // Sort articles to prioritize the requested locale over 'Both'
+    // This ensures pt-BR articles appear first when locale is pt-BR
+    const sortedArticles = articles.sort((a, b) => {
+      if (a.locale === prismaLocale && b.locale !== prismaLocale) return -1;
+      if (a.locale !== prismaLocale && b.locale === prismaLocale) return 1;
+      return 0;
+    });
+
+    const formattedArticles = sortedArticles.map((article: any) => {
       const currentSlug =
         (locale === 'pt-BR' && article.slugPt) ? article.slugPt :
         (locale === 'en-US' && article.slugEn) ? article.slugEn :
@@ -110,6 +118,7 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
         metaDescription: article.metaDescription,
         canonicalUrl: article.canonicalUrl,
         readingTime: article.readingTime,
+        showInMenu: article.showInMenu || false,
       };
     });
 
@@ -142,7 +151,7 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
 articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
   try {
     const { identifier } = req.params;
-    const { locale = 'en-US' } = req.query;
+    const { locale = 'pt-BR' } = req.query;
 
     // Try to find by localized slug first, then default slug
     let article = await prisma.article.findFirst({
@@ -264,6 +273,7 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
       canonicalUrl: article.canonicalUrl,
       structuredData: article.structuredData ? JSON.parse(article.structuredData) : null,
       readingTime: article.readingTime,
+      showInMenu: article.showInMenu || false,
     };
 
     res.setHeader('Cache-Control', 'public, max-age=3600');

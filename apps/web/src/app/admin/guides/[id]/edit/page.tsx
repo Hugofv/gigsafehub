@@ -15,7 +15,27 @@ const guideSchema = yup.object({
   content: yup.string().required('Content is required'),
   categoryId: yup.string().required('Category is required'),
   locale: yup.string().oneOf(['en_US', 'pt_BR', 'Both']).required('Locale is required'),
-  imageUrl: yup.string().url('Must be a valid URL').nullable().optional(),
+  imageUrl: yup
+    .string()
+    .nullable()
+    .optional()
+    .test('is-url-or-path', 'Must be a valid URL or relative path (starting with /)', (value) => {
+      if (!value) return true; // Optional field
+      // Accept full URLs (http://, https://)
+      if (value.startsWith('http://') || value.startsWith('https://')) {
+        try {
+          new URL(value);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+      // Accept relative paths starting with /
+      if (value.startsWith('/')) {
+        return true;
+      }
+      return false;
+    }),
   imageAlt: yup.string().optional(),
   slugEn: yup.string().optional(),
   slugPt: yup.string().optional(),
