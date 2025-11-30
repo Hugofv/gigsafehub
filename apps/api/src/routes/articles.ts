@@ -1,8 +1,8 @@
-import { Router, Request, Response } from 'express';
+import { Router, type Request, type Response } from 'express';
 import { prisma } from '../lib/prisma';
 import type { ContentLocale } from '@prisma/client';
 
-export const articlesRouter = Router();
+export const articlesRouter: Router = Router();
 
 /**
  * @swagger
@@ -22,7 +22,7 @@ export const articlesRouter = Router();
  */
 articlesRouter.get('/', async (req: Request, res: Response) => {
   try {
-    const { locale = 'en-US', category } = req.query;
+    const { locale = 'en-US', category, limit, sortBy = 'date', sortOrder = 'desc' } = req.query;
     const prismaLocale = locale === 'pt-BR' ? 'pt_BR' : locale === 'en-US' ? 'en_US' : 'Both';
 
     const where: any = {
@@ -35,7 +35,17 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
     };
 
     if (category) {
-      where.blogCategory = category;
+      where.categoryId = category as string;
+    }
+
+    // Build orderBy clause
+    const orderBy: any = {};
+    if (sortBy === 'date') {
+      orderBy.date = sortOrder === 'asc' ? 'asc' : 'desc';
+    } else if (sortBy === 'title') {
+      orderBy.title = sortOrder === 'asc' ? 'asc' : 'desc';
+    } else {
+      orderBy.date = 'desc'; // Default
     }
 
     const articles = await prisma.article.findMany({
@@ -54,9 +64,8 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
           },
         },
       },
-      orderBy: {
-        date: 'desc',
-      },
+      orderBy,
+      ...(limit && { take: parseInt(limit as string, 10) }),
     });
 
     const formattedArticles = articles.map((article: any) => {

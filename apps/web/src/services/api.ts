@@ -282,3 +282,34 @@ export async function getArticlesByCategory(
   return response.json();
 }
 
+/**
+ * Get latest articles
+ */
+export async function getLatestArticles(
+  limit: number = 6,
+  locale: string = 'en-US'
+): Promise<any[]> {
+  try {
+    const params = new URLSearchParams({
+      limit: limit.toString(),
+      locale,
+      sortBy: 'date',
+      sortOrder: 'desc',
+    });
+
+    const response = await fetch(`${API_URL}/api/articles?${params}`, {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch latest articles:', response.status);
+      return [];
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching latest articles:', error);
+    return [];
+  }
+}
+

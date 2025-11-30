@@ -287,13 +287,6 @@ const Navbar: React.FC = () => {
             >
               {t('nav.getQuote')}
             </Link>
-
-            <Link
-              href={getLink('/admin')}
-              className="hidden lg:block text-sm text-slate-500 hover:text-slate-900 font-medium"
-            >
-              {t('nav.admin')}
-            </Link>
           </div>
         </div>
       </div>

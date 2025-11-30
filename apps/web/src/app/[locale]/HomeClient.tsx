@@ -3,6 +3,8 @@
 import React, { lazy, Suspense } from 'react';
 import Link from 'next/link';
 import ProductCard from '@/components/ProductCard';
+import ArticleCarousel from '@/components/ArticleCarousel';
+import ArticleList from '@/components/ArticleList';
 import type { FinancialProduct } from '@gigsafehub/types';
 import { useTranslation } from '@/contexts/I18nContext';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
@@ -10,12 +12,30 @@ import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 // Lazy load heavy components
 const FeaturesSection = lazy(() => import('./FeaturesSection'));
 
+interface Article {
+  id: string;
+  slug: string;
+  slugEn?: string;
+  slugPt?: string;
+  title: string;
+  excerpt: string;
+  imageUrl: string;
+  imageAlt?: string;
+  date: string | Date;
+  partnerTag?: string;
+  readingTime?: number;
+}
+
 export default function HomeClient({
   locale,
-  featuredProducts
+  featuredProducts,
+  carouselArticles = [],
+  blogArticles = [],
 }: {
   locale: string;
   featuredProducts: FinancialProduct[];
+  carouselArticles?: Article[];
+  blogArticles?: Article[];
 }) {
   const { t } = useTranslation();
   const { isSlowConnection, saveData } = useNetworkStatus();
@@ -80,25 +100,10 @@ export default function HomeClient({
               </Link>
             </div>
 
-            {/* Stats */}
-            <div className={`mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto ${shouldAnimate ? 'animate-fade-in-up delay-300' : ''}`}>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">500+</div>
-                <div className="text-sm text-slate-400">Products Reviewed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">50K+</div>
-                <div className="text-sm text-slate-400">Monthly Visitors</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">4.8★</div>
-                <div className="text-sm text-slate-400">Avg Rating</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">100+</div>
-                <div className="text-sm text-slate-400">Expert Guides</div>
-              </div>
-            </div>
+            {/* Articles Carousel */}
+            {carouselArticles && carouselArticles.length > 0 && (
+              <ArticleCarousel articles={carouselArticles} locale={locale} />
+            )}
           </div>
         </div>
 
@@ -112,81 +117,16 @@ export default function HomeClient({
         )}
       </div>
 
-      {/* Trust Indicators */}
-      <div className="bg-gradient-to-b from-slate-50 to-white py-12 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4">
-          <p className="text-center text-sm font-semibold text-slate-500 uppercase tracking-wider mb-8">
-            Featured In
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-            {['THE VERGE', 'TechCrunch', 'WIRED', 'Forbes', 'FastCompany'].map((logo) => (
-              <div
-                key={logo}
-                className="text-slate-400 hover:text-slate-600 transition-colors font-bold text-lg md:text-xl grayscale hover:grayscale-0 opacity-60 hover:opacity-100"
-              >
-                {logo}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Features Section - Lazy loaded */}
-      {!isSlowConnection && (
-        <Suspense fallback={<div className="bg-white py-20 min-h-[600px]" />}>
-          <FeaturesSection />
-        </Suspense>
+      {/* Blog Articles Section */}
+      {blogArticles && blogArticles.length > 0 && (
+        <ArticleList
+          articles={blogArticles}
+          locale={locale}
+          title={t('home.latestArticles') || 'Latest Articles & Insights'}
+          showViewAll={true}
+          viewAllLink={getLink('/articles')}
+        />
       )}
-
-      {/* Featured Products Section */}
-      <div className="bg-gradient-to-b from-slate-50 to-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
-            <div className="mb-6 md:mb-0">
-              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-                {t('home.topRated')}
-              </h2>
-              <p className="text-xl text-slate-600 max-w-2xl">
-                {t('home.curated')}
-              </p>
-            </div>
-            <Link
-              href={getLink('/reviews')}
-              className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white border-2 border-brand-600 text-brand-600 font-semibold hover:bg-brand-600 hover:text-white transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-              prefetch={true}
-            >
-              {t('home.viewAll')}
-              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProducts.map((product, idx) => (
-              <div
-                key={product.id}
-                className={`transform transition-all duration-300 ${shouldAnimate ? 'hover:scale-105' : ''}`}
-                style={shouldAnimate ? { animationDelay: `${idx * 100}ms` } : undefined}
-              >
-                <ProductCard product={product} locale={locale} />
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center md:hidden">
-            <Link
-              href={getLink('/reviews')}
-              className="inline-flex items-center gap-2 text-brand-600 font-semibold hover:text-brand-700"
-            >
-              {t('home.viewAll')}
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </div>
 
       {/* CTA Section */}
       <div className="bg-gradient-to-r from-brand-600 via-blue-600 to-cyan-600 py-20">

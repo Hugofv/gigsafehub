@@ -177,7 +177,8 @@ export const TRANSLATIONS = {
       readGuides: 'Read Guides',
       topRated: 'Top Rated Gig Tools',
       curated: 'Curated selections with the highest safety scores.',
-      viewAll: 'View All'
+      viewAll: 'View All',
+      latestArticles: 'Latest Articles & Insights'
     },
     articles: {
       title: 'Financial Guides & Insights',
@@ -214,7 +215,8 @@ export const TRANSLATIONS = {
       readGuides: 'Ler Guias',
       topRated: 'Ferramentas Mais Bem Avaliadas',
       curated: 'Seleções curadas com as maiores pontuações de segurança.',
-      viewAll: 'Ver Todas'
+      viewAll: 'Ver Todas',
+      latestArticles: 'Últimos Artigos e Insights'
     },
     articles: {
       title: 'Guias Financeiros e Insights',
