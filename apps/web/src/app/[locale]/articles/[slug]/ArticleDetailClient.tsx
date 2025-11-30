@@ -124,7 +124,7 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
         )}
 
         <div
-          className="prose prose-lg max-w-none prose-slate prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-900 prose-code:text-brand-600 prose-code:bg-slate-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded"
+          className="prose prose-lg max-w-none prose-slate bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-900 prose-code:text-brand-600 prose-code:bg-slate-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 

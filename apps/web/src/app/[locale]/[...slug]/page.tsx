@@ -4,6 +4,7 @@ import { Metadata } from 'next';
 import { getCategoryBySlugPath, getProductsByCategory, getArticlesByCategory, getAllCategories, getArticleBySlug } from '@/services/api';
 import CategoryPageClient from './CategoryPageClient';
 import ArticleDetailClient from '../articles/[slug]/ArticleDetailClient';
+import StructuredData, { generateBreadcrumbStructuredData, generateArticleStructuredData, generateCategoryStructuredData } from '@/components/StructuredData';
 import type { Category } from '@/services/api';
 
 interface CategoryPageProps {
@@ -22,29 +23,111 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     const category = await getCategoryBySlugPath(slugPath, locale);
 
     if (!category) {
+      // Try to find article by slug
+      if (slug.length > 0) {
+        const lastSegment = slug[slug.length - 1];
+        const article = await getArticleBySlug(lastSegment, locale);
+
+        if (article) {
+          const articleTitle = article.metaTitle || article.title;
+          const fullTitle = `${articleTitle} - GigSafeHub`;
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+          const canonicalUrl = `${baseUrl}/${locale}/${slugPath}`;
+
+          return {
+            title: fullTitle,
+            description: article.metaDescription || article.excerpt || '',
+            keywords: article.metaKeywords?.split(',').map((k: string) => k.trim()) || [],
+            openGraph: {
+              title: fullTitle,
+              description: article.metaDescription || article.excerpt || '',
+              type: 'article',
+              url: canonicalUrl,
+              siteName: 'GigSafeHub',
+              locale: locale === 'pt-BR' ? 'pt_BR' : 'en_US',
+              publishedTime: article.date,
+              images: article.imageUrl ? [
+                {
+                  url: article.imageUrl,
+                  alt: article.imageAlt || article.title,
+                },
+              ] : [],
+            },
+            twitter: {
+              card: 'summary_large_image',
+              title: fullTitle,
+              description: article.metaDescription || article.excerpt || '',
+              images: article.imageUrl ? [article.imageUrl] : [],
+            },
+            alternates: {
+              canonical: canonicalUrl,
+            },
+            robots: {
+              index: article.robotsIndex ?? true,
+              follow: article.robotsFollow ?? true,
+            },
+          };
+        }
+      }
+
       return {
-        title: 'Category Not Found',
+        title: 'Category Not Found - GigSafeHub',
       };
     }
 
     const metaTitle = category.metaTitle || category.name;
     const metaDescription = category.metaDescription || category.description || '';
+    const fullTitle = `${metaTitle} - GigSafeHub`;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const canonicalUrl = `${baseUrl}/${locale}/${slugPath}`;
 
     return {
-      title: metaTitle,
+      title: fullTitle,
       description: metaDescription,
+      keywords: category.metaKeywords ? category.metaKeywords.split(',').map((k: string) => k.trim()) : [],
       openGraph: {
-        title: metaTitle,
+        title: fullTitle,
         description: metaDescription,
         type: 'website',
+        url: canonicalUrl,
+        siteName: 'GigSafeHub',
+        locale: locale === 'pt-BR' ? 'pt_BR' : 'en_US',
+        images: category.icon ? [
+          {
+            url: category.icon,
+            alt: category.name,
+          },
+        ] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: fullTitle,
+        description: metaDescription,
+        images: category.icon ? [category.icon] : [],
       },
       alternates: {
-        canonical: `/${locale}/${slugPath}`,
+        canonical: canonicalUrl,
+        languages: {
+          'pt-BR': `${baseUrl}/pt-BR/${slugPath}`,
+          'en-US': `${baseUrl}/en-US/${slugPath}`,
+        },
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
       },
     };
   } catch (error) {
     return {
-      title: 'Category',
+      title: 'Category - GigSafeHub',
+      description: 'Explore our categories and find the best insurance products for gig workers.',
     };
   }
 }
@@ -99,7 +182,37 @@ async function CategoryPage({ params }: CategoryPageProps) {
 
           if (pathsMatch) {
             // Path is correct, render the article
-            return <ArticleDetailClient article={article} locale={locale} isComparison={article.category.name?.toLowerCase().includes('compar') ?? false} />;
+            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+            const articleUrl = `${baseUrl}/${locale}/${expectedPath.join('/')}`;
+            const breadcrumbItems = [
+              { name: 'Home', url: `${baseUrl}/${locale}` },
+              ...categoryPath.map((slug, idx) => {
+                const cat = allCategories.find(c => {
+                  const catSlug = locale === 'pt-BR' ? (c.slugPt || c.slug) : (c.slugEn || c.slug);
+                  return catSlug === slug;
+                });
+                return {
+                  name: cat?.name || slug,
+                  url: `${baseUrl}/${locale}/${categoryPath.slice(0, idx + 1).join('/')}`,
+                };
+              }),
+              { name: article.title, url: articleUrl },
+            ];
+
+            return (
+              <>
+                <StructuredData data={generateBreadcrumbStructuredData(breadcrumbItems)} />
+                <StructuredData data={generateArticleStructuredData({
+                  title: article.title,
+                  description: article.metaDescription || article.excerpt,
+                  imageUrl: article.imageUrl,
+                  date: article.date,
+                  url: articleUrl,
+                  locale,
+                })} />
+                <ArticleDetailClient article={article} locale={locale} isComparison={article.category.name?.toLowerCase().includes('compar') ?? false} />
+              </>
+            );
           } else {
             // Path doesn't match, redirect to correct path
             const correctPath = `/${locale}/${expectedPath.join('/')}`;
@@ -170,18 +283,44 @@ async function CategoryPage({ params }: CategoryPageProps) {
       products = await getProductsByCategory(category.id, locale);
     }
 
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const categoryUrl = `${baseUrl}/${locale}/${slugPath}`;
+    const breadcrumbItems = [
+      { name: 'Home', url: `${baseUrl}/${locale}` },
+      ...breadcrumbs.map((cat, idx) => {
+        const catSlug = locale === 'pt-BR' ? (cat.slugPt || cat.slug) : (cat.slugEn || cat.slug);
+        const path = breadcrumbs.slice(0, idx + 1).map(c => {
+          const s = locale === 'pt-BR' ? (c.slugPt || c.slug) : (c.slugEn || c.slug);
+          return s;
+        }).join('/');
+        return {
+          name: cat.name,
+          url: `${baseUrl}/${locale}/${path}`,
+        };
+      }),
+    ];
+
     return (
-      <CategoryPageClient
-        category={category}
-        breadcrumbs={breadcrumbs}
-        subcategories={subcategoriesWithChildren}
-        products={products}
-        articles={articles}
-        locale={locale}
-        isBlog={isBlog}
-        isGuide={isGuide}
-        isComparison={isComparison}
-      />
+      <>
+        <StructuredData data={generateBreadcrumbStructuredData(breadcrumbItems)} />
+        <StructuredData data={generateCategoryStructuredData({
+          name: category.name,
+          description: category.metaDescription || category.description,
+          url: categoryUrl,
+          locale,
+        })} />
+        <CategoryPageClient
+          category={category}
+          breadcrumbs={breadcrumbs}
+          subcategories={subcategoriesWithChildren}
+          products={products}
+          articles={articles}
+          locale={locale}
+          isBlog={isBlog}
+          isGuide={isGuide}
+          isComparison={isComparison}
+        />
+      </>
     );
   } catch (error) {
     console.error('Error loading category page:', error);

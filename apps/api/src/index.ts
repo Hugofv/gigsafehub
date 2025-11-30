@@ -2,7 +2,6 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
-import rateLimit from 'express-rate-limit';
 import hpp from 'hpp';
 import mongoSanitize from 'express-mongo-sanitize';
 import pino from 'pino';
@@ -65,37 +64,7 @@ app.use(
   })
 );
 
-// Rate limiting - more lenient for categories endpoint
-const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Rate limiting removed for categories and menu endpoints
-// These endpoints are heavily cached and don't need rate limiting
-
-// Very permissive rate limiting for auth endpoints (login, register)
-// Skip rate limiting in development to avoid 429 errors during testing
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'development' ? 1000 : 50, // Very high limit in dev, normal in prod
-  message: 'Too many authentication attempts, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Apply auth-specific rate limiting (more permissive)
-app.use('/api/auth', authLimiter);
-// Menu and categories endpoints have no rate limiting (heavily cached)
-// Apply general rate limiting to specific routes only (excluding menu and categories)
-app.use('/api/quotes', generalLimiter);
-app.use('/api/products', generalLimiter);
-app.use('/api/articles', generalLimiter);
-app.use('/api/faq', generalLimiter);
-app.use('/api/admin', generalLimiter);
+// Rate limiting removed - no rate limiting applied
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));

@@ -1,11 +1,50 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
+import StructuredData, { generateOrganizationStructuredData, generateWebSiteStructuredData } from '@/components/StructuredData';
 
 export const metadata: Metadata = {
-  title: 'GigSafeHub',
-  description: 'Financial products comparison and insurance quotes',
+  title: {
+    default: 'GigSafeHub - Insurance and Protection for Gig Economy Workers',
+    template: '%s - GigSafeHub',
+  },
+  description: 'Compare insurance, find financial protection and discover the best options for drivers, delivery workers, freelancers and digital nomads. Guides, comparisons and specialized recommendations.',
+  keywords: ['insurance', 'gig economy', 'rideshare insurance', 'delivery insurance', 'freelancer insurance', 'financial protection'],
+  authors: [{ name: 'GigSafeHub' }],
+  creator: 'GigSafeHub',
+  publisher: 'GigSafeHub',
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    alternateLocale: ['pt_BR'],
+    siteName: 'GigSafeHub',
+    title: 'GigSafeHub - Insurance and Protection for Gig Economy Workers',
+    description: 'Compare insurance, find financial protection and discover the best options for drivers, delivery workers, freelancers and digital nomads.',
+    images: [
+      {
+        url: '/logo.png',
+        alt: 'GigSafeHub Logo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'GigSafeHub - Insurance and Protection for Gig Economy Workers',
+    description: 'Compare insurance, find financial protection and discover the best options for drivers, delivery workers, freelancers and digital nomads.',
+    images: ['/logo.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -21,6 +60,10 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/site.webmanifest',
+  verification: {
+    // Add Google Search Console verification if available
+    // google: 'your-verification-code',
+  },
 };
 
 export default function RootLayout({
@@ -39,6 +82,9 @@ export default function RootLayout({
         {/* <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /> */}
       </head>
       <body>
+        {/* Structured Data for SEO */}
+        <StructuredData data={generateOrganizationStructuredData()} />
+        <StructuredData data={generateWebSiteStructuredData()} />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

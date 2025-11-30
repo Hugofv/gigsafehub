@@ -19,6 +19,7 @@ export interface Category {
   order?: number;
   metaTitle?: string;
   metaDescription?: string;
+  metaKeywords?: string;
   counts?: {
     products: number;
     articles: number;
