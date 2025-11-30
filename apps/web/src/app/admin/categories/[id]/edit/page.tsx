@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import { adminCategories, type Category } from '@/services/admin';
 
 const categorySchema = yup.object({
@@ -31,6 +32,7 @@ export default function EditCategoryPage() {
   const params = useParams();
   const id = params?.id as string;
   const { user, loading: authLoading } = useAuth();
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -89,7 +91,7 @@ export default function EditCategoryPage() {
       } as any);
     } catch (error) {
       console.error('Error fetching category:', error);
-      alert('Failed to load category');
+      toast.error('Failed to load category');
       router.push('/admin/categories');
     } finally {
       setLoading(false);
@@ -104,7 +106,7 @@ export default function EditCategoryPage() {
       router.push('/admin/categories');
     } catch (error) {
       console.error('Error updating category:', error);
-      alert('Failed to update category');
+      toast.error('Failed to update category');
     } finally {
       setSaving(false);
     }

@@ -94,9 +94,13 @@ adminRouter.put('/categories/:id', async (req: Request, res: Response) => {
       data,
     });
     res.json(category);
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Validation error', details: error.errors });
+    }
+    // Prisma error code P2025 means record not found
+    if (error?.code === 'P2025') {
+      return res.status(404).json({ error: 'Category not found' });
     }
     res.status(500).json({ error: 'Failed to update category' });
   }
@@ -106,7 +110,11 @@ adminRouter.delete('/categories/:id', async (req: Request, res: Response) => {
   try {
     await prisma.category.delete({ where: { id: req.params.id } });
     res.status(204).send();
-  } catch (error) {
+  } catch (error: any) {
+    // Prisma error code P2025 means record not found
+    if (error?.code === 'P2025') {
+      return res.status(404).json({ error: 'Category not found' });
+    }
     res.status(500).json({ error: 'Failed to delete category' });
   }
 });
@@ -197,9 +205,13 @@ adminRouter.put('/products/:id', async (req: Request, res: Response) => {
       data,
     });
     res.json(product);
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Validation error', details: error.errors });
+    }
+    // Prisma error code P2025 means record not found
+    if (error?.code === 'P2025') {
+      return res.status(404).json({ error: 'Product not found' });
     }
     res.status(500).json({ error: 'Failed to update product' });
   }
@@ -209,7 +221,11 @@ adminRouter.delete('/products/:id', async (req: Request, res: Response) => {
   try {
     await prisma.financialProduct.delete({ where: { id: req.params.id } });
     res.status(204).send();
-  } catch (error) {
+  } catch (error: any) {
+    // Prisma error code P2025 means record not found
+    if (error?.code === 'P2025') {
+      return res.status(404).json({ error: 'Product not found' });
+    }
     res.status(500).json({ error: 'Failed to delete product' });
   }
 });
@@ -223,6 +239,7 @@ const articleSchema = z.object({
   slugEn: z.string().optional(),
   slugPt: z.string().optional(),
   title: z.string().min(1),
+  titleMenu: z.string().optional(),
   excerpt: z.string(),
   content: z.string(),
   partnerTag: z.string(),
@@ -301,9 +318,13 @@ adminRouter.put('/articles/:id', async (req: Request, res: Response) => {
       data: updateData,
     });
     res.json(article);
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Validation error', details: error.errors });
+    }
+    // Prisma error code P2025 means record not found
+    if (error?.code === 'P2025') {
+      return res.status(404).json({ error: 'Article not found' });
     }
     res.status(500).json({ error: 'Failed to update article' });
   }
@@ -313,7 +334,11 @@ adminRouter.delete('/articles/:id', async (req: Request, res: Response) => {
   try {
     await prisma.article.delete({ where: { id: req.params.id } });
     res.status(204).send();
-  } catch (error) {
+  } catch (error: any) {
+    // Prisma error code P2025 means record not found
+    if (error?.code === 'P2025') {
+      return res.status(404).json({ error: 'Article not found' });
+    }
     res.status(500).json({ error: 'Failed to delete article' });
   }
 });

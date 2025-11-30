@@ -6,10 +6,12 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import { adminArticles, adminCategories, type Article, type Category } from '@/services/admin';
 
 const articleSchema = yup.object({
   title: yup.string().required('Title is required'),
+  titleMenu: yup.string().optional(),
   slug: yup.string().required('Slug is required'),
   excerpt: yup.string().required('Excerpt is required'),
   content: yup.string().required('Content is required'),
@@ -52,6 +54,7 @@ export default function EditArticlePage() {
   const params = useParams();
   const id = params?.id as string;
   const { user, loading: authLoading } = useAuth();
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -65,6 +68,7 @@ export default function EditArticlePage() {
     resolver: yupResolver(articleSchema) as any,
     defaultValues: {
       title: '',
+      titleMenu: '',
       slug: '',
       excerpt: '',
       content: '',
@@ -114,6 +118,7 @@ export default function EditArticlePage() {
       setCategories(articleCategories);
       reset({
         title: articleData.title || '',
+        titleMenu: articleData.titleMenu || '',
         slug: articleData.slug || '',
         excerpt: articleData.excerpt || '',
         content: articleData.content || '',
@@ -131,7 +136,7 @@ export default function EditArticlePage() {
       } as any);
     } catch (error) {
       console.error('Error fetching article:', error);
-      alert('Failed to load article');
+      toast.error('Failed to load article');
       router.push('/admin/articles');
     } finally {
       setLoading(false);
@@ -146,7 +151,7 @@ export default function EditArticlePage() {
       router.push('/admin/articles');
     } catch (error) {
       console.error('Error updating article:', error);
-      alert('Failed to update article');
+      toast.error('Failed to update article');
     } finally {
       setSaving(false);
     }
@@ -190,6 +195,18 @@ export default function EditArticlePage() {
                 }`}
               />
               {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Title (Menu)</label>
+              <input
+                {...register('titleMenu')}
+                placeholder="Optional: Different title for navigation menu"
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
+                  errors.titleMenu ? 'border-red-300' : 'border-slate-300'
+                }`}
+              />
+              {errors.titleMenu && <p className="mt-1 text-sm text-red-600">{errors.titleMenu.message}</p>}
+              <p className="mt-1 text-xs text-slate-500">If empty, the article title will be used in the menu</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Slug *</label>

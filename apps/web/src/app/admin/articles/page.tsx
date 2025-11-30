@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import { adminArticles, adminCategories, type Article, type Category } from '@/services/admin';
 
 export default function ArticlesPage() {
   const { user, loading: authLoading } = useAuth();
+  const toast = useToast();
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ export default function ArticlesPage() {
       setCategories(categoriesData);
     } catch (error) {
       console.error('Error fetching data:', error);
-      alert('Failed to fetch data');
+      toast.error('Failed to fetch data');
     } finally {
       setLoading(false);
     }
@@ -38,14 +40,15 @@ export default function ArticlesPage() {
 
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this article?')) return;
+    if (!window.confirm('Are you sure you want to delete this article?')) return;
 
     try {
       await adminArticles.delete(id);
+      toast.success('Article deleted successfully');
       fetchData();
     } catch (error) {
       console.error('Error deleting article:', error);
-      alert('Failed to delete article');
+      toast.error('Failed to delete article');
     }
   };
 
@@ -58,13 +61,14 @@ export default function ArticlesPage() {
       } else {
         await adminArticles.create(formData);
       }
+      toast.success(editingId ? 'Article updated successfully' : 'Article created successfully');
       setShowForm(false);
       setEditingId(null);
       setFormData({});
       fetchData();
     } catch (error) {
       console.error('Error saving article:', error);
-      alert(error instanceof Error ? error.message : 'Failed to save article');
+      toast.error(error instanceof Error ? error.message : 'Failed to save article');
     }
   };
 

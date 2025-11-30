@@ -174,6 +174,7 @@ menuRouter.get('/', async (req: Request, res: Response) => {
       return {
         id: article.id,
         title: article.title,
+        titleMenu: article.titleMenu || article.title,
         slug: currentSlug,
         fullPath,
         category: article.category ? {

@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import { adminCategories, type Category } from '@/services/admin';
 
 export default function CategoriesPage() {
   const { user, loading: authLoading } = useAuth();
+  const toast = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<Partial<Category>>({});
@@ -24,7 +26,7 @@ export default function CategoriesPage() {
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
-      alert('Failed to fetch categories');
+      toast.error('Failed to fetch categories');
     } finally {
       setLoading(false);
     }
@@ -32,14 +34,15 @@ export default function CategoriesPage() {
 
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
+    if (!window.confirm('Are you sure you want to delete this category?')) return;
 
     try {
       await adminCategories.delete(id);
+      toast.success('Category deleted successfully');
       fetchCategories();
     } catch (error) {
       console.error('Error deleting category:', error);
-      alert('Failed to delete category');
+      toast.error('Failed to delete category');
     }
   };
 
@@ -48,12 +51,13 @@ export default function CategoriesPage() {
 
     try {
       await adminCategories.create(formData);
+      toast.success('Category created successfully');
       setShowForm(false);
       setFormData({});
       fetchCategories();
     } catch (error) {
       console.error('Error saving category:', error);
-      alert(error instanceof Error ? error.message : 'Failed to save category');
+      toast.error(error instanceof Error ? error.message : 'Failed to save category');
     }
   };
 

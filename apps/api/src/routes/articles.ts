@@ -28,10 +28,7 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
     const where: any = {
       robotsIndex: true,
       articleType: 'blog', // Only blog articles, not guides
-      OR: [
-        { locale: prismaLocale as ContentLocale },
-        { locale: 'Both' },
-      ],
+      OR: [{ locale: prismaLocale as ContentLocale }, { locale: 'Both' }],
     };
 
     if (category) {
@@ -87,9 +84,11 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
 
     const formattedArticles = sortedArticles.map((article: any) => {
       const currentSlug =
-        (locale === 'pt-BR' && article.slugPt) ? article.slugPt :
-        (locale === 'en-US' && article.slugEn) ? article.slugEn :
-        article.slug;
+        locale === 'pt-BR' && article.slugPt
+          ? article.slugPt
+          : locale === 'en-US' && article.slugEn
+            ? article.slugEn
+            : article.slug;
 
       return {
         id: article.id,
@@ -97,6 +96,7 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
         slugEn: article.slugEn || article.slug,
         slugPt: article.slugPt || article.slug,
         title: article.title,
+        titleMenu: article.titleMenu || article.title,
         excerpt: article.excerpt,
         content: article.content,
         partnerTag: article.partnerTag,
@@ -105,13 +105,15 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
         date: article.date.toISOString(),
         locale: article.locale,
         categoryId: article.categoryId,
-        category: article.category ? {
-          id: article.category.id,
-          name: article.category.name,
-          slug: article.category.slug,
-          slugEn: article.category.slugEn,
-          slugPt: article.category.slugPt,
-        } : null,
+        category: article.category
+          ? {
+              id: article.category.id,
+              name: article.category.name,
+              slug: article.category.slug,
+              slugEn: article.category.slugEn,
+              slugPt: article.category.slugPt,
+            }
+          : null,
         relatedProductIds: article.relatedProducts.map((rp: any) => rp.product.id),
         // SEO fields
         metaTitle: article.metaTitle,
@@ -237,9 +239,11 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
 
     // Get the correct slug for the locale
     const currentSlug =
-      (locale === 'pt-BR' && article.slugPt) ? article.slugPt :
-      (locale === 'en-US' && article.slugEn) ? article.slugEn :
-      article.slug;
+      locale === 'pt-BR' && article.slugPt
+        ? article.slugPt
+        : locale === 'en-US' && article.slugEn
+          ? article.slugEn
+          : article.slug;
 
     const formattedArticle = {
       id: article.id,
@@ -247,6 +251,7 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
       slugEn: article.slugEn || article.slug,
       slugPt: article.slugPt || article.slug,
       title: article.title,
+      titleMenu: article.titleMenu || article.title,
       excerpt: article.excerpt,
       content: article.content,
       partnerTag: article.partnerTag,
@@ -255,13 +260,15 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
       date: article.date.toISOString(),
       locale: article.locale,
       categoryId: article.categoryId,
-      category: article.category ? {
-        id: article.category.id,
-        name: article.category.name,
-        slug: article.category.slug,
-        slugEn: article.category.slugEn,
-        slugPt: article.category.slugPt,
-      } : null,
+      category: article.category
+        ? {
+            id: article.category.id,
+            name: article.category.name,
+            slug: article.category.slug,
+            slugEn: article.category.slugEn,
+            slugPt: article.category.slugPt,
+          }
+        : null,
       relatedProductIds: article.relatedProducts.map((rp: any) => rp.product.id),
       // SEO fields
       metaTitle: article.metaTitle,
@@ -313,10 +320,7 @@ articlesRouter.get('/menu', async (req: Request, res: Response) => {
       where: {
         showInMenu: true,
         robotsIndex: true,
-        OR: [
-          { locale: prismaLocale as ContentLocale },
-          { locale: 'Both' },
-        ],
+        OR: [{ locale: prismaLocale as ContentLocale }, { locale: 'Both' }],
       },
       include: {
         category: {
@@ -336,23 +340,28 @@ articlesRouter.get('/menu', async (req: Request, res: Response) => {
 
     const formattedArticles = articles.map((article: any) => {
       const currentSlug =
-        (locale === 'pt-BR' && article.slugPt) ? article.slugPt :
-        (locale === 'en-US' && article.slugEn) ? article.slugEn :
-        article.slug;
+        locale === 'pt-BR' && article.slugPt
+          ? article.slugPt
+          : locale === 'en-US' && article.slugEn
+            ? article.slugEn
+            : article.slug;
 
       return {
         id: article.id,
         title: article.title,
+        titleMenu: article.titleMenu || article.title,
         slug: currentSlug,
         slugEn: article.slugEn || article.slug,
         slugPt: article.slugPt || article.slug,
-        category: article.category ? {
-          id: article.category.id,
-          name: article.category.name,
-          slug: article.category.slug,
-          slugEn: article.category.slugEn,
-          slugPt: article.category.slugPt,
-        } : null,
+        category: article.category
+          ? {
+              id: article.category.id,
+              name: article.category.name,
+              slug: article.category.slug,
+              slugEn: article.category.slugEn,
+              slugPt: article.category.slugPt,
+            }
+          : null,
       };
     });
 
@@ -363,4 +372,3 @@ articlesRouter.get('/menu', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-

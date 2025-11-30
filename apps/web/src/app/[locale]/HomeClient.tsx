@@ -1,16 +1,12 @@
 'use client';
 
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import ProductCard from '@/components/ProductCard';
 import ArticleCarousel from '@/components/ArticleCarousel';
 import ArticleList from '@/components/ArticleList';
 import type { FinancialProduct } from '@gigsafehub/types';
 import { useTranslation } from '@/contexts/I18nContext';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
-
-// Lazy load heavy components
-const FeaturesSection = lazy(() => import('./FeaturesSection'));
 
 interface Article {
   id: string;
@@ -28,7 +24,7 @@ interface Article {
 
 export default function HomeClient({
   locale,
-  featuredProducts,
+  featuredProducts: _featuredProducts,
   carouselArticles = [],
   blogArticles = [],
 }: {

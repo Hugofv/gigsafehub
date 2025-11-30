@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import { adminProducts, adminCategories, type Product, type Category } from '@/services/admin';
 
 const productSchema = yup.object({
@@ -53,6 +54,7 @@ export default function EditProductPage() {
   const params = useParams();
   const id = params?.id as string;
   const { user, loading: authLoading } = useAuth();
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -117,7 +119,7 @@ export default function EditProductPage() {
       } as any);
     } catch (error) {
       console.error('Error fetching product:', error);
-      alert('Failed to load product');
+      toast.error('Failed to load product');
       router.push('/admin/products');
     } finally {
       setLoading(false);
@@ -132,7 +134,7 @@ export default function EditProductPage() {
       router.push('/admin/products');
     } catch (error) {
       console.error('Error updating product:', error);
-      alert('Failed to update product');
+      toast.error('Failed to update product');
     } finally {
       setSaving(false);
     }

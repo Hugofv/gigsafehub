@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import { adminProducts, adminCategories, type Product, type Category } from '@/services/admin';
 
 export default function ProductsPage() {
   const { user, loading: authLoading } = useAuth();
+  const toast = useToast();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ export default function ProductsPage() {
       setCategories(categoriesData);
     } catch (error) {
       console.error('Error fetching data:', error);
-      alert('Failed to fetch data');
+      toast.error('Failed to fetch data');
     } finally {
       setLoading(false);
     }
@@ -38,14 +40,15 @@ export default function ProductsPage() {
 
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
 
     try {
       await adminProducts.delete(id);
+      toast.success('Product deleted successfully');
       fetchData();
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert('Failed to delete product');
+      toast.error('Failed to delete product');
     }
   };
 
@@ -58,13 +61,14 @@ export default function ProductsPage() {
       } else {
         await adminProducts.create(formData);
       }
+      toast.success(editingId ? 'Product updated successfully' : 'Product created successfully');
       setShowForm(false);
       setEditingId(null);
       setFormData({});
       fetchData();
     } catch (error) {
       console.error('Error saving product:', error);
-      alert(error instanceof Error ? error.message : 'Failed to save product');
+      toast.error(error instanceof Error ? error.message : 'Failed to save product');
     }
   };
 

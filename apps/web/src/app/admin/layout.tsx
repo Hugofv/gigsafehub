@@ -57,7 +57,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <nav className="p-4 space-y-1">
           {menuItems.map((item) => {
-            const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+            // For Dashboard, check exact match or just /admin
+            // For other items, check if pathname starts with the href (but not just /admin)
+            let isActive = false;
+            if (item.href === '/admin') {
+              isActive = pathname === '/admin' || pathname === '/admin/';
+            } else {
+              isActive = pathname === item.href || (pathname?.startsWith(`${item.href}/`) ?? false);
+            }
             return (
               <Link
                 key={item.href}

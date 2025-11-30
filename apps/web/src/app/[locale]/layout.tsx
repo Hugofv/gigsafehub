@@ -1,42 +1,23 @@
-'use client';
-
 import type { ReactNode } from 'react';
-import { I18nProvider, useTranslation } from '@/contexts/I18nContext';
-import { CategoriesProvider } from '@/contexts/CategoriesContext';
-import { MenuProvider } from '@/contexts/MenuContext';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import LocaleLayoutClient from './LocaleLayoutClient';
 
 interface LocaleLayoutProps {
   children: ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-function LayoutContent({ children }: { children: ReactNode }) {
-  const { locale } = useTranslation();
+// Force dynamic rendering to ensure metadata is always generated
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+// Force Node.js runtime to disable metadata streaming
+export const runtime = 'nodejs';
 
-  return (
-    <CategoriesProvider locale={locale}>
-      <MenuProvider locale={locale}>
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-        </div>
-      </MenuProvider>
-    </CategoriesProvider>
-  );
-}
-
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
+  params,
 }: LocaleLayoutProps) {
-  return (
-    <I18nProvider>
-      <LayoutContent>{children}</LayoutContent>
-    </I18nProvider>
-  );
+  const { locale } = await params;
+
+  return <LocaleLayoutClient>{children}</LocaleLayoutClient>;
 }
 

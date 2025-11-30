@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
-import StructuredData, { generateOrganizationStructuredData, generateWebSiteStructuredData } from '@/components/StructuredData';
+import { ToastProvider } from '@/contexts/ToastContext';
+import { generateOrganizationStructuredData, generateWebSiteStructuredData } from '@/components/StructuredData';
 
 export const metadata: Metadata = {
   title: {
@@ -73,19 +75,27 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Preconnect to external domains */}
-        <link rel="preconnect" href="https://picsum.photos" />
-        <link rel="dns-prefetch" href="https://picsum.photos" />
-
-        {/* Preload critical fonts if using custom fonts */}
-        {/* <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /> */}
-      </head>
       <body>
-        {/* Structured Data for SEO */}
-        <StructuredData data={generateOrganizationStructuredData()} />
-        <StructuredData data={generateWebSiteStructuredData()} />
-        <AuthProvider>{children}</AuthProvider>
+        {/* Structured Data (JSON-LD) for SEO - injected into head via beforeInteractive */}
+        <Script
+          id="structured-data-organization"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateOrganizationStructuredData()),
+          }}
+        />
+        <Script
+          id="structured-data-website"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateWebSiteStructuredData()),
+          }}
+        />
+        <AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   );

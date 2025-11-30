@@ -1,4 +1,43 @@
 import React from 'react';
+import { Metadata } from 'next';
+import { unstable_noStore as noStore } from 'next/cache';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  noStore(); // Prevent metadata streaming - ensures metadata is in <head> on reload
+  const { locale } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const title = locale === 'pt-BR'
+    ? 'Sobre Nós - GigSafeHub'
+    : 'About Us - GigSafeHub';
+  const description = locale === 'pt-BR'
+    ? 'Conheça a missão e visão do GigSafeHub. Capacitamos trabalhadores da economia gig com informações transparentes e ferramentas de segurança financeira.'
+    : 'Learn about GigSafeHub\'s mission and vision. We empower gig economy workers with transparent information and financial security tools.';
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `${baseUrl}/${locale}/about`,
+      siteName: 'GigSafeHub',
+      locale: locale === 'pt-BR' ? 'pt_BR' : 'en_US',
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
+    alternates: {
+      canonical: `${baseUrl}/${locale}/about`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 export default function About() {
   return (
@@ -48,3 +87,6 @@ export default function About() {
   );
 }
 
+// Force dynamic rendering to ensure metadata is always generated on reload
+export const dynamic = 'force-dynamic';
+export const revalidate = 0; // Always revalidate

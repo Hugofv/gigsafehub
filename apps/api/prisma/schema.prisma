@@ -188,6 +188,7 @@ model Article {
   slugEn           String?       @unique // English slug
   slugPt           String?       @unique // Portuguese slug
   title           String
+  titleMenu       String?       // Title to display in navigation menu (different from article title)
   excerpt         String        @db.Text
   content         String        @db.Text
   partnerTag       String

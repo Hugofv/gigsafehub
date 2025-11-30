@@ -120,9 +120,10 @@ ${urls.join('\n')}
 seoRouter.get('/robots.txt', (req: Request, res: Response) => {
   const robots = `User-agent: *
 Allow: /
-Disallow: /admin
+Disallow: /admin/
 Disallow: /api/
-Disallow: /docs
+Disallow: /docs/
+Disallow: /_next/
 
 Sitemap: ${BASE_URL}/sitemap.xml`;
 

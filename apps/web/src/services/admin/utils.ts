@@ -29,6 +29,18 @@ export const fetchWithAuth = async (endpoint: string, options: RequestInit = {})
     throw new Error(error.error || 'Request failed');
   }
 
-  return response.json();
+  // Handle 204 No Content responses (common for DELETE operations)
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined;
+  }
+
+  // Check if response has content before trying to parse JSON
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    const text = await response.text();
+    return text ? JSON.parse(text) : undefined;
+  }
+
+  return undefined;
 };
 

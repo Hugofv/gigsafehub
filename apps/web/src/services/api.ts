@@ -225,7 +225,7 @@ export async function getCategoryBySlugPath(
     const response = await fetch(
       `${API_URL}/api/categories/${slugPath}?locale=${locale}`,
       {
-        next: { revalidate: 3600 }, // Cache for 1 hour
+        cache: 'no-store', // No cache to ensure fresh data for metadata
       }
     );
 
@@ -323,7 +323,7 @@ export async function getArticleBySlug(
 ): Promise<any | null> {
   try {
     const response = await fetch(`${API_URL}/api/articles/${slug}?locale=${locale}`, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      cache: 'no-store', // No cache to ensure fresh data for metadata
     });
 
     if (!response.ok) {

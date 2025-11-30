@@ -1,6 +1,7 @@
 import React from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
+import { unstable_noStore as noStore } from 'next/cache';
 import { getCategoryBySlugPath, getProductsByCategory, getArticlesByCategory, getAllCategories, getArticleBySlug } from '@/services/api';
 import CategoryPageClient from './CategoryPageClient';
 import ArticleDetailClient from '../articles/[slug]/ArticleDetailClient';
@@ -16,6 +17,7 @@ interface CategoryPageProps {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  noStore(); // Prevent metadata streaming - ensures metadata is in <head> on reload
   const { locale, slug } = await params;
   const slugPath = slug.join('/');
 
@@ -29,18 +31,20 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
         const article = await getArticleBySlug(lastSegment, locale);
 
         if (article) {
-          const articleTitle = article.metaTitle || article.title;
-          const fullTitle = `${articleTitle} - GigSafeHub`;
+          let articleTitle = article.metaTitle || article.title;
+          // Remove suffix if already present (to avoid duplication with template)
+          articleTitle = articleTitle.replace(/\s*[-–—]\s*GigSafeHub\s*$/i, '').trim();
           const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
           const canonicalUrl = `${baseUrl}/${locale}/${slugPath}`;
+          const articleDescription = article.metaDescription || article.excerpt || `Read ${article.title} on GigSafeHub. Expert guides and information for gig economy workers.`;
 
           return {
-            title: fullTitle,
-            description: article.metaDescription || article.excerpt || '',
+            title: articleTitle, // Template from root layout will add suffix
+            description: articleDescription,
             keywords: article.metaKeywords?.split(',').map((k: string) => k.trim()) || [],
             openGraph: {
-              title: fullTitle,
-              description: article.metaDescription || article.excerpt || '',
+              title: articleTitle, // Use title without suffix for OG
+              description: articleDescription,
               type: 'article',
               url: canonicalUrl,
               siteName: 'GigSafeHub',
@@ -55,8 +59,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
             },
             twitter: {
               card: 'summary_large_image',
-              title: fullTitle,
-              description: article.metaDescription || article.excerpt || '',
+              title: articleTitle, // Use title without suffix for Twitter
+              description: articleDescription,
               images: article.imageUrl ? [article.imageUrl] : [],
             },
             alternates: {
@@ -72,21 +76,22 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
       return {
         title: 'Category Not Found - GigSafeHub',
+        description: 'The requested category or page could not be found. Explore our insurance products and guides for gig economy workers.',
       };
     }
 
     const metaTitle = category.metaTitle || category.name;
-    const metaDescription = category.metaDescription || category.description || '';
-    const fullTitle = `${metaTitle} - GigSafeHub`;
+    const metaDescription = category.metaDescription || category.description || `Explore ${category.name} and find the best insurance products and guides for gig economy workers.`;
+    // Don't add suffix, template from root layout will add it
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const canonicalUrl = `${baseUrl}/${locale}/${slugPath}`;
 
     return {
-      title: fullTitle,
+      title: metaTitle, // Template from root layout will add suffix
       description: metaDescription,
       keywords: category.metaKeywords ? category.metaKeywords.split(',').map((k: string) => k.trim()) : [],
       openGraph: {
-        title: fullTitle,
+        title: metaTitle, // Use title without suffix for OG
         description: metaDescription,
         type: 'website',
         url: canonicalUrl,
@@ -101,7 +106,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       },
       twitter: {
         card: 'summary_large_image',
-        title: fullTitle,
+        title: metaTitle, // Use title without suffix for Twitter
         description: metaDescription,
         images: category.icon ? [category.icon] : [],
       },
@@ -124,7 +129,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
         },
       },
     };
-  } catch (error) {
+  } catch {
     return {
       title: 'Category - GigSafeHub',
       description: 'Explore our categories and find the best insurance products for gig workers.',
@@ -133,12 +138,13 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 }
 
 async function CategoryPage({ params }: CategoryPageProps) {
+  noStore(); // Prevent streaming for page content too
   const { locale, slug } = await params;
   const slugPath = slug.join('/');
 
   try {
     // First, try to fetch category by hierarchical slug path
-    let category = await getCategoryBySlugPath(slugPath, locale);
+    const category = await getCategoryBySlugPath(slugPath, locale);
 
     // If category not found, try to find an article by the last slug segment
     if (!category && slug.length > 0) {
@@ -288,7 +294,6 @@ async function CategoryPage({ params }: CategoryPageProps) {
     const breadcrumbItems = [
       { name: 'Home', url: `${baseUrl}/${locale}` },
       ...breadcrumbs.map((cat, idx) => {
-        const catSlug = locale === 'pt-BR' ? (cat.slugPt || cat.slug) : (cat.slugEn || cat.slug);
         const path = breadcrumbs.slice(0, idx + 1).map(c => {
           const s = locale === 'pt-BR' ? (c.slugPt || c.slug) : (c.slugEn || c.slug);
           return s;
@@ -327,5 +332,10 @@ async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 }
+
+// Force dynamic rendering to ensure metadata is always generated on reload
+export const dynamic = 'force-dynamic';
+export const revalidate = 0; // Always revalidate
+export const runtime = 'nodejs'; // Disable streaming to ensure metadata is always in head
 
 export default CategoryPage;

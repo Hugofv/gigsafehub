@@ -71,6 +71,7 @@ export interface Article {
   slugEn?: string;
   slugPt?: string;
   title: string;
+  titleMenu?: string;
   excerpt: string;
   content: string;
   partnerTag: string;

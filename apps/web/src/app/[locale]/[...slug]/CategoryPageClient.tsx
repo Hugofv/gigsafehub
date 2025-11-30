@@ -32,8 +32,8 @@ export default function CategoryPageClient({
   articles,
   locale,
   isBlog,
-  isGuide,
-  isComparison,
+  isGuide: _isGuide,
+  isComparison: _isComparison,
 }: CategoryPageClientProps) {
   const { buildPath } = useCategories();
   const [compareList, setCompareList] = React.useState<string[]>([]);
@@ -348,7 +348,7 @@ export default function CategoryPageClient({
               </svg>
               <h3 className="text-2xl font-bold text-slate-900 mb-2">No content yet</h3>
               <p className="text-slate-600 mb-6">
-                This category doesn't have any {isBlog ? 'articles' : 'products'} yet. Check back soon!
+                This category doesn&apos;t have any {isBlog ? 'articles' : 'products'} yet. Check back soon!
               </p>
               <Link
                 href={`/${locale}`}

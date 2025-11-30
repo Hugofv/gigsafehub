@@ -17,7 +17,7 @@ export function getLocalizedSlug(
   return slug || '';
 }
 
-export function generateSlug(text: string, locale: string = 'en-US'): string {
+export function generateSlug(text: string, _locale: string = 'en-US'): string {
   // Remove accents and special characters
   const normalized = text
     .normalize('NFD')

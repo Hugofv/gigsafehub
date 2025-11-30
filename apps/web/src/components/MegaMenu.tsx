@@ -321,7 +321,7 @@ onClick={(e) => {
             }}
                 className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2.5 px-3 rounded-md"
               >
-                {article.title}
+                {article.titleMenu || article.title}
               </Link>
             </li>
           ))}
@@ -539,7 +539,7 @@ onClick={(e) => {
             }}
           className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
         >
-          {article.title}
+          {article.titleMenu || article.title}
         </Link>
       ))}
     </div>
