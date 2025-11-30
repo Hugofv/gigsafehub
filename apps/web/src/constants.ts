@@ -184,8 +184,18 @@ export const TRANSLATIONS = {
       title: 'Financial Guides & Insights',
       subtitle: 'Expert advice on managing risk, taxes, and income in the gig economy.',
       loading: 'Loading articles...',
-      readMore: 'Read Article',
-      noArticles: 'No articles found for this region.'
+      noArticles: 'No articles found for this region.',
+      allArticles: 'All Articles',
+      allArticlesSubtitle: 'Explore insights and guides about insurance for gig economy workers',
+      filterBy: 'Filter by:',
+      all: 'All',
+      noArticlesFound: 'No articles found',
+      noArticlesMessage: 'Try selecting a different category or check back later.',
+      showing: 'Showing',
+      article: 'article',
+      articles: 'articles',
+      in: 'in',
+      readMore: 'Read More'
     },
     common: {
       loading: 'Loading...',
@@ -193,7 +203,17 @@ export const TRANSLATIONS = {
       relatedProducts: 'Related Products',
       relatedProductsDescription: 'Check out these related insurance products',
       backToArticles: 'Back to Articles',
-      backToComparisons: 'Back to Comparisons'
+      backToComparisons: 'Back to Comparisons',
+      home: 'Home',
+      products: 'Products',
+      subcategories: 'Subcategories',
+      browseCategories: 'Browse Categories',
+      browseSubcategories: 'Browse Subcategories',
+      noContentYet: 'No content yet',
+      noContentMessage: "This category doesn't have any content yet. Check back soon!",
+      goToHome: 'Go to Home',
+      compareSelected: 'Compare Selected',
+      youCanOnlyCompare: 'You can only compare up to 3 products.'
     }
   },
   'pt-BR': {
@@ -227,8 +247,18 @@ export const TRANSLATIONS = {
       title: 'Guias Financeiros e Insights',
       subtitle: 'Conselhos de especialistas sobre gestão de riscos, impostos e renda na economia gig.',
       loading: 'Carregando artigos...',
-      readMore: 'Ler Artigo',
-      noArticles: 'Nenhum artigo encontrado para esta região.'
+      noArticles: 'Nenhum artigo encontrado para esta região.',
+      allArticles: 'Todos os Artigos',
+      allArticlesSubtitle: 'Explore insights e guias sobre seguros para trabalhadores da economia gig',
+      filterBy: 'Filtrar por:',
+      all: 'Todos',
+      noArticlesFound: 'Nenhum artigo encontrado',
+      noArticlesMessage: 'Tente selecionar uma categoria diferente ou volte mais tarde.',
+      showing: 'Mostrando',
+      article: 'artigo',
+      articles: 'artigos',
+      in: 'em',
+      readMore: 'Ler mais'
     },
     common: {
       loading: 'Carregando...',
@@ -236,7 +266,17 @@ export const TRANSLATIONS = {
       relatedProducts: 'Produtos Relacionados',
       relatedProductsDescription: 'Confira estes produtos de seguro relacionados',
       backToArticles: 'Voltar aos Artigos',
-      backToComparisons: 'Voltar aos Comparadores'
+      backToComparisons: 'Voltar aos Comparadores',
+      home: 'Início',
+      products: 'Produtos',
+      subcategories: 'Subcategorias',
+      browseCategories: 'Navegar Categorias',
+      browseSubcategories: 'Navegar Subcategorias',
+      noContentYet: 'Ainda sem conteúdo',
+      noContentMessage: 'Esta categoria ainda não tem conteúdo. Volte em breve!',
+      goToHome: 'Ir para Início',
+      compareSelected: 'Comparar Selecionados',
+      youCanOnlyCompare: 'Você só pode comparar até 3 produtos.'
     }
   }
 };

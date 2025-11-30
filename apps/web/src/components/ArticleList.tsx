@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCategories } from '@/contexts/CategoriesContext';
+import { useTranslation } from '@/contexts/I18nContext';
 import { normalizeImageUrl } from '@/lib/imageUtils';
 
 interface Article {
@@ -43,6 +44,7 @@ export default function ArticleList({
   viewAllLink,
 }: ArticleListProps) {
   const { buildPath, categories } = useCategories();
+  const { t } = useTranslation();
 
   if (!articles || articles.length === 0) {
     return null;
@@ -101,7 +103,7 @@ export default function ArticleList({
           {title && (
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">{title}</h2>
-              <p className="text-slate-600">Latest insights and guides for gig workers</p>
+              <p className="text-slate-600">{t('articles.subtitle')}</p>
             </div>
           )}
           {showViewAll && (
@@ -109,7 +111,7 @@ export default function ArticleList({
               href={viewAllLink || defaultViewAllLink}
               className="hidden md:flex items-center gap-2 text-brand-600 hover:text-brand-700 font-semibold transition-colors"
             >
-              View All Articles
+              {t('articles.allArticles')}
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -152,7 +154,7 @@ export default function ArticleList({
                   {article.readingTime && (
                     <>
                       <span>•</span>
-                      <span>{article.readingTime} min read</span>
+                      <span>{article.readingTime} {t('common.minRead')}</span>
                     </>
                   )}
                 </div>
@@ -163,7 +165,7 @@ export default function ArticleList({
                   {article.excerpt}
                 </p>
                 <div className="mt-4 flex items-center text-brand-600 font-semibold text-sm group-hover:gap-2 transition-all">
-                  Read More
+                  {t('articles.readMore')}
                   <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -180,7 +182,7 @@ export default function ArticleList({
               href={viewAllLink || defaultViewAllLink}
               className="inline-flex items-center gap-2 px-6 py-3 bg-brand-600 text-white font-semibold rounded-lg hover:bg-brand-700 transition-colors"
             >
-              View All Articles
+              {t('articles.allArticles')}
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

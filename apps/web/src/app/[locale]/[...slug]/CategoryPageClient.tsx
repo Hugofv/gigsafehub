@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useCategories } from '@/contexts/CategoriesContext';
+import { useTranslation } from '@/contexts/I18nContext';
 import ProductCard from '@/components/ProductCard';
 import type { Category } from '@/services/api';
 import type { FinancialProduct, Article } from '@gigsafehub/types';
@@ -36,13 +37,14 @@ export default function CategoryPageClient({
   isComparison: _isComparison,
 }: CategoryPageClientProps) {
   const { buildPath } = useCategories();
+  const { t } = useTranslation();
   const [compareList, setCompareList] = React.useState<string[]>([]);
 
   const handleCompareToggle = (id: string) => {
     setCompareList((prev) => {
       if (prev.includes(id)) return prev.filter((pid) => pid !== id);
       if (prev.length >= 3) {
-        alert('You can only compare up to 3 products.');
+        alert(t('common.youCanOnlyCompare'));
         return prev;
       }
       return [...prev, id];
@@ -60,7 +62,7 @@ export default function CategoryPageClient({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center space-x-2 text-sm">
             <Link href={`/${locale}`} className="text-slate-500 hover:text-brand-600">
-              Home
+              {t('common.home')}
             </Link>
             {breadcrumbs.map((crumb, idx) => {
               const crumbPath = buildPath(crumb, locale);
@@ -99,20 +101,20 @@ export default function CategoryPageClient({
               {products.length > 0 && (
                 <div>
                   <span className="font-bold text-2xl">{products.length}</span>
-                  <span className="ml-2 text-brand-100">Products</span>
+                  <span className="ml-2 text-brand-100">{t('common.products')}</span>
                 </div>
               )}
               {articles.length > 0 && (
                 <div>
                   <span className="font-bold text-2xl">{articles.length}</span>
-                  <span className="ml-2 text-brand-100">Articles</span>
+                  <span className="ml-2 text-brand-100">{t('articles.articles')}</span>
                 </div>
               )}
               {/* Only show subcategories count if there are no articles (hierarchy rule: articles = leaf category) */}
               {subcategories.length > 0 && articles.length === 0 && (
                 <div>
                   <span className="font-bold text-2xl">{subcategories.length}</span>
-                  <span className="ml-2 text-brand-100">Subcategories</span>
+                  <span className="ml-2 text-brand-100">{t('common.subcategories')}</span>
                 </div>
               )}
             </div>
@@ -125,7 +127,7 @@ export default function CategoryPageClient({
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h2 className="text-2xl font-bold text-slate-900 mb-6">
-              {category.level === 0 ? 'Browse Categories' : 'Browse Subcategories'}
+              {category.level === 0 ? t('common.browseCategories') : t('common.browseSubcategories')}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {subcategories.map((subcat) => {
@@ -160,10 +162,10 @@ export default function CategoryPageClient({
                       {/* Stats */}
                       <div className="flex items-center gap-4 text-xs text-slate-500 mb-3">
                         {subcatCounts.products > 0 && (
-                          <span>{subcatCounts.products} products</span>
+                          <span>{subcatCounts.products} {t('common.products')}</span>
                         )}
                         {subcatCounts.articles > 0 && (
-                          <span>{subcatCounts.articles} articles</span>
+                          <span>{subcatCounts.articles} {t('articles.articles')}</span>
                         )}
                       </div>
                     </Link>
@@ -172,7 +174,7 @@ export default function CategoryPageClient({
                     {hasChildren && (
                       <div className="mt-4 pt-4 border-t border-slate-200">
                         <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-3">
-                          Subcategories
+                          {t('common.subcategories')}
                         </h4>
                         <div className="space-y-2">
                           {subcat.children!.map((child) => {
@@ -222,7 +224,7 @@ export default function CategoryPageClient({
               href={`/${locale}/compare?ids=${compareList.join(',')}`}
               className="inline-flex items-center px-6 py-3 bg-brand-600 text-white rounded-lg shadow-lg hover:bg-brand-700 transition-colors font-semibold"
             >
-              Compare Selected ({compareList.length})
+              {t('common.compareSelected')} ({compareList.length})
               <svg
                 className="w-5 h-5 ml-2"
                 fill="none"
@@ -243,7 +245,7 @@ export default function CategoryPageClient({
         {/* Articles Section */}
         {articles.length > 0 && (
           <div className={products.length > 0 ? 'mb-12' : ''}>
-            <h2 className="text-3xl font-bold text-slate-900 mb-8">Articles</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-8">{t('articles.articles')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {articles.map((article) => {
                 const articleSlug =
@@ -289,7 +291,7 @@ export default function CategoryPageClient({
                         {article.excerpt}
                       </p>
                       <span className="text-brand-600 font-semibold text-sm flex items-center">
-                        Read More
+                        {t('articles.readMore')}
                         <svg
                           className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"
                           fill="none"
@@ -315,7 +317,7 @@ export default function CategoryPageClient({
         {/* Products Section */}
         {products.length > 0 && (
           <div>
-            <h2 className="text-3xl font-bold text-slate-900 mb-8">Products</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-8">{t('common.products')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
                 <ProductCard
@@ -347,15 +349,15 @@ export default function CategoryPageClient({
                   d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
                 />
               </svg>
-              <h3 className="text-2xl font-bold text-slate-900 mb-2">No content yet</h3>
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">{t('common.noContentYet')}</h3>
               <p className="text-slate-600 mb-6">
-                This category doesn&apos;t have any content yet. Check back soon!
+                {t('common.noContentMessage')}
               </p>
               <Link
                 href={`/${locale}`}
                 className="inline-flex items-center px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
               >
-                Go to Home
+                {t('common.goToHome')}
               </Link>
             </div>
           </div>
