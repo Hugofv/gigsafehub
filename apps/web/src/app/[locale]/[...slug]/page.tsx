@@ -7,15 +7,15 @@ import ArticleDetailClient from '../articles/[slug]/ArticleDetailClient';
 import type { Category } from '@/services/api';
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     locale: string;
     slug: string[];
-  };
+  }>;
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const { locale, slug } = params;
+  const { locale, slug } = await params;
   const slugPath = slug.join('/');
 
   try {
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 }
 
 async function CategoryPage({ params }: CategoryPageProps) {
-  const { locale, slug } = params;
+  const { locale, slug } = await params;
   const slugPath = slug.join('/');
 
   try {
@@ -155,10 +155,10 @@ async function CategoryPage({ params }: CategoryPageProps) {
 
     // Determine content type based on category level or name
     const categoryName = category.name.toLowerCase();
-    const counts = category.counts || { products: 0, articles: 0, guides: 0, comparisons: 0 };
+    const counts = category.counts || { products: 0, articles: 0 };
     const isBlog = categoryName.includes('blog') || (category.level >= 2 && counts.articles > 0);
-    const isGuide = categoryName.includes('guide') || counts.guides > 0;
-    const isComparison = categoryName.includes('compar') || counts.comparisons > 0;
+    const isGuide = categoryName.includes('guide');
+    const isComparison = categoryName.includes('compar');
 
     // Fetch content based on category type
     let products: any[] = [];

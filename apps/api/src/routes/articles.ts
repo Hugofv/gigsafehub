@@ -288,3 +288,79 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/articles/menu:
+ *   get:
+ *     summary: Get articles that should appear in navigation menu
+ *     tags: [Articles]
+ *     parameters:
+ *       - in: query
+ *         name: locale
+ *         schema:
+ *           type: string
+ *           enum: [en-US, pt-BR]
+ *     responses:
+ *       200:
+ *         description: List of menu articles
+ */
+articlesRouter.get('/menu', async (req: Request, res: Response) => {
+  try {
+    const { locale = 'pt-BR' } = req.query;
+    const prismaLocale = locale === 'pt-BR' ? 'pt_BR' : locale === 'en-US' ? 'en_US' : 'Both';
+
+    const articles = await prisma.article.findMany({
+      where: {
+        showInMenu: true,
+        robotsIndex: true,
+        OR: [
+          { locale: prismaLocale as ContentLocale },
+          { locale: 'Both' },
+        ],
+      },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            slugEn: true,
+            slugPt: true,
+          },
+        },
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+
+    const formattedArticles = articles.map((article: any) => {
+      const currentSlug =
+        (locale === 'pt-BR' && article.slugPt) ? article.slugPt :
+        (locale === 'en-US' && article.slugEn) ? article.slugEn :
+        article.slug;
+
+      return {
+        id: article.id,
+        title: article.title,
+        slug: currentSlug,
+        slugEn: article.slugEn || article.slug,
+        slugPt: article.slugPt || article.slug,
+        category: article.category ? {
+          id: article.category.id,
+          name: article.category.name,
+          slug: article.category.slug,
+          slugEn: article.category.slugEn,
+          slugPt: article.category.slugPt,
+        } : null,
+      };
+    });
+
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.json(formattedArticles);
+  } catch (error) {
+    console.error('Error fetching menu articles:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+

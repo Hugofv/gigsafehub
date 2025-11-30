@@ -2,8 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslation } from '@/contexts/I18nContext';
 import { getLocalizedSlug } from '@/lib/slug';
+import { normalizeImageUrl } from '@/lib/imageUtils';
 import type { FinancialProduct } from '@gigsafehub/types';
 
 interface ProductDetailClientProps {
@@ -31,9 +33,11 @@ export default function ProductDetailClient({ product, locale }: ProductDetailCl
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center space-x-4">
-              <img
-                src={product.logoUrl}
+              <Image
+                src={normalizeImageUrl(product.logoUrl)}
                 alt={product.name}
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-xl bg-slate-100 object-cover"
               />
               <div>

@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { I18nProvider, useTranslation } from '@/contexts/I18nContext';
 import { CategoriesProvider } from '@/contexts/CategoriesContext';
+import { MenuProvider } from '@/contexts/MenuContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -16,13 +17,15 @@ function LayoutContent({ children }: { children: ReactNode }) {
 
   return (
     <CategoriesProvider locale={locale}>
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
-      </div>
+      <MenuProvider locale={locale}>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
+        </div>
+      </MenuProvider>
     </CategoriesProvider>
   );
 }

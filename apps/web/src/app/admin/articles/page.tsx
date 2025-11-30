@@ -236,6 +236,24 @@ export default function ArticlesPage() {
               </div>
             </div>
 
+            <div className="border-t pt-4">
+              <h3 className="font-semibold mb-3">Menu Settings</h3>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.showInMenu || false}
+                  onChange={(e) => setFormData({ ...formData, showInMenu: e.target.checked })}
+                  className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
+                />
+                <label className="text-sm font-medium text-slate-700">
+                  Show in Navigation Menu
+                </label>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
+                When enabled, this article will appear in the navigation menu (e.g., Guides menu)
+              </p>
+            </div>
+
             <div className="flex gap-4">
               <button
                 type="submit"

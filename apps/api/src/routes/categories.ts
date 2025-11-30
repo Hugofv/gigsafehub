@@ -69,8 +69,6 @@ categoriesRouter.get('/', async (req: Request, res: Response) => {
           select: {
             products: true,
             articles: true,
-            guides: true,
-            comparisons: true,
           },
         },
       },
@@ -151,15 +149,11 @@ categoriesRouter.get('/', async (req: Request, res: Response) => {
             })) : [],
           };
         }) : [],
-        country: cat.country,
-        icon: cat.icon,
         metaTitle: cat.metaTitle,
         metaDescription: cat.metaDescription,
         counts: {
           products: cat._count.products,
           articles: cat._count.articles,
-          guides: cat._count.guides,
-          comparisons: cat._count.comparisons,
         },
       };
     });
@@ -232,8 +226,6 @@ categoriesRouter.get('/:slugPath(*)', async (req: Request, res: Response) => {
           select: {
             products: true,
             articles: true,
-            guides: true,
-            comparisons: true,
           },
         },
       },
@@ -245,12 +237,12 @@ categoriesRouter.get('/:slugPath(*)', async (req: Request, res: Response) => {
 
     // Verify the hierarchical path matches
     if (slugParts.length > 1) {
-      let current = category;
-      const path = [current];
+      let current: typeof category = category;
+      const path: Array<typeof category> = [current];
 
       while (current.parent) {
-        path.unshift(current.parent);
-        current = current.parent;
+        path.unshift(current.parent as typeof category);
+        current = current.parent as typeof category;
       }
 
       // Check if the path matches
@@ -286,13 +278,13 @@ categoriesRouter.get('/:slugPath(*)', async (req: Request, res: Response) => {
 
     // Build full path
     const fullPath: string[] = [];
-    let parent = category.parent;
+    let parent: typeof category.parent = category.parent;
     while (parent) {
       const parentSlug = (locale === 'pt-BR' && parent.slugPt) ? parent.slugPt :
                         (locale === 'en-US' && parent.slugEn) ? parent.slugEn :
                         parent.slug;
       fullPath.unshift(parentSlug);
-      parent = parent.parent;
+      parent = (parent as any).parent;
     }
     fullPath.push(currentSlugFormatted);
 
@@ -334,8 +326,6 @@ categoriesRouter.get('/:slugPath(*)', async (req: Request, res: Response) => {
       counts: {
         products: category._count.products,
         articles: category._count.articles,
-        guides: category._count.guides,
-        comparisons: category._count.comparisons,
       },
     };
 

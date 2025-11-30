@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { normalizeImageUrl } from '@/lib/imageUtils';
 
 interface LazyImageProps {
   src: string;
@@ -43,7 +44,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
           <div className="absolute inset-0 bg-slate-200 animate-pulse" />
         )}
         <Image
-          src={src}
+          src={normalizeImageUrl(src)}
           alt={alt}
           fill
           className={`object-cover ${isLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-300'}`}
@@ -68,7 +69,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
         />
       )}
       <Image
-        src={src}
+        src={normalizeImageUrl(src)}
         alt={alt}
         width={width}
         height={height}

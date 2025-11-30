@@ -130,7 +130,7 @@ export default function CategoryPageClient({
               {subcategories.map((subcat) => {
                 const subcatPath = buildPath(subcat, locale);
                 const hasChildren = subcat.children && subcat.children.length > 0;
-                const subcatCounts = subcat.counts || { products: 0, articles: 0, guides: 0, comparisons: 0 };
+                const subcatCounts = subcat.counts || { products: 0, articles: 0 };
 
                 return (
                   <div
@@ -269,9 +269,15 @@ export default function CategoryPageClient({
                         alt={article.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-slate-900 uppercase tracking-wide">
-                        {article.partnerTag}
-                      </div>
+                      {article.partnerTag && (
+                        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                          {article.partnerTag.split(',').map((tag, index) => (
+                            <span key={index} className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-slate-900 uppercase tracking-wide">
+                              {tag.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div className="p-6 flex-1 flex flex-col">
                       <div className="text-xs text-slate-400 mb-2">{article.date}</div>

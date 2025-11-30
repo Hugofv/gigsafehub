@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCategories } from '@/contexts/CategoriesContext';
+import { useMenu } from '@/contexts/MenuContext';
 import type { Category } from '@/services/api';
 
 interface MegaMenuProps {
@@ -267,28 +268,7 @@ onClick={(e) => {
 };
 
 export const GuidesMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
-  const {
-    categories: allCategories,
-    loading,
-    getByParent,
-    findBySlug,
-    buildPath,
-  } = useCategories();
-
-  // Find guides root category
-  const guidesRoot = findBySlug(locale === 'pt-BR' ? 'guias' : 'guides', locale);
-
-  // Filter guide categories (level 1)
-  const guideCats = guidesRoot ? getByParent(guidesRoot.id) : [];
-
-  // Build full paths
-  const categories = guideCats.map((cat) => {
-    const fullPath = buildPath(cat, locale);
-    return {
-      ...cat,
-      fullPath: fullPath || cat.slug || '',
-    };
-  });
+  const { menu, loading } = useMenu();
 
   if (loading) {
     return (
@@ -298,7 +278,14 @@ export const GuidesMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClo
     );
   }
 
-  if (categories.length === 0) {
+  if (!menu || !menu.guides.root) {
+    return null;
+  }
+
+  const guideItems = menu.guides.items || [];
+  const menuArticles = menu.guides.menuArticles || [];
+
+  if (guideItems.length === 0 && menuArticles.length === 0) {
     return null;
   }
 
@@ -306,11 +293,12 @@ export const GuidesMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClo
     <div className="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-slate-200 z-50 overflow-hidden">
       <div className="p-4">
         <ul className="space-y-1">
-          {categories.map((item) => (
+          {/* Categories */}
+          {guideItems.map((item: any) => (
             <li key={item.id}>
               <Link
                 href={getLink(
-                  item.fullPath ? `/${item.fullPath}` : item.slug ? `/${item.slug}` : '#'
+                  item.slug ? `/${item.slug}` : '#'
                 )}
 onClick={(e) => {
               // Close menu immediately, navigation will happen via Link
@@ -319,6 +307,21 @@ onClick={(e) => {
                 className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2.5 px-3 rounded-md"
               >
                 {item.name}
+              </Link>
+            </li>
+          ))}
+          {/* Menu Articles */}
+          {menuArticles.map((article: any) => (
+            <li key={article.id}>
+              <Link
+                href={getLink(article.fullPath)}
+onClick={(e) => {
+              // Close menu immediately, navigation will happen via Link
+              onClose();
+            }}
+                className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2.5 px-3 rounded-md"
+              >
+                {article.title}
               </Link>
             </li>
           ))}
@@ -462,17 +465,51 @@ onClick={(e) => {
 
 export const MobileGuidesMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
   const { categories, loading, getByParent, findBySlug, buildPath } = useCategories();
+  const [menuArticles, setMenuArticles] = React.useState<any[]>([]);
+  const [articlesLoading, setArticlesLoading] = React.useState(true);
+
+  // Fetch articles that should appear in menu
+  React.useEffect(() => {
+    const fetchMenuArticles = async () => {
+      try {
+        const { getMenuArticles } = await import('@/services/api');
+        const articles = await getMenuArticles(locale);
+        setMenuArticles(articles);
+      } catch (error) {
+        console.error('Error fetching menu articles:', error);
+      } finally {
+        setArticlesLoading(false);
+      }
+    };
+    fetchMenuArticles();
+  }, [locale]);
 
   const guidesRoot = findBySlug(locale === 'pt-BR' ? 'guias' : 'guides', locale);
   const guideCats = guidesRoot ? getByParent(guidesRoot.id) : [];
   const sortedCats = [...guideCats].sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  if (loading) {
+  // Build paths for menu articles
+  const articlesWithPaths = menuArticles.map((article) => {
+    let articlePath = '';
+    if (article.category) {
+      const categoryPath = buildPath(article.category, locale);
+      articlePath = categoryPath ? `/${categoryPath}/${article.slug}` : `/${article.slug}`;
+    } else {
+      articlePath = `/${article.slug}`;
+    }
+    return {
+      ...article,
+      fullPath: articlePath,
+    };
+  });
+
+  if (loading || articlesLoading) {
     return <div className="px-3 py-2 text-sm text-slate-500">Loading...</div>;
   }
 
   return (
     <div className="pl-4 mt-1 space-y-1 border-l-2 border-slate-200">
+      {/* Categories */}
       {sortedCats.map((cat) => (
         <Link
           key={cat.id}
@@ -489,6 +526,20 @@ onClick={(e) => {
           className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
         >
           {cat.name}
+        </Link>
+      ))}
+      {/* Menu Articles */}
+      {articlesWithPaths.map((article) => (
+        <Link
+          key={article.id}
+          href={getLink(article.fullPath)}
+onClick={(e) => {
+              // Close menu immediately, navigation will happen via Link
+              onClose();
+            }}
+          className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
+        >
+          {article.title}
         </Link>
       ))}
     </div>

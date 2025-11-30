@@ -289,8 +289,6 @@ export default function CategoriesPage() {
                       <div className="flex gap-2 text-xs">
                         <span>P: {category._count.products}</span>
                         <span>A: {category._count.articles}</span>
-                        <span>G: {category._count.guides}</span>
-                        <span>C: {category._count.comparisons}</span>
                       </div>
                     )}
                   </td>

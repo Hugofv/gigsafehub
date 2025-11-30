@@ -11,8 +11,6 @@ export default function AdminDashboard() {
     categories: 0,
     products: 0,
     articles: 0,
-    guides: 0,
-    comparisons: 0,
   });
   const [loadingStats, setLoadingStats] = useState(true);
 
@@ -65,20 +63,6 @@ export default function AdminDashboard() {
       icon: '📝',
       href: '/admin/articles',
       color: 'bg-purple-500',
-    },
-    {
-      title: 'Guides',
-      value: stats.guides,
-      icon: '📚',
-      href: '/admin/guides',
-      color: 'bg-orange-500',
-    },
-    {
-      title: 'Comparisons',
-      value: stats.comparisons,
-      icon: '⚖️',
-      href: '/admin/comparisons',
-      color: 'bg-pink-500',
     },
   ];
 
@@ -135,12 +119,6 @@ export default function AdminDashboard() {
             className="px-4 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors text-center font-medium"
           >
             + New Article
-          </Link>
-          <Link
-            href="/admin/guides/new"
-            className="px-4 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors text-center font-medium"
-          >
-            + New Guide
           </Link>
         </div>
       </div>

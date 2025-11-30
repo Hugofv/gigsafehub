@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+import { normalizeImageUrl } from '@/lib/imageUtils';
 import type { FinancialProduct } from '@gigsafehub/types';
 
 interface ComparisonTableProps {
@@ -15,11 +17,23 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({ products }) => {
       <div className="grid grid-cols-3 bg-slate-50 border-b border-slate-200">
         <div className="p-4 font-bold text-slate-500 text-sm uppercase tracking-wide flex items-center">Feature</div>
         <div className="p-4 text-center border-l border-slate-200">
-          <img src={p1.logoUrl} alt={p1.name} className="w-10 h-10 mx-auto mb-2 rounded bg-white" />
+          <Image
+            src={normalizeImageUrl(p1.logoUrl)}
+            alt={p1.name}
+            width={40}
+            height={40}
+            className="w-10 h-10 mx-auto mb-2 rounded bg-white"
+          />
           <h4 className="font-bold text-slate-900">{p1.name}</h4>
         </div>
         <div className="p-4 text-center border-l border-slate-200">
-          <img src={p2.logoUrl} alt={p2.name} className="w-10 h-10 mx-auto mb-2 rounded bg-white" />
+          <Image
+            src={normalizeImageUrl(p2.logoUrl)}
+            alt={p2.name}
+            width={40}
+            height={40}
+            className="w-10 h-10 mx-auto mb-2 rounded bg-white"
+          />
           <h4 className="font-bold text-slate-900">{p2.name}</h4>
         </div>
       </div>

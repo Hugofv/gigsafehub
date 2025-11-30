@@ -339,3 +339,80 @@ export async function getArticleBySlug(
   }
 }
 
+/**
+ * Get articles that should appear in navigation menu
+ * @deprecated Use getMenu() instead for better performance
+ */
+export async function getMenuArticles(
+  locale: string = 'pt-BR'
+): Promise<any[]> {
+  try {
+    const response = await fetch(
+      `${API_URL}/api/articles/menu?locale=${locale}`,
+      {
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      }
+    );
+
+    if (!response.ok) {
+      return [];
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching menu articles:', error);
+    return [];
+  }
+}
+
+/**
+ * Get complete navigation menu structure (optimized, single request)
+ * This endpoint returns all menu data in one request for better performance
+ */
+export async function getMenu(
+  locale: string = 'pt-BR',
+  country?: string
+): Promise<{
+  locale: string;
+  menu: {
+    insurance: { root: any; items: any[] };
+    comparison: { root: any; items: any[] };
+    guides: { root: any; items: any[]; menuArticles: any[] };
+    blog: { root: any; items: any[] };
+  };
+  timestamp: string;
+}> {
+  try {
+    const params = new URLSearchParams({ locale });
+    if (country) {
+      params.append('country', country);
+    }
+
+    const response = await fetch(
+      `${API_URL}/api/menu?${params.toString()}`,
+      {
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch menu');
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching menu:', error);
+    // Return empty menu structure on error
+    return {
+      locale,
+      menu: {
+        insurance: { root: null, items: [] },
+        comparison: { root: null, items: [] },
+        guides: { root: null, items: [], menuArticles: [] },
+        blog: { root: null, items: [] },
+      },
+      timestamp: new Date().toISOString(),
+    };
+  }
+}
+

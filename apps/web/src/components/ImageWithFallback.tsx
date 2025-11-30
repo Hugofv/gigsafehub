@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { normalizeImageUrl } from '@/lib/imageUtils';
 
 interface ImageWithFallbackProps {
   src: string;
@@ -24,12 +25,13 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   fill = false,
   fallback = '/placeholder.png',
 }) => {
-  const [imgSrc, setImgSrc] = useState(src);
+  const [imgSrc, setImgSrc] = useState(normalizeImageUrl(src));
   const [isLoading, setIsLoading] = useState(true);
 
   const handleError = () => {
-    if (imgSrc !== fallback) {
-      setImgSrc(fallback);
+    const normalizedFallback = normalizeImageUrl(fallback);
+    if (imgSrc !== normalizedFallback) {
+      setImgSrc(normalizedFallback);
     }
     setIsLoading(false);
   };

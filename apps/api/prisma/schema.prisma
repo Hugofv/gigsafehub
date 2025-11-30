@@ -43,6 +43,8 @@ model Category {
   country     Country?  // If null, applies to all countries
   order       Int       @default(0) // For sorting
   isActive    Boolean   @default(true)
+  showInNavbar Boolean  @default(false) // Show in navigation menu
+  showInFooter Boolean  @default(false) // Show in footer
   icon        String?   // Icon name or URL
   metaTitle   String?   @db.Text
   metaDescription String? @db.Text
@@ -53,8 +55,6 @@ model Category {
   // Relations
   products    FinancialProduct[]
   articles    Article[]
-  guides      GuidePage[]
-  comparisons ComparisonPage[]
 
   @@index([slug])
   @@index([slugEn])
@@ -284,72 +284,6 @@ model Lead {
   user          User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("leads")
-}
-
-model ComparisonPage {
-  id              String            @id @default(uuid())
-  slug            String            @unique
-  slugEn          String?           @unique
-  slugPt          String?           @unique
-  title           String
-  description     String            @db.Text
-  categoryId      String            // Reference to Category
-  category        Category          @relation(fields: [categoryId], references: [id])
-  locale          ContentLocale
-  productIds      String[]          // Array of product IDs to compare
-  metaTitle       String?           @db.Text
-  metaDescription String?           @db.Text
-  metaKeywords    String?           @db.Text
-  canonicalUrl    String?
-  structuredData  String?           @db.Text
-  lastModified    DateTime?         @updatedAt
-  sitemapPriority Float?            @default(0.8)
-  sitemapChangefreq String?         @default("monthly")
-  robotsIndex     Boolean           @default(true)
-  robotsFollow    Boolean           @default(true)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-
-  @@index([slug])
-  @@index([slugEn])
-  @@index([slugPt])
-  @@index([categoryId])
-  @@index([locale])
-  @@map("comparison_pages")
-}
-
-model GuidePage {
-  id              String            @id @default(uuid())
-  slug            String            @unique
-  slugEn          String?           @unique
-  slugPt          String?           @unique
-  title           String
-  excerpt         String            @db.Text
-  content         String            @db.Text
-  categoryId      String            // Reference to Category
-  category        Category          @relation(fields: [categoryId], references: [id])
-  locale          ContentLocale
-  imageUrl        String?
-  imageAlt        String?
-  metaTitle       String?           @db.Text
-  metaDescription String?           @db.Text
-  metaKeywords    String?           @db.Text
-  canonicalUrl    String?
-  structuredData  String?           @db.Text
-  lastModified    DateTime?         @updatedAt
-  sitemapPriority Float?            @default(0.9)
-  sitemapChangefreq String?         @default("monthly")
-  robotsIndex     Boolean           @default(true)
-  robotsFollow    Boolean           @default(true)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-
-  @@index([slug])
-  @@index([slugEn])
-  @@index([slugPt])
-  @@index([categoryId])
-  @@index([locale])
-  @@map("guide_pages")
 }
 
 model FAQ {

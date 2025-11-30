@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '@/contexts/I18nContext';
+import { normalizeImageUrl } from '@/lib/imageUtils';
 
 interface Article {
   id: string;
@@ -94,9 +95,13 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
             {article.partnerTag && (
               <>
                 <span>•</span>
-                <span className="px-2 py-1 bg-brand-100 text-brand-700 rounded-full text-xs">
-                  {article.partnerTag}
-                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {article.partnerTag.split(',').map((tag, index) => (
+                    <span key={index} className="px-2 py-1 bg-brand-100 text-brand-700 rounded-full text-xs">
+                      {tag.trim()}
+                    </span>
+                  ))}
+                </div>
               </>
             )}
           </div>
@@ -108,7 +113,7 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
         {article.imageUrl && (
           <div className="mb-8 rounded-xl overflow-hidden">
             <Image
-              src={article.imageUrl}
+              src={normalizeImageUrl(article.imageUrl)}
               alt={article.imageAlt || article.title}
               width={1200}
               height={600}

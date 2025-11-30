@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCategories } from '@/contexts/CategoriesContext';
+import { normalizeImageUrl } from '@/lib/imageUtils';
 
 interface Article {
   id: string;
@@ -127,17 +128,19 @@ export default function ArticleList({
               {/* Image */}
               <div className="relative h-48 overflow-hidden bg-slate-100">
                 <Image
-                  src={article.imageUrl || '/placeholder-article.jpg'}
+                  src={normalizeImageUrl(article.imageUrl)}
                   alt={article.imageAlt || article.title}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 {article.partnerTag && (
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 text-xs font-semibold bg-brand-500 text-white rounded-full">
-                      {article.partnerTag}
-                    </span>
+                  <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                    {article.partnerTag.split(',').map((tag, index) => (
+                      <span key={index} className="px-3 py-1 text-xs font-semibold bg-brand-500 text-white rounded-full">
+                        {tag.trim()}
+                      </span>
+                    ))}
                   </div>
                 )}
               </div>

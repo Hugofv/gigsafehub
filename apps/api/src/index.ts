@@ -14,10 +14,9 @@ import { quotesRouter } from './routes/quotes';
 import { authRouter } from './routes/auth';
 import { productsRouter } from './routes/products';
 import { articlesRouter } from './routes/articles';
-import { guidesRouter } from './routes/guides';
-import { comparisonsRouter } from './routes/comparisons';
 import { faqRouter } from './routes/faq';
 import { categoriesRouter } from './routes/categories';
+import { menuRouter } from './routes/menu';
 import { seoRouter } from './routes/seo';
 import { adminRouter } from './routes/admin';
 import { seoHeaders, structuredDataHeaders } from './middleware/seo';
@@ -75,14 +74,8 @@ const generalLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// More lenient rate limiting for categories (since we cache aggressively)
-const categoriesLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // Higher limit for categories
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// Rate limiting removed for categories and menu endpoints
+// These endpoints are heavily cached and don't need rate limiting
 
 // Very permissive rate limiting for auth endpoints (login, register)
 // Skip rate limiting in development to avoid 429 errors during testing
@@ -96,10 +89,13 @@ const authLimiter = rateLimit({
 
 // Apply auth-specific rate limiting (more permissive)
 app.use('/api/auth', authLimiter);
-// Apply category-specific rate limiting
-app.use('/api/categories', categoriesLimiter);
-// Apply general rate limiting to other routes
-app.use('/api/', generalLimiter);
+// Menu and categories endpoints have no rate limiting (heavily cached)
+// Apply general rate limiting to specific routes only (excluding menu and categories)
+app.use('/api/quotes', generalLimiter);
+app.use('/api/products', generalLimiter);
+app.use('/api/articles', generalLimiter);
+app.use('/api/faq', generalLimiter);
+app.use('/api/admin', generalLimiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -161,10 +157,9 @@ app.use('/api/quotes', quotesRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/articles', articlesRouter);
-app.use('/api/guides', guidesRouter);
-app.use('/api/comparisons', comparisonsRouter);
 app.use('/api/faq', faqRouter);
-app.use('/api/categories', categoriesRouter);
+app.use('/api/categories', categoriesRouter); // No rate limiting
+app.use('/api/menu', menuRouter); // No rate limiting
 app.use('/', seoRouter); // SEO routes (sitemap.xml, robots.txt, /api/seo/meta)
 app.use('/api/admin', adminRouter);
 

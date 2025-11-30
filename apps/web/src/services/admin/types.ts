@@ -90,48 +90,7 @@ export interface Article {
   canonicalUrl?: string;
   structuredData?: string;
   readingTime?: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface Guide {
-  id: string;
-  slug: string;
-  slugEn?: string;
-  slugPt?: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  categoryId: string;
-  category?: Category;
-  locale: 'en_US' | 'pt_BR' | 'Both';
-  imageUrl?: string;
-  imageAlt?: string;
-  metaTitle?: string;
-  metaDescription?: string;
-  metaKeywords?: string;
-  canonicalUrl?: string;
-  structuredData?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface Comparison {
-  id: string;
-  slug: string;
-  slugEn?: string;
-  slugPt?: string;
-  title: string;
-  description: string;
-  categoryId: string;
-  category?: Category;
-  locale: 'en_US' | 'pt_BR' | 'Both';
-  productIds: string[];
-  metaTitle?: string;
-  metaDescription?: string;
-  metaKeywords?: string;
-  canonicalUrl?: string;
-  structuredData?: string;
+  showInMenu?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -140,7 +99,5 @@ export interface DashboardStats {
   categories: number;
   products: number;
   articles: number;
-  guides: number;
-  comparisons: number;
 }
 

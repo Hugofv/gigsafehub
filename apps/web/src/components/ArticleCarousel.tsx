@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCategories } from '@/contexts/CategoriesContext';
+import { normalizeImageUrl } from '@/lib/imageUtils';
 
 interface Article {
   id: string;
@@ -104,7 +105,7 @@ export default function ArticleCarousel({ articles, locale }: ArticleCarouselPro
         >
           <div className="relative h-64 md:h-80 lg:h-96">
             <Image
-              src={currentArticle.imageUrl || '/placeholder-article.jpg'}
+              src={normalizeImageUrl(currentArticle.imageUrl)}
               alt={currentArticle.imageAlt || currentArticle.title}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -114,11 +115,15 @@ export default function ArticleCarousel({ articles, locale }: ArticleCarouselPro
 
             {/* Content Overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3 mb-3 flex-wrap">
                 {currentArticle.partnerTag && (
-                  <span className="px-3 py-1 text-xs font-semibold bg-brand-500 rounded-full">
-                    {currentArticle.partnerTag}
-                  </span>
+                  <>
+                    {currentArticle.partnerTag.split(',').map((tag, index) => (
+                      <span key={index} className="px-3 py-1 text-xs font-semibold bg-brand-500 rounded-full">
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </>
                 )}
                 <span className="text-sm text-white/80">
                   {formatDate(currentArticle.date)}

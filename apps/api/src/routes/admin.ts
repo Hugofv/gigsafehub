@@ -45,8 +45,6 @@ adminRouter.get('/categories', async (req: Request, res: Response) => {
           select: {
             products: true,
             articles: true,
-            guides: true,
-            comparisons: true,
           },
         },
       },
@@ -230,6 +228,7 @@ const articleSchema = z.object({
   partnerTag: z.string(),
   imageUrl: z.string(),
   imageAlt: z.string().optional(),
+  showInMenu: z.boolean().optional().default(false),
   date: z.string().or(z.date()),
   locale: z.enum(['en_US', 'pt_BR', 'Both']),
   articleType: z.string().default('blog'),
@@ -316,178 +315,6 @@ adminRouter.delete('/articles/:id', async (req: Request, res: Response) => {
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete article' });
-  }
-});
-
-// ============================================
-// GUIDES CRUD
-// ============================================
-
-const guideSchema = z.object({
-  slug: z.string().min(1),
-  slugEn: z.string().optional(),
-  slugPt: z.string().optional(),
-  title: z.string().min(1),
-  excerpt: z.string(),
-  content: z.string(),
-  categoryId: z.string(),
-  locale: z.enum(['en_US', 'pt_BR', 'Both']),
-  imageUrl: z.string().optional(),
-  imageAlt: z.string().optional(),
-  metaTitle: z.string().optional(),
-  metaDescription: z.string().optional(),
-  metaKeywords: z.string().optional(),
-  canonicalUrl: z.string().optional(),
-  structuredData: z.string().optional(),
-});
-
-adminRouter.get('/guides', async (req: Request, res: Response) => {
-  try {
-    const guides = await prisma.guidePage.findMany({
-      include: { category: true },
-      orderBy: { createdAt: 'desc' },
-    });
-    res.json(guides);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch guides' });
-  }
-});
-
-adminRouter.get('/guides/:id', async (req: Request, res: Response) => {
-  try {
-    const guide = await prisma.guidePage.findUnique({
-      where: { id: req.params.id },
-      include: { category: true },
-    });
-    if (!guide) {
-      return res.status(404).json({ error: 'Guide not found' });
-    }
-    res.json(guide);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch guide' });
-  }
-});
-
-adminRouter.post('/guides', async (req: Request, res: Response) => {
-  try {
-    const data = guideSchema.parse(req.body);
-    const guide = await prisma.guidePage.create({ data });
-    res.status(201).json(guide);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation error', details: error.errors });
-    }
-    res.status(500).json({ error: 'Failed to create guide' });
-  }
-});
-
-adminRouter.put('/guides/:id', async (req: Request, res: Response) => {
-  try {
-    const data = guideSchema.partial().parse(req.body);
-    const guide = await prisma.guidePage.update({
-      where: { id: req.params.id },
-      data,
-    });
-    res.json(guide);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation error', details: error.errors });
-    }
-    res.status(500).json({ error: 'Failed to update guide' });
-  }
-});
-
-adminRouter.delete('/guides/:id', async (req: Request, res: Response) => {
-  try {
-    await prisma.guidePage.delete({ where: { id: req.params.id } });
-    res.status(204).send();
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete guide' });
-  }
-});
-
-// ============================================
-// COMPARISONS CRUD
-// ============================================
-
-const comparisonSchema = z.object({
-  slug: z.string().min(1),
-  slugEn: z.string().optional(),
-  slugPt: z.string().optional(),
-  title: z.string().min(1),
-  description: z.string(),
-  categoryId: z.string(),
-  locale: z.enum(['en_US', 'pt_BR', 'Both']),
-  productIds: z.array(z.string()),
-  metaTitle: z.string().optional(),
-  metaDescription: z.string().optional(),
-  metaKeywords: z.string().optional(),
-  canonicalUrl: z.string().optional(),
-  structuredData: z.string().optional(),
-});
-
-adminRouter.get('/comparisons', async (req: Request, res: Response) => {
-  try {
-    const comparisons = await prisma.comparisonPage.findMany({
-      include: { category: true },
-      orderBy: { createdAt: 'desc' },
-    });
-    res.json(comparisons);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch comparisons' });
-  }
-});
-
-adminRouter.get('/comparisons/:id', async (req: Request, res: Response) => {
-  try {
-    const comparison = await prisma.comparisonPage.findUnique({
-      where: { id: req.params.id },
-      include: { category: true },
-    });
-    if (!comparison) {
-      return res.status(404).json({ error: 'Comparison not found' });
-    }
-    res.json(comparison);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch comparison' });
-  }
-});
-
-adminRouter.post('/comparisons', async (req: Request, res: Response) => {
-  try {
-    const data = comparisonSchema.parse(req.body);
-    const comparison = await prisma.comparisonPage.create({ data });
-    res.status(201).json(comparison);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation error', details: error.errors });
-    }
-    res.status(500).json({ error: 'Failed to create comparison' });
-  }
-});
-
-adminRouter.put('/comparisons/:id', async (req: Request, res: Response) => {
-  try {
-    const data = comparisonSchema.partial().parse(req.body);
-    const comparison = await prisma.comparisonPage.update({
-      where: { id: req.params.id },
-      data,
-    });
-    res.json(comparison);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation error', details: error.errors });
-    }
-    res.status(500).json({ error: 'Failed to update comparison' });
-  }
-});
-
-adminRouter.delete('/comparisons/:id', async (req: Request, res: Response) => {
-  try {
-    await prisma.comparisonPage.delete({ where: { id: req.params.id } });
-    res.status(204).send();
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete comparison' });
   }
 });
 
