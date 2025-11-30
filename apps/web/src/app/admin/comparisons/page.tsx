@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   adminComparisons,
@@ -45,11 +46,6 @@ export default function ComparisonsPage() {
     }
   };
 
-  const handleEdit = (comparison: Comparison) => {
-    setEditingId(comparison.id);
-    setFormData(comparison);
-    setShowForm(true);
-  };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this comparison?')) return;
@@ -294,15 +290,15 @@ export default function ComparisonsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">{comparison.locale}</td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(comparison)}
-                      className="text-brand-600 hover:text-brand-700 mr-4"
+                    <Link
+                      href={`/admin/comparisons/${comparison.id}/edit`}
+                      className="text-brand-600 hover:text-brand-700 mr-4 font-medium"
                     >
                       Edit
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(comparison.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 hover:text-red-700 ml-4"
                     >
                       Delete
                     </button>

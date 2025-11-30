@@ -313,3 +313,29 @@ export async function getLatestArticles(
   }
 }
 
+/**
+ * Get article by slug
+ */
+export async function getArticleBySlug(
+  slug: string,
+  locale: string = 'en-US'
+): Promise<any | null> {
+  try {
+    const response = await fetch(`${API_URL}/api/articles/${slug}?locale=${locale}`, {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error('Failed to fetch article');
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    return null;
+  }
+}
+

@@ -329,7 +329,7 @@ onClick={(e) => {
 };
 
 export const BlogMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
-  const { categories: allCategories, loading, getByParent, findBySlug } = useCategories();
+  const { categories: allCategories, loading, getByParent, findBySlug, buildPath } = useCategories();
 
   // Find blog root category
   const blogRoot = findBySlug('blog', locale);
@@ -356,7 +356,12 @@ export const BlogMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose
           {categories.map((item) => (
             <li key={item.id}>
               <Link
-                href={getLink(`/articles/${item.slug}`)}
+                href={getLink(
+                  (() => {
+                    const path = buildPath(item, locale);
+                    return path ? `/${path}` : item.slug ? `/${item.slug}` : '#';
+                  })()
+                )}
 onClick={(e) => {
               // Close menu immediately, navigation will happen via Link
               onClose();
@@ -491,7 +496,7 @@ onClick={(e) => {
 };
 
 export const MobileBlogMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
-  const { categories, loading, getByParent, findBySlug } = useCategories();
+  const { categories, loading, getByParent, findBySlug, buildPath } = useCategories();
 
   const blogRoot = findBySlug('blog', locale);
   const blogCats = blogRoot ? getByParent(blogRoot.id) : [];
@@ -506,7 +511,12 @@ export const MobileBlogMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClo
       {sortedCats.map((cat) => (
         <Link
           key={cat.id}
-          href={getLink(`/articles/${cat.slug}`)}
+          href={getLink(
+            (() => {
+              const path = buildPath(cat, locale);
+              return path ? `/${path}` : cat.slug ? `/${cat.slug}` : '#';
+            })()
+          )}
 onClick={(e) => {
               // Close menu immediately, navigation will happen via Link
               onClose();

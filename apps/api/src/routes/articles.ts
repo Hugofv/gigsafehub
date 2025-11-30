@@ -51,6 +51,15 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
     const articles = await prisma.article.findMany({
       where,
       include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            slugEn: true,
+            slugPt: true,
+          },
+        },
         relatedProducts: {
           include: {
             product: {
@@ -87,6 +96,14 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
         imageAlt: article.imageAlt,
         date: article.date.toISOString(),
         locale: article.locale,
+        categoryId: article.categoryId,
+        category: article.category ? {
+          id: article.category.id,
+          name: article.category.name,
+          slug: article.category.slug,
+          slugEn: article.category.slugEn,
+          slugPt: article.category.slugPt,
+        } : null,
         relatedProductIds: article.relatedProducts.map((rp: any) => rp.product.id),
         // SEO fields
         metaTitle: article.metaTitle,
@@ -137,6 +154,15 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
         ],
       },
       include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            slugEn: true,
+            slugPt: true,
+          },
+        },
         relatedProducts: {
           include: {
             product: {
@@ -162,6 +188,15 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
       article = await prisma.article.findUnique({
         where: { slug: identifier },
         include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              slugEn: true,
+              slugPt: true,
+            },
+          },
           relatedProducts: {
             include: {
               product: {
@@ -210,6 +245,14 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
       imageAlt: article.imageAlt,
       date: article.date.toISOString(),
       locale: article.locale,
+      categoryId: article.categoryId,
+      category: article.category ? {
+        id: article.category.id,
+        name: article.category.name,
+        slug: article.category.slug,
+        slugEn: article.category.slugEn,
+        slugPt: article.category.slugPt,
+      } : null,
       relatedProductIds: article.relatedProducts.map((rp: any) => rp.product.id),
       // SEO fields
       metaTitle: article.metaTitle,

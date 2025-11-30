@@ -188,7 +188,12 @@ export const TRANSLATIONS = {
       noArticles: 'No articles found for this region.'
     },
     common: {
-      loading: 'Loading...'
+      loading: 'Loading...',
+      minRead: 'min read',
+      relatedProducts: 'Related Products',
+      relatedProductsDescription: 'Check out these related insurance products',
+      backToArticles: 'Back to Articles',
+      backToComparisons: 'Back to Comparisons'
     }
   },
   'pt-BR': {
@@ -226,7 +231,12 @@ export const TRANSLATIONS = {
       noArticles: 'Nenhum artigo encontrado para esta região.'
     },
     common: {
-      loading: 'Carregando...'
+      loading: 'Carregando...',
+      minRead: 'min de leitura',
+      relatedProducts: 'Produtos Relacionados',
+      relatedProductsDescription: 'Confira estes produtos de seguro relacionados',
+      backToArticles: 'Voltar aos Artigos',
+      backToComparisons: 'Voltar aos Comparadores'
     }
   }
 };

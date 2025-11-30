@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCategories } from '@/contexts/CategoriesContext';
 
 interface Article {
   id: string;
@@ -16,6 +17,13 @@ interface Article {
   date: string | Date;
   partnerTag?: string;
   readingTime?: number;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+    slugEn?: string;
+    slugPt?: string;
+  } | null;
 }
 
 interface ArticleListProps {
@@ -33,6 +41,8 @@ export default function ArticleList({
   showViewAll = true,
   viewAllLink,
 }: ArticleListProps) {
+  const { buildPath, categories } = useCategories();
+
   if (!articles || articles.length === 0) {
     return null;
   }
@@ -41,6 +51,34 @@ export default function ArticleList({
     if (locale === 'pt-BR' && article.slugPt) return article.slugPt;
     if (locale === 'en-US' && article.slugEn) return article.slugEn;
     return article.slug;
+  };
+
+  const getArticlePath = (article: Article) => {
+    const articleSlug = getSlug(article);
+
+    // If article has a category, build the full category path
+    if (article.category) {
+      // Find the full category object from context
+      const fullCategory = categories.find(c => c.id === article.category?.id);
+
+      if (fullCategory) {
+        try {
+          const categoryPath = buildPath(fullCategory, locale);
+          return `/${locale}/${categoryPath}/${articleSlug}`;
+        } catch (error) {
+          // Fallback to simple category slug if buildPath fails
+        }
+      }
+
+      // Fallback to simple category slug
+      const categorySlug = locale === 'pt-BR'
+        ? (article.category.slugPt || article.category.slug)
+        : (article.category.slugEn || article.category.slug);
+      return `/${locale}/${categorySlug}/${articleSlug}`;
+    }
+
+    // Fallback to articles route if no category
+    return `/${locale}/articles/${articleSlug}`;
   };
 
   const formatDate = (date: string | Date) => {
@@ -83,7 +121,7 @@ export default function ArticleList({
           {articles.map((article) => (
             <Link
               key={article.id}
-              href={`/${locale}/articles/${getSlug(article)}`}
+              href={getArticlePath(article)}
               className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-brand-300"
             >
               {/* Image */}

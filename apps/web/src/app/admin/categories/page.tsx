@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminCategories, type Category } from '@/services/admin';
 
@@ -8,7 +9,6 @@ export default function CategoriesPage() {
   const { user, loading: authLoading } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<Category>>({});
   const [showForm, setShowForm] = useState(false);
 
@@ -30,11 +30,6 @@ export default function CategoriesPage() {
     }
   };
 
-  const handleEdit = (category: Category) => {
-    setEditingId(category.id);
-    setFormData(category);
-    setShowForm(true);
-  };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this category?')) return;
@@ -52,13 +47,8 @@ export default function CategoriesPage() {
     e.preventDefault();
 
     try {
-      if (editingId) {
-        await adminCategories.update(editingId, formData);
-      } else {
-        await adminCategories.create(formData);
-      }
+      await adminCategories.create(formData);
       setShowForm(false);
-      setEditingId(null);
       setFormData({});
       fetchCategories();
     } catch (error) {
@@ -87,7 +77,6 @@ export default function CategoriesPage() {
         <button
           onClick={() => {
             setShowForm(true);
-            setEditingId(null);
             setFormData({ level: 0, order: 0, isActive: true });
           }}
           className="px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors font-medium"
@@ -98,7 +87,7 @@ export default function CategoriesPage() {
 
       {showForm && (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
-          <h2 className="text-xl font-bold mb-4">{editingId ? 'Edit' : 'Create'} Category</h2>
+          <h2 className="text-xl font-bold mb-4">Create Category</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -231,13 +220,12 @@ export default function CategoriesPage() {
                 type="submit"
                 className="px-6 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
               >
-                {editingId ? 'Update' : 'Create'}
+                Create
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setShowForm(false);
-                  setEditingId(null);
                   setFormData({});
                 }}
                 className="px-6 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors"
@@ -318,15 +306,15 @@ export default function CategoriesPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(category)}
-                      className="text-brand-600 hover:text-brand-700 mr-4"
+                    <Link
+                      href={`/admin/categories/${category.id}/edit`}
+                      className="text-brand-600 hover:text-brand-700 mr-4 font-medium"
                     >
                       Edit
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(category.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 hover:text-red-700 ml-4"
                     >
                       Delete
                     </button>

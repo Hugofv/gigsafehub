@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCategories } from '@/contexts/CategoriesContext';
 
 interface Article {
   id: string;
@@ -15,6 +16,13 @@ interface Article {
   imageAlt?: string;
   date: string | Date;
   partnerTag?: string;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+    slugEn?: string;
+    slugPt?: string;
+  } | null;
 }
 
 interface ArticleCarouselProps {
@@ -24,6 +32,7 @@ interface ArticleCarouselProps {
 
 export default function ArticleCarousel({ articles, locale }: ArticleCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { buildPath, categories } = useCategories();
 
   // Auto-advance carousel
   useEffect(() => {
@@ -46,6 +55,34 @@ export default function ArticleCarousel({ articles, locale }: ArticleCarouselPro
     return article.slug;
   };
 
+  const getArticlePath = (article: Article) => {
+    const articleSlug = getSlug(article);
+
+    // If article has a category, build the full category path
+    if (article.category) {
+      // Find the full category object from context
+      const fullCategory = categories.find(c => c.id === article.category?.id);
+
+      if (fullCategory) {
+        try {
+          const categoryPath = buildPath(fullCategory, locale);
+          return `/${locale}/${categoryPath}/${articleSlug}`;
+        } catch (error) {
+          // Fallback to simple category slug if buildPath fails
+        }
+      }
+
+      // Fallback to simple category slug
+      const categorySlug = locale === 'pt-BR'
+        ? (article.category.slugPt || article.category.slug)
+        : (article.category.slugEn || article.category.slug);
+      return `/${locale}/${categorySlug}/${articleSlug}`;
+    }
+
+    // Fallback to articles route if no category
+    return `/${locale}/articles/${articleSlug}`;
+  };
+
   const formatDate = (date: string | Date) => {
     const d = typeof date === 'string' ? new Date(date) : date;
     return new Intl.DateTimeFormat(locale, {
@@ -62,7 +99,7 @@ export default function ArticleCarousel({ articles, locale }: ArticleCarouselPro
       {/* Carousel Container */}
       <div className="relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-2xl">
         <Link
-          href={`/${locale}/articles/${getSlug(currentArticle)}`}
+          href={getArticlePath(currentArticle)}
           className="block group"
         >
           <div className="relative h-64 md:h-80 lg:h-96">

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminProducts, adminCategories, type Product, type Category } from '@/services/admin';
 
@@ -35,11 +36,6 @@ export default function ProductsPage() {
     }
   };
 
-  const handleEdit = (product: Product) => {
-    setEditingId(product.id);
-    setFormData(product);
-    setShowForm(true);
-  };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
@@ -335,15 +331,15 @@ export default function ProductsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">{product.country || 'All'}</td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(product)}
-                      className="text-brand-600 hover:text-brand-700 mr-4"
+                    <Link
+                      href={`/admin/products/${product.id}/edit`}
+                      className="text-brand-600 hover:text-brand-700 mr-4 font-medium"
                     >
                       Edit
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(product.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 hover:text-red-700 ml-4"
                     >
                       Delete
                     </button>

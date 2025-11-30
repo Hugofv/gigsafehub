@@ -84,6 +84,18 @@ const categoriesLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Very permissive rate limiting for auth endpoints (login, register)
+// Skip rate limiting in development to avoid 429 errors during testing
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === 'development' ? 1000 : 50, // Very high limit in dev, normal in prod
+  message: 'Too many authentication attempts, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply auth-specific rate limiting (more permissive)
+app.use('/api/auth', authLimiter);
 // Apply category-specific rate limiting
 app.use('/api/categories', categoriesLimiter);
 // Apply general rate limiting to other routes

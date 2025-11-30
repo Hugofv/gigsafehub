@@ -253,10 +253,14 @@ export default function CategoryPageClient({
                     locale
                   ) || article.slug;
 
+                // Build article path using current category path
+                const categoryPath = buildPath(category, locale);
+                const articlePath = `/${locale}/${categoryPath}/${articleSlug}`;
+
                 return (
                   <Link
                     key={article.id}
-                    href={`/${locale}/articles/${articleSlug}`}
+                    href={articlePath}
                     className="group flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-300"
                   >
                     <div className="h-48 overflow-hidden relative">

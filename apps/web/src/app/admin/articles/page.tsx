@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminArticles, adminCategories, type Article, type Category } from '@/services/admin';
 
@@ -35,14 +36,6 @@ export default function ArticlesPage() {
     }
   };
 
-  const handleEdit = (article: Article) => {
-    setEditingId(article.id);
-    setFormData({
-      ...article,
-      date: typeof article.date === 'string' ? article.date : new Date(article.date).toISOString().split('T')[0],
-    });
-    setShowForm(true);
-  };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this article?')) return;
@@ -297,15 +290,15 @@ export default function ArticlesPage() {
                     {typeof article.date === 'string' ? article.date : new Date(article.date).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(article)}
-                      className="text-brand-600 hover:text-brand-700 mr-4"
+                    <Link
+                      href={`/admin/articles/${article.id}/edit`}
+                      className="text-brand-600 hover:text-brand-700 mr-4 font-medium"
                     >
                       Edit
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(article.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 hover:text-red-700 ml-4"
                     >
                       Delete
                     </button>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminGuides, adminCategories, type Guide, type Category } from '@/services/admin';
 
@@ -35,11 +36,6 @@ export default function GuidesPage() {
     }
   };
 
-  const handleEdit = (guide: Guide) => {
-    setEditingId(guide.id);
-    setFormData(guide);
-    setShowForm(true);
-  };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this guide?')) return;
@@ -266,15 +262,15 @@ export default function GuidesPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">{guide.locale}</td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(guide)}
-                      className="text-brand-600 hover:text-brand-700 mr-4"
+                    <Link
+                      href={`/admin/guides/${guide.id}/edit`}
+                      className="text-brand-600 hover:text-brand-700 mr-4 font-medium"
                     >
                       Edit
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(guide.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 hover:text-red-700 ml-4"
                     >
                       Delete
                     </button>
