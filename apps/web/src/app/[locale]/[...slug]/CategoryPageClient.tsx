@@ -108,7 +108,8 @@ export default function CategoryPageClient({
                   <span className="ml-2 text-brand-100">Articles</span>
                 </div>
               )}
-              {subcategories.length > 0 && (
+              {/* Only show subcategories count if there are no articles (hierarchy rule: articles = leaf category) */}
+              {subcategories.length > 0 && articles.length === 0 && (
                 <div>
                   <span className="font-bold text-2xl">{subcategories.length}</span>
                   <span className="ml-2 text-brand-100">Subcategories</span>
@@ -240,8 +241,8 @@ export default function CategoryPageClient({
         )}
 
         {/* Articles Section */}
-        {isBlog && articles.length > 0 && (
-          <div>
+        {articles.length > 0 && (
+          <div className={products.length > 0 ? 'mb-12' : ''}>
             <h2 className="text-3xl font-bold text-slate-900 mb-8">Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {articles.map((article) => {
@@ -312,7 +313,7 @@ export default function CategoryPageClient({
         )}
 
         {/* Products Section */}
-        {!isBlog && products.length > 0 && (
+        {products.length > 0 && (
           <div>
             <h2 className="text-3xl font-bold text-slate-900 mb-8">Products</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -348,7 +349,7 @@ export default function CategoryPageClient({
               </svg>
               <h3 className="text-2xl font-bold text-slate-900 mb-2">No content yet</h3>
               <p className="text-slate-600 mb-6">
-                This category doesn&apos;t have any {isBlog ? 'articles' : 'products'} yet. Check back soon!
+                This category doesn&apos;t have any content yet. Check back soon!
               </p>
               <Link
                 href={`/${locale}`}

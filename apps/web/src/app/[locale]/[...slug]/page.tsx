@@ -256,10 +256,39 @@ async function CategoryPage({ params }: CategoryPageProps) {
 
     const breadcrumbs = buildBreadcrumbs(category, allCategories);
 
-    // Get subcategories (children) - all direct children
-    const subcategories = allCategories.filter(
+    // Determine content type based on category level or name
+    const categoryName = category.name.toLowerCase();
+    const counts = category.counts || { products: 0, articles: 0 };
+    const isBlog = categoryName.includes('blog') || (category.level >= 2 && counts.articles > 0);
+    const isGuide = categoryName.includes('guide');
+    const isComparison = categoryName.includes('compar');
+
+    // Fetch content - fetch both products and articles if they exist
+    let products: any[] = [];
+    let articles: any[] = [];
+
+    // Fetch products if category has products
+    if (counts.products > 0) {
+      products = await getProductsByCategory(category.id, locale);
+    }
+
+    // Fetch articles if category has articles (for blog categories or any category with articles)
+    if (counts.articles > 0) {
+      const allArticles = await getArticlesByCategory(category.id, locale);
+      // Filter to only show articles that belong directly to this category (not subcategories)
+      articles = allArticles.filter((article: any) => article.categoryId === category.id);
+    }
+
+    // Get subcategories (children) - but only if category doesn't have articles directly assigned
+    // If a category has articles, it's a content category and shouldn't show subcategories
+    let subcategories = allCategories.filter(
       (c) => c.parentId === category.id
     ).sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    // Hide subcategories if this category has articles directly assigned to it
+    if (articles.length > 0) {
+      subcategories = [];
+    }
 
     // Get nested subcategories (children of children) for each subcategory
     const subcategoriesWithChildren = subcategories.map((subcat) => {
@@ -271,23 +300,6 @@ async function CategoryPage({ params }: CategoryPageProps) {
         children,
       };
     });
-
-    // Determine content type based on category level or name
-    const categoryName = category.name.toLowerCase();
-    const counts = category.counts || { products: 0, articles: 0 };
-    const isBlog = categoryName.includes('blog') || (category.level >= 2 && counts.articles > 0);
-    const isGuide = categoryName.includes('guide');
-    const isComparison = categoryName.includes('compar');
-
-    // Fetch content based on category type
-    let products: any[] = [];
-    let articles: any[] = [];
-
-    if (isBlog || counts.articles > counts.products) {
-      articles = await getArticlesByCategory(category.id, locale);
-    } else {
-      products = await getProductsByCategory(category.id, locale);
-    }
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const categoryUrl = `${baseUrl}/${locale}/${slugPath}`;

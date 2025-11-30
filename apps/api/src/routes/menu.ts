@@ -214,6 +214,18 @@ menuRouter.get('/', async (req: Request, res: Response) => {
       return article.category && insuranceCategoryIds.includes(article.category.id);
     });
 
+    const guidesRoot = rootCategories.find((cat) =>
+      (locale === 'pt-BR' && cat.slug === 'guias') ||
+      (locale === 'en-US' && cat.slug === 'guides') ||
+      cat.slug === 'guides' || cat.slug === 'guias'
+    );
+    const guidesCategoryIds = guidesRoot
+      ? getAllInsuranceCategoryIds(guidesRoot.id, formattedCategories)
+      : [];
+    const guidesMenuArticles = formattedMenuArticles.filter((article: any) => {
+      return article.category && guidesCategoryIds.includes(article.category.id);
+    });
+
     const menuStructure = {
       insurance: {
         root: insuranceRoot,
@@ -229,13 +241,9 @@ menuRouter.get('/', async (req: Request, res: Response) => {
         items: [] as any[],
       },
       guides: {
-        root: rootCategories.find((cat) =>
-          (locale === 'pt-BR' && cat.slug === 'guias') ||
-          (locale === 'en-US' && cat.slug === 'guides') ||
-          cat.slug === 'guides' || cat.slug === 'guias'
-        ),
+        root: guidesRoot,
         items: [] as any[],
-        menuArticles: formattedMenuArticles, // Articles that should appear in menu
+        menuArticles: guidesMenuArticles, // Articles that should appear in guides menu
       },
       blog: {
         root: rootCategories.find((cat) =>

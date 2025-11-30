@@ -22,7 +22,7 @@ export const articlesRouter: Router = Router();
  */
 articlesRouter.get('/', async (req: Request, res: Response) => {
   try {
-    const { locale = 'pt-BR', category, limit, sortBy = 'date', sortOrder = 'desc' } = req.query;
+    const { locale = 'pt-BR', category, categoryId, limit, sortBy = 'date', sortOrder = 'desc' } = req.query;
     const prismaLocale = locale === 'pt-BR' ? 'pt_BR' : locale === 'en-US' ? 'en_US' : 'Both';
 
     const where: any = {
@@ -31,8 +31,10 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
       OR: [{ locale: prismaLocale as ContentLocale }, { locale: 'Both' }],
     };
 
-    if (category) {
-      where.categoryId = category as string;
+    // Support both 'category' and 'categoryId' query parameters
+    const categoryFilter = categoryId || category;
+    if (categoryFilter) {
+      where.categoryId = categoryFilter as string;
     }
 
     // Build orderBy clause
