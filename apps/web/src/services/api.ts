@@ -376,9 +376,10 @@ export async function getMenu(
 ): Promise<{
   locale: string;
   menu: {
-    insurance: { root: any; items: any[] };
+    items: Array<{ root: any; items: any[]; menuArticles?: any[] }>; // New dynamic structure
+    insurance: { root: any; items: any[]; menuArticles?: any[] };
     comparison: { root: any; items: any[] };
-    guides: { root: any; items: any[]; menuArticles: any[] };
+    guides: { root: any; items: any[]; menuArticles?: any[] };
     blog: { root: any; items: any[] };
   };
   timestamp: string;
@@ -407,7 +408,8 @@ export async function getMenu(
     return {
       locale,
       menu: {
-        insurance: { root: null, items: [] },
+        items: [], // New dynamic structure
+        insurance: { root: null, items: [], menuArticles: [] },
         comparison: { root: null, items: [] },
         guides: { root: null, items: [], menuArticles: [] },
         blog: { root: null, items: [] },

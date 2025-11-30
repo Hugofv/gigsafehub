@@ -185,72 +185,21 @@ menuRouter.get('/', async (req: Request, res: Response) => {
       };
     });
 
-    // Organize menu by root categories
-    const rootCategories = formattedCategories.filter((cat) => cat.level === 0);
+    // Organize menu by root categories - get all root categories that should appear in navbar
+    const rootCategories = formattedCategories
+      .filter((cat) => cat.level === 0 && cat.showInNavbar)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-    // Filter articles by insurance categories
-    const insuranceRoot = rootCategories.find((cat) =>
-      (locale === 'pt-BR' && cat.slug === 'seguros') ||
-      (locale === 'en-US' && cat.slug === 'insurance') ||
-      cat.slug === 'insurance' || cat.slug === 'seguros'
-    );
-
-    // Get all insurance category IDs (including children)
-    const getAllInsuranceCategoryIds = (parentId: string | null, allCats: any[]): string[] => {
+    // Get all category IDs (including children) for a given root category
+    const getAllCategoryIds = (parentId: string | null, allCats: any[]): string[] => {
       if (!parentId) return [];
       const ids = [parentId];
       const children = allCats.filter((cat) => cat.parentId === parentId);
       children.forEach((child) => {
         ids.push(child.id);
-        ids.push(...getAllInsuranceCategoryIds(child.id, allCats));
+        ids.push(...getAllCategoryIds(child.id, allCats));
       });
       return ids;
-    };
-
-    const insuranceCategoryIds = insuranceRoot
-      ? getAllInsuranceCategoryIds(insuranceRoot.id, formattedCategories)
-      : [];
-    const insuranceMenuArticles = formattedMenuArticles.filter((article: any) => {
-      return article.category && insuranceCategoryIds.includes(article.category.id);
-    });
-
-    const guidesRoot = rootCategories.find((cat) =>
-      (locale === 'pt-BR' && cat.slug === 'guias') ||
-      (locale === 'en-US' && cat.slug === 'guides') ||
-      cat.slug === 'guides' || cat.slug === 'guias'
-    );
-    const guidesCategoryIds = guidesRoot
-      ? getAllInsuranceCategoryIds(guidesRoot.id, formattedCategories)
-      : [];
-    const guidesMenuArticles = formattedMenuArticles.filter((article: any) => {
-      return article.category && guidesCategoryIds.includes(article.category.id);
-    });
-
-    const menuStructure = {
-      insurance: {
-        root: insuranceRoot,
-        items: [] as any[],
-        menuArticles: insuranceMenuArticles, // Articles that should appear in insurance menu
-      },
-      comparison: {
-        root: rootCategories.find((cat) =>
-          (locale === 'pt-BR' && cat.slug === 'comparador') ||
-          (locale === 'en-US' && cat.slug === 'comparisons') ||
-          cat.slug === 'comparisons' || cat.slug === 'comparador'
-        ),
-        items: [] as any[],
-      },
-      guides: {
-        root: guidesRoot,
-        items: [] as any[],
-        menuArticles: guidesMenuArticles, // Articles that should appear in guides menu
-      },
-      blog: {
-        root: rootCategories.find((cat) =>
-          cat.slug === 'blog' || cat.slug === 'blog'
-        ),
-        items: [] as any[],
-      },
     };
 
     // Build items for each menu section (only showInNavbar items)
@@ -275,18 +224,73 @@ menuRouter.get('/', async (req: Request, res: Response) => {
         }));
     };
 
-    if (menuStructure.insurance.root) {
-      menuStructure.insurance.items = buildMenuItems(menuStructure.insurance.root.id, 1);
-    }
-    if (menuStructure.comparison.root) {
-      menuStructure.comparison.items = buildMenuItems(menuStructure.comparison.root.id, 1);
-    }
-    if (menuStructure.guides.root) {
-      menuStructure.guides.items = buildMenuItems(menuStructure.guides.root.id, 1);
-    }
-    if (menuStructure.blog.root) {
-      menuStructure.blog.items = buildMenuItems(menuStructure.blog.root.id, 1);
-    }
+    // Build dynamic menu structure from root categories
+    const menuItems = rootCategories.map((rootCategory) => {
+      const categoryIds = getAllCategoryIds(rootCategory.id, formattedCategories);
+      const menuArticles = formattedMenuArticles.filter((article: any) => {
+        return article.category && categoryIds.includes(article.category.id);
+      });
+
+      return {
+        root: rootCategory,
+        items: buildMenuItems(rootCategory.id, 1),
+        menuArticles: menuArticles.length > 0 ? menuArticles : undefined,
+      };
+    });
+
+    // Build legacy structure for backward compatibility (can be removed later)
+    const insuranceRoot = rootCategories.find((cat) =>
+      (locale === 'pt-BR' && cat.slug === 'seguros') ||
+      (locale === 'en-US' && cat.slug === 'insurance') ||
+      cat.slug === 'insurance' || cat.slug === 'seguros'
+    );
+    const comparisonRoot = rootCategories.find((cat) =>
+      (locale === 'pt-BR' && cat.slug === 'comparador') ||
+      (locale === 'en-US' && cat.slug === 'comparisons') ||
+      cat.slug === 'comparisons' || cat.slug === 'comparador'
+    );
+    const guidesRoot = rootCategories.find((cat) =>
+      (locale === 'pt-BR' && cat.slug === 'guias') ||
+      (locale === 'en-US' && cat.slug === 'guides') ||
+      cat.slug === 'guides' || cat.slug === 'guias'
+    );
+    const blogRoot = rootCategories.find((cat) =>
+      cat.slug === 'blog' || cat.slug === 'blog'
+    );
+
+    // Legacy structure for backward compatibility
+    const menuStructure: any = {
+      items: menuItems, // New dynamic structure
+      // Legacy structure (for backward compatibility)
+      insurance: {
+        root: insuranceRoot,
+        items: insuranceRoot ? buildMenuItems(insuranceRoot.id, 1) : [],
+        menuArticles: insuranceRoot
+          ? formattedMenuArticles.filter((article: any) => {
+              const categoryIds = getAllCategoryIds(insuranceRoot.id, formattedCategories);
+              return article.category && categoryIds.includes(article.category.id);
+            })
+          : [],
+      },
+      comparison: {
+        root: comparisonRoot,
+        items: comparisonRoot ? buildMenuItems(comparisonRoot.id, 1) : [],
+      },
+      guides: {
+        root: guidesRoot,
+        items: guidesRoot ? buildMenuItems(guidesRoot.id, 1) : [],
+        menuArticles: guidesRoot
+          ? formattedMenuArticles.filter((article: any) => {
+              const categoryIds = getAllCategoryIds(guidesRoot.id, formattedCategories);
+              return article.category && categoryIds.includes(article.category.id);
+            })
+          : [],
+      },
+      blog: {
+        root: blogRoot,
+        items: blogRoot ? buildMenuItems(blogRoot.id, 1) : [],
+      },
+    };
 
     // Set aggressive cache headers for performance
     res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400');

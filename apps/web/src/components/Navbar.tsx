@@ -4,29 +4,17 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from '../contexts/I18nContext';
-import {
-  InsuranceMegaMenu,
-  ComparisonMegaMenu,
-  GuidesMegaMenu,
-  BlogMegaMenu,
-  MobileInsuranceMenu,
-  MobileComparisonMenu,
-  MobileGuidesMenu,
-  MobileBlogMenu,
-} from './MegaMenu';
+import { useMenu } from '../contexts/MenuContext';
+import { GenericMegaMenu, GenericMobileMenu } from './MegaMenu';
 
 const Navbar: React.FC = () => {
   const pathname = usePathname();
   const { t, locale, changeLocale } = useTranslation();
+  const { menu } = useMenu();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null);
-  const menuRefs = {
-    insurance: useRef<HTMLDivElement>(null),
-    comparison: useRef<HTMLDivElement>(null),
-    guides: useRef<HTMLDivElement>(null),
-    blog: useRef<HTMLDivElement>(null),
-  };
+  const menuRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const isActive = (path: string) => {
     const fullPath = `/${locale}${path === '/' ? '' : path}`;
@@ -128,129 +116,64 @@ const Navbar: React.FC = () => {
               )}
             </button>
             <div className="hidden lg:ml-8 lg:flex lg:space-x-1 items-center">
-              {/* Insurance Mega Menu */}
-              <div className="relative" ref={menuRefs.insurance}>
-                <button
-                  onClick={() => toggleMenu('insurance')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
-                    pathname.includes('/reviews') && pathname.includes('Insurance')
-                      ? 'bg-navy-50 text-navy-700'
-                      : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
-                  }`}
-                >
-                  {t('nav.insurance')}
-                  <svg
-                    className={`w-4 h-4 transition-transform ${openMenu === 'insurance' ? 'rotate-180' : ''}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {openMenu === 'insurance' && (
-                  <InsuranceMegaMenu
-                    locale={locale}
-                    getLink={getLink}
-                    onClose={() => setOpenMenu(null)}
-                  />
-                )}
-              </div>
+              {/* Dynamic Menu Items from Database */}
+              {menu?.items?.map((menuItem) => {
+                if (!menuItem.root) return null;
 
-              {/* Comparison Mega Menu */}
-              <div className="relative" ref={menuRefs.comparison}>
-                <button
-                  onClick={() => toggleMenu('comparison')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${linkClass('/compare')}`}
-                >
-                  {t('nav.compare')}
-                  <svg
-                    className={`w-4 h-4 transition-transform ${openMenu === 'comparison' ? 'rotate-180' : ''}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {openMenu === 'comparison' && (
-                  <ComparisonMegaMenu
-                    locale={locale}
-                    getLink={getLink}
-                    onClose={() => setOpenMenu(null)}
-                  />
-                )}
-              </div>
+                const categorySlug = menuItem.root.slug;
+                const menuKey = categorySlug.toLowerCase();
+                // Use category name from database, fallback to translation if available
+                const categoryName = menuItem.root.name;
 
-              {/* Guides Mega Menu */}
-              <div className="relative" ref={menuRefs.guides}>
-                <button
-                  onClick={() => toggleMenu('guides')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${linkClass('/guides')}`}
-                >
-                  {t('nav.guides')}
-                  <svg
-                    className={`w-4 h-4 transition-transform ${openMenu === 'guides' ? 'rotate-180' : ''}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {openMenu === 'guides' && (
-                  <GuidesMegaMenu
-                    locale={locale}
-                    getLink={getLink}
-                    onClose={() => setOpenMenu(null)}
-                  />
-                )}
-              </div>
+                // Determine if this menu item is active based on pathname
+                const isActive = pathname.includes(`/${categorySlug}`) ||
+                                 pathname.includes(`/${menuItem.root.slugPt}`) ||
+                                 pathname.includes(`/${menuItem.root.slugEn}`);
 
-              {/* Blog Mega Menu */}
-              <div className="relative" ref={menuRefs.blog}>
-                <button
-                  onClick={() => toggleMenu('blog')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${linkClass('/articles')}`}
-                >
-                  {t('nav.blog')}
-                  <svg
-                    className={`w-4 h-4 transition-transform ${openMenu === 'blog' ? 'rotate-180' : ''}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                return (
+                  <div
+                    key={menuItem.root.id}
+                    className="relative"
+                    ref={(el) => {
+                      menuRefs.current[menuKey] = el;
+                    }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {openMenu === 'blog' && (
-                  <BlogMegaMenu
-                    locale={locale}
-                    getLink={getLink}
-                    onClose={() => setOpenMenu(null)}
-                  />
-                )}
-              </div>
+                    <button
+                      onClick={() => toggleMenu(menuKey)}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
+                        isActive
+                          ? 'bg-navy-50 text-navy-700'
+                          : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
+                      }`}
+                    >
+                      {categoryName}
+                      <svg
+                        className={`w-4 h-4 transition-transform ${openMenu === menuKey ? 'rotate-180' : ''}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {openMenu === menuKey && (
+                      <GenericMegaMenu
+                        locale={locale}
+                        getLink={getLink}
+                        onClose={() => setOpenMenu(null)}
+                        rootCategory={menuItem.root}
+                        items={menuItem.items}
+                        menuArticles={menuItem.menuArticles}
+                      />
+                    )}
+                  </div>
+                );
+              })}
 
               <Link href={getLink('/about')} className={linkClass('/about')}>
                 {t('nav.about')}
@@ -309,125 +232,58 @@ const Navbar: React.FC = () => {
               {t('nav.home')}
             </Link>
 
-            {/* Insurance Mobile Submenu */}
-            <div>
-              <button
-                onClick={() => toggleMobileSubmenu('insurance')}
-                className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
-                  pathname.includes('/reviews')
-                    ? 'bg-navy-50 text-navy-700'
-                    : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
-                }`}
-              >
-                <span>{t('nav.insurance')}</span>
-                <svg
-                  className={`w-4 h-4 transition-transform ${mobileSubmenuOpen === 'insurance' ? 'rotate-180' : ''}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {mobileSubmenuOpen === 'insurance' && (
-                <MobileInsuranceMenu locale={locale} getLink={getLink} onClose={closeMobileMenu} />
-              )}
-            </div>
+            {/* Dynamic Mobile Menu Items from Database */}
+            {menu?.items?.map((menuItem) => {
+              if (!menuItem.root) return null;
 
-            {/* Comparison Mobile Submenu */}
-            <div>
-              <button
-                onClick={() => toggleMobileSubmenu('comparison')}
-                className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
-                  isActive('/compare')
-                    ? 'bg-navy-50 text-navy-700'
-                    : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
-                }`}
-              >
-                <span>{t('nav.compare')}</span>
-                <svg
-                  className={`w-4 h-4 transition-transform ${mobileSubmenuOpen === 'comparison' ? 'rotate-180' : ''}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {mobileSubmenuOpen === 'comparison' && (
-                <MobileComparisonMenu locale={locale} getLink={getLink} onClose={closeMobileMenu} />
-              )}
-            </div>
+              const categorySlug = menuItem.root.slug;
+              const menuKey = categorySlug.toLowerCase();
+              // Use category name from database
+              const categoryName = menuItem.root.name;
 
-            {/* Guides Mobile Submenu */}
-            <div>
-              <button
-                onClick={() => toggleMobileSubmenu('guides')}
-                className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
-                  isActive('/guides')
-                    ? 'bg-navy-50 text-navy-700'
-                    : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
-                }`}
-              >
-                <span>{t('nav.guides')}</span>
-                <svg
-                  className={`w-4 h-4 transition-transform ${mobileSubmenuOpen === 'guides' ? 'rotate-180' : ''}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {mobileSubmenuOpen === 'guides' && (
-                <MobileGuidesMenu locale={locale} getLink={getLink} onClose={closeMobileMenu} />
-              )}
-            </div>
+              // Determine if this menu item is active based on pathname
+              const isActiveMenu = pathname.includes(`/${categorySlug}`) ||
+                                  pathname.includes(`/${menuItem.root.slugPt}`) ||
+                                  pathname.includes(`/${menuItem.root.slugEn}`);
 
-            {/* Blog Mobile Submenu */}
-            <div>
-              <button
-                onClick={() => toggleMobileSubmenu('blog')}
-                className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
-                  isActive('/articles')
-                    ? 'bg-navy-50 text-navy-700'
-                    : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
-                }`}
-              >
-                <span>{t('nav.blog')}</span>
-                <svg
-                  className={`w-4 h-4 transition-transform ${mobileSubmenuOpen === 'blog' ? 'rotate-180' : ''}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {mobileSubmenuOpen === 'blog' && (
-                <MobileBlogMenu locale={locale} getLink={getLink} onClose={closeMobileMenu} />
-              )}
-            </div>
+              return (
+                <div key={menuItem.root.id}>
+                  <button
+                    onClick={() => toggleMobileSubmenu(menuKey)}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
+                      isActiveMenu
+                        ? 'bg-navy-50 text-navy-700'
+                        : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>{categoryName}</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform ${mobileSubmenuOpen === menuKey ? 'rotate-180' : ''}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                  {mobileSubmenuOpen === menuKey && (
+                    <GenericMobileMenu
+                      locale={locale}
+                      getLink={getLink}
+                      onClose={closeMobileMenu}
+                      rootCategory={menuItem.root}
+                      items={menuItem.items}
+                      menuArticles={menuItem.menuArticles}
+                    />
+                  )}
+                </div>
+              );
+            })}
 
             <Link
               href={getLink('/about')}

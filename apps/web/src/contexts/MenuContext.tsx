@@ -3,7 +3,15 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { getMenu } from '@/services/api';
 
+interface MenuItem {
+  root: any;
+  items: any[];
+  menuArticles?: any[];
+}
+
 interface MenuStructure {
+  items: MenuItem[]; // New dynamic structure
+  // Legacy structure for backward compatibility
   insurance: {
     root: any;
     items: any[];
@@ -51,12 +59,13 @@ export function MenuProvider({
       setLoading(true);
       setError(null);
       const data = await getMenu(locale, country);
-      setMenu(data.menu);
+      setMenu(data.menu as MenuStructure);
     } catch (err) {
       console.error('Error loading menu:', err);
       setError(err instanceof Error ? err : new Error('Failed to load menu'));
       // Set empty menu structure on error
       setMenu({
+        items: [], // New dynamic structure
         insurance: { root: null, items: [], menuArticles: [] },
         comparison: { root: null, items: [] },
         guides: { root: null, items: [], menuArticles: [] },

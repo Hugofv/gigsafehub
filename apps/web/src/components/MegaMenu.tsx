@@ -10,7 +10,221 @@ interface MegaMenuProps {
   locale: string;
   getLink: (path: string) => string;
   onClose: () => void;
+  rootCategory?: any;
+  items?: any[];
+  menuArticles?: any[];
 }
+
+// Generic MegaMenu component that works with any category
+export const GenericMegaMenu: React.FC<MegaMenuProps> = ({
+  locale,
+  getLink,
+  onClose,
+  rootCategory,
+  items = [],
+  menuArticles = []
+}) => {
+  const { buildPath } = useCategories();
+
+  if (!rootCategory && items.length === 0 && menuArticles.length === 0) {
+    return null;
+  }
+
+  // Build full paths for categories
+  const categories = items.map((cat) => {
+    const fullPath = buildPath(cat, locale);
+    return {
+      ...cat,
+      fullPath: fullPath || cat.slug || '',
+    };
+  });
+
+  // Group articles by their category ID
+  const articlesByCategory = menuArticles.reduce((acc: any, article: any) => {
+    if (article.category && article.category.id) {
+      const categoryId = article.category.id;
+      if (!acc[categoryId]) {
+        acc[categoryId] = [];
+      }
+      acc[categoryId].push(article);
+    }
+    return acc;
+  }, {});
+
+  return (
+    <div className="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-slate-200 z-50 overflow-hidden">
+      <div className="p-4">
+        <ul className="space-y-1">
+          {categories.map((item) => {
+            const categoryArticles = articlesByCategory[item.id] || [];
+            return (
+              <li key={item.id}>
+                <Link
+                  href={getLink(
+                    item.fullPath ? `/${item.fullPath}` : item.slug ? `/${item.slug}` : '#'
+                  )}
+                  onClick={(e) => {
+                    // Close menu immediately, navigation will happen via Link
+                    onClose();
+                  }}
+                  className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2.5 px-3 rounded-md"
+                >
+                  {item.name}
+                </Link>
+                {categoryArticles.length > 0 && (
+                  <ul className="pl-4 mt-1 space-y-1">
+                    {categoryArticles.map((article: any) => (
+                      <li key={article.id}>
+                        <Link
+                          href={getLink(article.fullPath)}
+                          onClick={(e) => {
+                            // Close menu immediately, navigation will happen via Link
+                            onClose();
+                          }}
+                          className="text-sm text-slate-500 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2 px-3 rounded-md"
+                        >
+                          {article.titleMenu || article.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
+          {/* Show articles that don't have a category or belong to categories not in the list */}
+          {menuArticles
+            .filter((article: any) => {
+              if (!article.category || !article.category.id) return true;
+              return !categories.some((cat) => cat.id === article.category.id);
+            })
+            .map((article: any) => (
+              <li key={article.id}>
+                <Link
+                  href={getLink(article.fullPath)}
+                  onClick={(e) => {
+                    // Close menu immediately, navigation will happen via Link
+                    onClose();
+                  }}
+                  className="text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-colors block py-2.5 px-3 rounded-md"
+                >
+                  {article.titleMenu || article.title}
+                </Link>
+              </li>
+            ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+// Generic MobileMenu component
+export const GenericMobileMenu: React.FC<MegaMenuProps> = ({
+  locale,
+  getLink,
+  onClose,
+  rootCategory,
+  items = [],
+  menuArticles = []
+}) => {
+  const { buildPath, getByParent } = useCategories();
+
+  if (!rootCategory && items.length === 0 && menuArticles.length === 0) {
+    return null;
+  }
+
+  // Get level 1 categories
+  const level1Cats = rootCategory ? getByParent(rootCategory.id) : items;
+  const sortedLevel1Cats = [...level1Cats].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  // Get all category IDs (including children) for filtering articles
+  const getAllCategoryIds = (parentId: string | null): string[] => {
+    if (!parentId) return [];
+    const ids = [parentId];
+    const children = getByParent(parentId);
+    children.forEach((child) => {
+      ids.push(child.id);
+      ids.push(...getAllCategoryIds(child.id));
+    });
+    return ids;
+  };
+
+  const categoryIds = rootCategory ? getAllCategoryIds(rootCategory.id) : [];
+
+  // Filter articles to only show those that belong to this category tree
+  const filteredMenuArticles = menuArticles.filter((article: any) => {
+    if (!article.category || !article.category.id) return false;
+    return categoryIds.includes(article.category.id);
+  });
+
+  return (
+    <div className="pl-4 mt-1 space-y-1 border-l-2 border-slate-200">
+      {sortedLevel1Cats.map((level1Cat) => {
+        const children = getByParent(level1Cat.id);
+        const sortedChildren = [...children].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+        // Get articles that belong to this level 1 category
+        const categoryArticles = filteredMenuArticles.filter(
+          (article: any) => article.category?.id === level1Cat.id
+        );
+
+        return (
+          <div key={level1Cat.id} className="pt-2">
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide px-3 py-1">
+              {level1Cat.name}
+            </div>
+            {/* Category children */}
+            {sortedChildren.map((child) => {
+              const childPath = buildPath(child, locale);
+              const href = childPath ? `/${childPath}` : child.slug ? `/${child.slug}` : '#';
+              return (
+                <Link
+                  key={child.id}
+                  href={getLink(href)}
+                  onClick={(e) => {
+                    // Close menu immediately, navigation will happen via Link
+                    onClose();
+                  }}
+                  className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
+                >
+                  {child.name}
+                </Link>
+              );
+            })}
+            {/* Articles */}
+            {categoryArticles.map((article: any) => (
+              <Link
+                key={article.id}
+                href={getLink(article.fullPath)}
+                onClick={(e) => {
+                  onClose();
+                }}
+                className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
+              >
+                {article.titleMenu || article.title}
+              </Link>
+            ))}
+          </div>
+        );
+      })}
+      {/* Show articles without a category */}
+      {filteredMenuArticles
+        .filter((article: any) => !article.category || !article.category.id)
+        .map((article: any) => (
+          <Link
+            key={article.id}
+            href={getLink(article.fullPath)}
+            onClick={(e) => {
+              onClose();
+            }}
+            className="block px-3 py-2 text-sm text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-md"
+          >
+            {article.titleMenu || article.title}
+          </Link>
+        ))}
+    </div>
+  );
+};
 
 export const InsuranceMegaMenu: React.FC<MegaMenuProps> = ({ locale, getLink, onClose }) => {
   const {
