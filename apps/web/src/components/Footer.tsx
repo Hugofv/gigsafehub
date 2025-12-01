@@ -3,15 +3,30 @@
 import React from 'react';
 import Link from 'next/link';
 import { useTranslation } from '../contexts/I18nContext';
+import { useCategories } from '../contexts/CategoriesContext';
 
 const Footer: React.FC = () => {
   const { locale, changeLocale } = useTranslation();
+  const { categories, findBySlug, buildPath } = useCategories();
   const getLink = (path: string) => `/${locale}${path === '/' ? '' : path}`;
+
+  // Get insurance categories for footer links
+  const insuranceRoot = findBySlug(locale === 'pt-BR' ? 'seguros' : 'insurance', locale);
+  const insuranceCategories = insuranceRoot 
+    ? categories
+        .filter(cat => cat.parentId === insuranceRoot.id && cat.isActive)
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+        .slice(0, 4)
+    : [];
+
+  // Get guides root category
+  const guidesRoot = findBySlug(locale === 'pt-BR' ? 'guias' : 'guides', locale);
+  const guidesPath = guidesRoot ? buildPath(guidesRoot, locale) : null;
 
   return (
     <footer className="bg-slate-900 text-slate-400 py-12 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Institutional */}
           <div>
             <h3 className="text-white font-semibold mb-4">
@@ -35,11 +50,6 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href={getLink('/contact')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Contato' : 'Contact'}
-                </Link>
-              </li>
-              <li>
                 <Link
                   href={getLink(locale === 'pt-BR' ? '/politicas-e-privacidade' : '/privacy-and-policies')}
                   className="hover:text-white transition-colors"
@@ -55,11 +65,6 @@ const Footer: React.FC = () => {
                   {locale === 'pt-BR' ? 'Termos de Uso' : 'Terms of Use'}
                 </Link>
               </li>
-              <li>
-                <Link href={getLink('/affiliate-policy')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Política de Afiliados' : 'Affiliate Policy'}
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -69,52 +74,61 @@ const Footer: React.FC = () => {
               {locale === 'pt-BR' ? 'Categorias de Seguros' : 'Insurance Categories'}
             </h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href={getLink('/reviews?category=Insurance&subcategory=UberDriver')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Motoristas' : 'Drivers'}
-                </Link>
-              </li>
-              <li>
-                <Link href={getLink('/reviews?category=Insurance&subcategory=MotorcycleDelivery')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Entregadores' : 'Delivery Workers'}
-                </Link>
-              </li>
-              <li>
-                <Link href={getLink('/reviews?category=Insurance&subcategory=IncomeInsurance')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Freelancers' : 'Freelancers'}
-                </Link>
-              </li>
-              <li>
-                <Link href={getLink('/reviews?category=Insurance&subcategory=InternationalHealth')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Nômades' : 'Digital Nomads'}
-                </Link>
-              </li>
+              {insuranceCategories.length > 0 ? (
+                insuranceCategories.map((category) => {
+                  const categoryPath = buildPath(category, locale);
+                  const categoryLink = categoryPath ? `/${categoryPath}` : `/${category.slug}`;
+                  
+                  return (
+                    <li key={category.id}>
+                      <Link 
+                        href={getLink(categoryLink)} 
+                        className="hover:text-white transition-colors"
+                      >
+                        {category.name}
+                      </Link>
+                    </li>
+                  );
+                })
+              ) : (
+                // Fallback links if categories not loaded
+                <>
+                  <li>
+                    <Link 
+                      href={getLink(locale === 'pt-BR' ? '/seguros/seguros-para-motoristas' : '/insurance/insurance-for-drivers')} 
+                      className="hover:text-white transition-colors"
+                    >
+                      {locale === 'pt-BR' ? 'Motoristas' : 'Drivers'}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link 
+                      href={getLink(locale === 'pt-BR' ? '/seguros/seguros-para-entregadores' : '/insurance/insurance-for-delivery')} 
+                      className="hover:text-white transition-colors"
+                    >
+                      {locale === 'pt-BR' ? 'Entregadores' : 'Delivery Workers'}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link 
+                      href={getLink(locale === 'pt-BR' ? '/seguros/seguros-para-freelancers' : '/insurance/insurance-for-freelancers')} 
+                      className="hover:text-white transition-colors"
+                    >
+                      {locale === 'pt-BR' ? 'Freelancers' : 'Freelancers'}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link 
+                      href={getLink(locale === 'pt-BR' ? '/seguros' : '/insurance')} 
+                      className="hover:text-white transition-colors"
+                    >
+                      {locale === 'pt-BR' ? 'Ver Todos' : 'View All'}
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
-
-          {/* Tools */}
-          {/* <div>
-            <h3 className="text-white font-semibold mb-4">
-              {locale === 'pt-BR' ? 'Ferramentas' : 'Tools'}
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href={getLink('/compare')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Comparador' : 'Comparator'}
-                </Link>
-              </li>
-              <li>
-                <Link href={getLink('/calculator')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Calculadora de Custo' : 'Cost Calculator'}
-                </Link>
-              </li>
-              <li>
-                <Link href={getLink('/calculator/income-protection')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Calculadora de Renda Protegida' : 'Income Protection Calculator'}
-                </Link>
-              </li>
-            </ul>
-          </div> */}
 
           {/* Content */}
           <div>
@@ -127,11 +141,13 @@ const Footer: React.FC = () => {
                   {locale === 'pt-BR' ? 'Blog' : 'Blog'}
                 </Link>
               </li>
-              <li>
-                <Link href={getLink('/guides')} className="hover:text-white transition-colors">
-                  {locale === 'pt-BR' ? 'Guias' : 'Guides'}
-                </Link>
-              </li>
+              {guidesPath && (
+                <li>
+                  <Link href={getLink(`/${guidesPath}`)} className="hover:text-white transition-colors">
+                    {locale === 'pt-BR' ? 'Guias' : 'Guides'}
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link href={getLink('/faq')} className="hover:text-white transition-colors">
                   {locale === 'pt-BR' ? 'Perguntas Frequentes' : 'FAQ'}
@@ -149,7 +165,8 @@ const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => changeLocale('en-US')}
-                  className={`hover:text-white transition-colors ${locale === 'en-US' ? 'text-white font-semibold' : ''}`}
+                  className={`hover:text-white transition-colors text-left ${locale === 'en-US' ? 'text-white font-semibold' : ''}`}
+                  aria-label="Switch to English"
                 >
                   English version
                 </button>
@@ -157,7 +174,8 @@ const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => changeLocale('pt-BR')}
-                  className={`hover:text-white transition-colors ${locale === 'pt-BR' ? 'text-white font-semibold' : ''}`}
+                  className={`hover:text-white transition-colors text-left ${locale === 'pt-BR' ? 'text-white font-semibold' : ''}`}
+                  aria-label="Mudar para Português"
                 >
                   Português (Brasil)
                 </button>
@@ -168,6 +186,7 @@ const Footer: React.FC = () => {
                 src="/logo.png"
                 alt="GigSafeHub"
                 className="h-8 w-auto brightness-0 invert"
+                loading="lazy"
               />
               <p className="mt-2 text-xs text-slate-500 max-w-xs">
                 {locale === 'pt-BR'
