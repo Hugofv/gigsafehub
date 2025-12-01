@@ -1,5 +1,11 @@
 [phases.setup]
 nixPkgs = ["nodejs_20", "pnpm"]
 
+[phases.install]
+cmds = [
+  "cd ..//..",                # go to monorepo root
+  "pnpm install",
+  "cd /app/api"                    # return to service root (apps/api)
+]
 
 
