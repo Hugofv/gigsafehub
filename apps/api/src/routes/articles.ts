@@ -206,13 +206,28 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
     const { identifier } = req.params;
     const { locale = 'pt-BR' } = req.query;
 
+    // Convert locale format from 'pt-BR'/'en-US' to 'pt_BR'/'en_US'/'Both'
+    // Filter to only return articles that match the requested locale
+    const prismaLocale: ContentLocale = locale === 'pt-BR' ? 'pt_BR' : 'en_US';
+
     // Try to find by localized slug first, then default slug
+    // Filter by article locale to ensure we get the correct language version
     let article = await prisma.article.findFirst({
       where: {
-        OR: [
-          { slug: identifier },
-          ...(locale === 'pt-BR' ? [{ slugPt: identifier }] : []),
-          ...(locale === 'en-US' ? [{ slugEn: identifier }] : []),
+        AND: [
+          {
+            OR: [
+              { slug: identifier },
+              ...(locale === 'pt-BR' ? [{ slugPt: identifier }] : []),
+              ...(locale === 'en-US' ? [{ slugEn: identifier }] : []),
+            ],
+          },
+          {
+            OR: [
+              { locale: prismaLocale },
+              { locale: 'Both' },
+            ],
+          },
         ],
       },
       include: {
@@ -245,10 +260,20 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
       },
     });
 
-    // Fallback: try default slug if not found
+    // Fallback: try default slug if not found, but still filter by locale
     if (!article) {
-      article = await prisma.article.findUnique({
-        where: { slug: identifier },
+      article = await prisma.article.findFirst({
+        where: {
+          AND: [
+            { slug: identifier },
+            {
+              OR: [
+                { locale: prismaLocale },
+                { locale: 'Both' },
+              ],
+            },
+          ],
+        },
         include: {
           category: {
             select: {
