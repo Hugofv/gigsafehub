@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '@/contexts/I18nContext';
 import { normalizeImageUrl } from '@/lib/imageUtils';
+import CommentsSection from '@/components/Comments';
 
 interface Article {
   id: string;
@@ -123,10 +124,45 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
           </div>
         )}
 
-        <div
-          className="prose prose-lg max-w-none prose-slate bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-900 prose-code:text-brand-600 prose-code:bg-slate-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded"
-          dangerouslySetInnerHTML={{ __html: article.content }}
-        />
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12">
+          <div
+            className="prose prose-lg max-w-none prose-slate prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-900 prose-code:text-brand-600 prose-code:bg-slate-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
+
+          {/* Article Credits Section */}
+          <div className="mt-8 pt-8 border-t border-slate-200 text-center">
+            <p className="text-sm text-slate-600">
+              {locale === 'pt-BR' ? (
+                <>
+                  Artigo criado por <strong className="text-slate-700">GigSafeHub</strong>. Para republicação, favor manter créditos e link para{' '}
+                  <a
+                    href="https://gigsafehub.com"
+                    className="text-brand-600 hover:text-brand-700"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    gigsafehub.com
+                  </a>
+                  .
+                </>
+              ) : (
+                <>
+                  Article created by <strong className="text-slate-700">GigSafeHub</strong>. For republication, please maintain credits and link to{' '}
+                  <a
+                    href="https://gigsafehub.com"
+                    className="text-brand-600 hover:text-brand-700"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    gigsafehub.com
+                  </a>
+                  .
+                </>
+              )}
+            </p>
+          </div>
+        </div>
 
         {/* Related Products Section */}
         {article.relatedProductIds && article.relatedProductIds.length > 0 && (
@@ -139,9 +175,14 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
             </p>
           </div>
         )}
+      </article>
+
+      {/* Comments Section */}
+      <div className="bg-slate-50 border-t border-slate-200">
+        <CommentsSection articleId={article.id} locale={locale} />
 
         {/* Back to Articles */}
-        <div className="mt-12 pt-8 border-t border-slate-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 border-t border-slate-200">
           <Link
             href={`/${locale}/${categorySlug}`}
             className="inline-flex items-center gap-2 text-brand-600 hover:text-brand-700 font-medium"
@@ -152,7 +193,7 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
             {isComparisonArticle ? t('common.backToComparisons') : t('common.backToArticles')}
           </Link>
         </div>
-      </article>
+      </div>
     </div>
   );
 }
