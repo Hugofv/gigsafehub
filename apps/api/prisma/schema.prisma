@@ -220,6 +220,7 @@ model Article {
   showInMenu      Boolean       @default(false) // Control if article appears in navigation menu
 
   relatedProducts ArticleProduct[]
+  comments        Comment[]
 
   @@index([slug])
   @@index([slugEn])
@@ -302,4 +303,21 @@ model FAQ {
   @@index([locale])
   @@index([isPublished])
   @@map("faqs")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  name      String
+  email     String
+  message   String   @db.Text
+  isApproved Boolean @default(true) // Comments are approved by default
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([articleId])
+  @@index([isApproved])
+  @@index([createdAt])
+  @@map("comments")
 }

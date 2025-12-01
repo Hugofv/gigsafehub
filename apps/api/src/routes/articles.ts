@@ -136,6 +136,55 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
 
 /**
  * @swagger
+ * /api/articles/{articleId}/comments:
+ *   get:
+ *     summary: Get comments for an article
+ *     tags: [Articles, Comments]
+ *     parameters:
+ *       - in: path
+ *         name: articleId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of approved comments
+ *       404:
+ *         description: Article not found
+ */
+articlesRouter.get('/:articleId/comments', async (req: Request, res: Response) => {
+  try {
+    const { articleId } = req.params;
+
+    // Verify article exists
+    const article = await prisma.article.findUnique({
+      where: { id: articleId },
+    });
+
+    if (!article) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    // Get only approved comments, ordered by creation date (newest first)
+    const comments = await prisma.comment.findMany({
+      where: {
+        articleId,
+        isApproved: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    res.json(comments);
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
+ * @swagger
  * /api/articles/{slug}:
  *   get:
  *     summary: Get an article by slug
@@ -371,6 +420,146 @@ articlesRouter.get('/menu', async (req: Request, res: Response) => {
     res.json(formattedArticles);
   } catch (error) {
     console.error('Error fetching menu articles:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/articles/{articleId}/comments:
+ *   get:
+ *     summary: Get comments for an article
+ *     tags: [Articles, Comments]
+ *     parameters:
+ *       - in: path
+ *         name: articleId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of approved comments
+ *       404:
+ *         description: Article not found
+ */
+articlesRouter.get('/:articleId/comments', async (req: Request, res: Response) => {
+  try {
+    const { articleId } = req.params;
+
+    // Verify article exists
+    const article = await prisma.article.findUnique({
+      where: { id: articleId },
+    });
+
+    if (!article) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    // Get only approved comments, ordered by creation date (newest first)
+    const comments = await prisma.comment.findMany({
+      where: {
+        articleId,
+        isApproved: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    res.json(comments);
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/articles/{articleId}/comments:
+ *   post:
+ *     summary: Create a new comment for an article
+ *     tags: [Articles, Comments]
+ *     parameters:
+ *       - in: path
+ *         name: articleId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - message
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               message:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Comment created successfully
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Article not found
+ */
+articlesRouter.post('/:articleId/comments', async (req: Request, res: Response) => {
+  try {
+    const { articleId } = req.params;
+    const { name, email, message } = req.body;
+
+    // Validation
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'Name, email, and message are required' });
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    // Verify article exists
+    const article = await prisma.article.findUnique({
+      where: { id: articleId },
+    });
+
+    if (!article) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    // Create comment (approved by default)
+    const comment = await prisma.comment.create({
+      data: {
+        articleId,
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        message: message.trim(),
+        isApproved: true, // Comments are approved by default
+      },
+    });
+
+    // Return success message with comment data
+    res.status(201).json({
+      success: true,
+      message: 'Comment submitted successfully.',
+      comment: {
+        id: comment.id,
+        name: comment.name,
+        message: comment.message,
+        createdAt: comment.createdAt.toISOString(),
+        isApproved: comment.isApproved,
+      },
+    });
+  } catch (error) {
+    console.error('Error creating comment:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

@@ -76,26 +76,30 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        {/* Google Analytics 4 (gtag.js) */}
-        <Script
-          id="ga4-script"
-          src={`https://www.googletagmanager.com/gtag/js?id=G-MLKZZ27W2M`}
-          strategy="afterInteractive"
-        />
-        <Script
-          id="ga4-config"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-MLKZZ27W2M', {
-                send_page_view: true
-              });
-            `,
-          }}
-        />
+        {/* Google Analytics 4 (gtag.js) - Only load in production */}
+        {process.env.NODE_ENV === 'production' && (
+          <>
+            <Script
+              id="ga4-script"
+              src={`https://www.googletagmanager.com/gtag/js?id=G-MLKZZ27W2M`}
+              strategy="afterInteractive"
+            />
+            <Script
+              id="ga4-config"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', 'G-MLKZZ27W2M', {
+                    send_page_view: true
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
 
         {/* Structured Data (JSON-LD) for SEO - injected into head via beforeInteractive */}
         <Script
