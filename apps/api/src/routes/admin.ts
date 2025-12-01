@@ -291,18 +291,45 @@ adminRouter.get('/articles/:id', async (req: Request, res: Response) => {
 adminRouter.post('/articles', async (req: Request, res: Response) => {
   try {
     const data = articleSchema.parse(req.body);
+
+    // Normalize categoryId: convert empty string to null
+    let categoryId = data.categoryId;
+    if (categoryId === '' || categoryId === null || categoryId === undefined) {
+      categoryId = null;
+    } else {
+      // Validate that the category exists if categoryId is provided
+      const categoryExists = await prisma.category.findUnique({
+        where: { id: categoryId },
+      });
+      if (!categoryExists) {
+        return res.status(400).json({
+          error: 'Invalid category',
+          message: `Category with id "${categoryId}" does not exist`
+        });
+      }
+    }
+
     const article = await prisma.article.create({
       data: {
         ...data,
+        categoryId: categoryId,
         date: typeof data.date === 'string' ? new Date(data.date) : data.date,
       },
     });
     res.status(201).json(article);
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Validation error', details: error.errors });
     }
-    res.status(500).json({ error: 'Failed to create article' });
+    // Handle Prisma foreign key constraint errors
+    if (error?.code === 'P2003') {
+      return res.status(400).json({
+        error: 'Invalid category',
+        message: 'The provided category does not exist'
+      });
+    }
+    console.error('Error creating article:', error);
+    res.status(500).json({ error: 'Failed to create article', message: error?.message });
   }
 });
 
@@ -310,6 +337,25 @@ adminRouter.put('/articles/:id', async (req: Request, res: Response) => {
   try {
     const data = articleSchema.partial().parse(req.body);
     const updateData: any = { ...data };
+
+    // Normalize categoryId: convert empty string to null
+    if ('categoryId' in updateData) {
+      if (updateData.categoryId === '' || updateData.categoryId === null || updateData.categoryId === undefined) {
+        updateData.categoryId = null;
+      } else {
+        // Validate that the category exists if categoryId is provided
+        const categoryExists = await prisma.category.findUnique({
+          where: { id: updateData.categoryId },
+        });
+        if (!categoryExists) {
+          return res.status(400).json({
+            error: 'Invalid category',
+            message: `Category with id "${updateData.categoryId}" does not exist`
+          });
+        }
+      }
+    }
+
     if (data.date) {
       updateData.date = typeof data.date === 'string' ? new Date(data.date) : data.date;
     }
@@ -326,7 +372,15 @@ adminRouter.put('/articles/:id', async (req: Request, res: Response) => {
     if (error?.code === 'P2025') {
       return res.status(404).json({ error: 'Article not found' });
     }
-    res.status(500).json({ error: 'Failed to update article' });
+    // Handle Prisma foreign key constraint errors
+    if (error?.code === 'P2003') {
+      return res.status(400).json({
+        error: 'Invalid category',
+        message: 'The provided category does not exist'
+      });
+    }
+    console.error('Error updating article:', error);
+    res.status(500).json({ error: 'Failed to update article', message: error?.message });
   }
 });
 

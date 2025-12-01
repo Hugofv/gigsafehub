@@ -185,8 +185,8 @@ model ProductFeature {
 model Article {
   id              String        @id @default(uuid())
   slug            String        @unique // Default/English slug (for backward compatibility)
-  slugEn           String?       @unique // English slug
-  slugPt           String?       @unique // Portuguese slug
+  slugEn           String?       // English slug (not unique to allow redirects between languages)
+  slugPt           String?       // Portuguese slug (not unique to allow redirects between languages)
   title           String
   titleMenu       String?       // Title to display in navigation menu (different from article title)
   excerpt         String        @db.Text

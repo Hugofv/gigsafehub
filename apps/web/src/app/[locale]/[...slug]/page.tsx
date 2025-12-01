@@ -179,7 +179,15 @@ async function CategoryPage({ params }: CategoryPageProps) {
           };
 
           const categoryPath = buildCategoryPath(articleCategory, allCategories);
-          const expectedPath = [...categoryPath, lastSegment];
+
+          // Determine the correct article slug for the current locale
+          const correctArticleSlug = locale === 'pt-BR' && article.slugPt
+            ? article.slugPt
+            : locale === 'en-US' && article.slugEn
+              ? article.slugEn
+              : article.slug;
+
+          const expectedPath = [...categoryPath, correctArticleSlug];
           const currentPath = slug;
 
           // Check if current path matches expected path
@@ -220,7 +228,7 @@ async function CategoryPage({ params }: CategoryPageProps) {
               </>
             );
           } else {
-            // Path doesn't match, redirect to correct path
+            // Path doesn't match, redirect to correct path with the correct slug for the locale
             const correctPath = `/${locale}/${expectedPath.join('/')}`;
             redirect(correctPath);
           }

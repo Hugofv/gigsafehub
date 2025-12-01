@@ -13,6 +13,8 @@ const articleSchema = yup.object({
   title: yup.string().required('Title is required'),
   titleMenu: yup.string().optional(),
   slug: yup.string().required('Slug is required'),
+  slugEn: yup.string().optional(),
+  slugPt: yup.string().optional(),
   excerpt: yup.string().required('Excerpt is required'),
   content: yup.string().required('Content is required'),
   categoryId: yup.string().nullable().optional(),
@@ -51,6 +53,8 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
           title: article.title || '',
           titleMenu: article.titleMenu || '',
           slug: article.slug || '',
+          slugEn: article.slugEn || '',
+          slugPt: article.slugPt || '',
           excerpt: article.excerpt || '',
           content: article.content || '',
           categoryId: article.categoryId || null,
@@ -122,6 +126,46 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
               }`}
             />
             {errors.slug && <p className="mt-1 text-sm text-red-600">{errors.slug.message}</p>}
+            <p className="text-xs text-slate-500 mt-1">
+              Default/English slug (for backward compatibility)
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Slug (English)
+              <span className="text-slate-400 font-normal ml-2">(Optional)</span>
+            </label>
+            <input
+              {...register('slugEn')}
+              placeholder="English-specific slug"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
+                errors.slugEn ? 'border-red-300' : 'border-slate-300'
+              }`}
+            />
+            {errors.slugEn && <p className="mt-1 text-sm text-red-600">{errors.slugEn.message}</p>}
+            <p className="text-xs text-slate-500 mt-1">
+              If provided, this slug will be used for English locale URLs
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Slug (Portuguese)
+              <span className="text-slate-400 font-normal ml-2">(Optional)</span>
+            </label>
+            <input
+              {...register('slugPt')}
+              placeholder="Portuguese-specific slug"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
+                errors.slugPt ? 'border-red-300' : 'border-slate-300'
+              }`}
+            />
+            {errors.slugPt && <p className="mt-1 text-sm text-red-600">{errors.slugPt.message}</p>}
+            <p className="text-xs text-slate-500 mt-1">
+              If provided, this slug will be used for Portuguese locale URLs
+            </p>
           </div>
         </div>
 
