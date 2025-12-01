@@ -39,6 +39,7 @@
     "pino-pretty": "^11.2.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "twitter-api-v2": "^1.15.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

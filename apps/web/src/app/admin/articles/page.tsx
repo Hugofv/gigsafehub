@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { adminArticles, type Article } from '@/services/admin';
+import { adminArticles, type Article, type SocialMediaPlatform } from '@/services/admin';
 
 export default function ArticlesPage() {
   const router = useRouter();
@@ -13,6 +13,7 @@ export default function ArticlesPage() {
   const toast = useToast();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [publishing, setPublishing] = useState<{ [key: string]: SocialMediaPlatform[] }>({});
 
   useEffect(() => {
     if (user) {
@@ -43,6 +44,46 @@ export default function ArticlesPage() {
     } catch (error) {
       console.error('Error deleting article:', error);
       toast.error('Failed to delete article');
+    }
+  };
+
+  const handlePublishToSocialMedia = async (articleId: string, platform: SocialMediaPlatform) => {
+    if (!window.confirm(`Publish this article to ${platform.charAt(0).toUpperCase() + platform.slice(1)}?`)) {
+      return;
+    }
+
+    setPublishing((prev) => ({
+      ...prev,
+      [articleId]: [...(prev[articleId] || []), platform],
+    }));
+
+    try {
+      const result = await adminArticles.publishToSocialMedia(articleId, {
+        platforms: [platform],
+      });
+
+      const platformResult = result.results.find((r) => r.platform === platform);
+      if (platformResult?.success) {
+        toast.success(`Article published to ${platform.charAt(0).toUpperCase() + platform.slice(1)} successfully!`);
+      } else {
+        toast.error(
+          `Failed to publish to ${platform}: ${platformResult?.error || 'Unknown error'}`
+        );
+      }
+    } catch (error: any) {
+      console.error(`Error publishing to ${platform}:`, error);
+      toast.error(`Failed to publish to ${platform}: ${error.message || 'Unknown error'}`);
+    } finally {
+      setPublishing((prev) => {
+        const newState = { ...prev };
+        if (newState[articleId]) {
+          newState[articleId] = newState[articleId].filter((p) => p !== platform);
+          if (newState[articleId].length === 0) {
+            delete newState[articleId];
+          }
+        }
+        return newState;
+      });
     }
   };
 
@@ -82,6 +123,7 @@ export default function ArticlesPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Category</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Locale</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Social Media</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">Actions</th>
               </tr>
             </thead>
@@ -98,6 +140,79 @@ export default function ArticlesPage() {
                   <td className="px-6 py-4 text-sm text-slate-600">{article.locale}</td>
                   <td className="px-6 py-4 text-sm text-slate-600">
                     {typeof article.date === 'string' ? article.date : new Date(article.date).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handlePublishToSocialMedia(article.id, 'facebook')}
+                        disabled={publishing[article.id]?.includes('facebook')}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-[#1877F2] rounded-lg hover:bg-[#1565C0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                        title="Publish to Facebook"
+                      >
+                        {publishing[article.id]?.includes('facebook') ? (
+                          <>
+                            <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Publishing...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                            Facebook
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handlePublishToSocialMedia(article.id, 'instagram')}
+                        disabled={publishing[article.id]?.includes('instagram')}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg hover:from-purple-700 hover:to-pink-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                        title="Publish to Instagram"
+                      >
+                        {publishing[article.id]?.includes('instagram') ? (
+                          <>
+                            <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Publishing...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                            Instagram
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handlePublishToSocialMedia(article.id, 'twitter')}
+                        disabled={publishing[article.id]?.includes('twitter')}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-[#1DA1F2] rounded-lg hover:bg-[#0d8bd9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                        title="Publish to Twitter/X"
+                      >
+                        {publishing[article.id]?.includes('twitter') ? (
+                          <>
+                            <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Publishing...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
+                            X
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
                     <Link

@@ -418,3 +418,38 @@ adminRouter.delete('/articles/:id', async (req: Request, res: Response) => {
   }
 });
 
+// ============================================
+// SOCIAL MEDIA PUBLISHING
+// ============================================
+
+import { postArticleToSocialMedia, type SocialMediaPlatform } from '../services/socialMedia';
+
+const socialMediaPostSchema = z.object({
+  platforms: z.array(z.enum(['facebook', 'instagram', 'twitter'])),
+  customMessage: z.string().optional(),
+});
+
+adminRouter.post('/articles/:id/publish-social', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const data = socialMediaPostSchema.parse(req.body);
+
+    const results = await postArticleToSocialMedia({
+      articleId: id,
+      platforms: data.platforms as SocialMediaPlatform[],
+      customMessage: data.customMessage,
+    });
+
+    res.json({
+      success: results.every((r) => r.success),
+      results,
+    });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Validation error', details: error.errors });
+    }
+    console.error('Error publishing to social media:', error);
+    res.status(500).json({ error: error.message || 'Failed to publish to social media' });
+  }
+});
+
