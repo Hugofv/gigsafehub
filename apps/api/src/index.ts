@@ -149,7 +149,7 @@ app.use((req: Request, res: Response) => {
 // Error handler (must be last)
 app.use(errorHandler);
 
-const server = app.listen(config.port, () => {
+const server = app.listen(config.port, '0.0.0.0', () => {
   logger.info(`Server running on port ${config.port}`);
   logger.info(`Environment: ${config.nodeEnv}`);
   logger.info(`API Documentation: http://localhost:${config.port}/docs`);

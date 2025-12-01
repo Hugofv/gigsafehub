@@ -96,12 +96,6 @@ export default function AdminLogin() {
             </Link>
           </p>
         </div>
-
-        <div className="mt-4 p-4 bg-slate-50 rounded-lg text-xs text-slate-600">
-          <p className="font-semibold mb-2">Demo Credentials:</p>
-          <p>Email: admin@example.com</p>
-          <p>Password: password123</p>
-        </div>
       </div>
     </div>
   );
