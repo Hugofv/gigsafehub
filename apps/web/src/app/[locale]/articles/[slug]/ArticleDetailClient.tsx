@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useTranslation } from '@/contexts/I18nContext';
 import { normalizeImageUrl } from '@/lib/imageUtils';
 import CommentsSection from '@/components/Comments';
+import ShareButtons from '@/components/ShareButtons';
 
 interface Article {
   id: string;
@@ -62,6 +63,12 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
     });
   };
 
+  // Build article URL for sharing
+  const articleSlug = locale === 'pt-BR'
+    ? (article.slugPt || article.slug)
+    : (article.slugEn || article.slug);
+  const articleUrl = `/${locale}/${categorySlug}/${articleSlug}`;
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
@@ -85,7 +92,7 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
             <p className="text-xl text-slate-600 mb-6">{article.excerpt}</p>
           )}
 
-          <div className="flex items-center gap-4 text-sm text-slate-500">
+          <div className="flex items-center gap-4 text-sm text-slate-500 mb-6">
             <time dateTime={article.date}>{formatDate(article.date)}</time>
             {article.readingTime && (
               <>
@@ -105,6 +112,19 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
                 </div>
               </>
             )}
+          </div>
+
+          {/* Share Buttons */}
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-600 font-medium">
+              {locale === 'pt-BR' ? 'Compartilhar:' : 'Share:'}
+            </span>
+            <ShareButtons
+              url={articleUrl}
+              title={article.title}
+              description={article.excerpt}
+              locale={locale}
+            />
           </div>
         </div>
       </div>
