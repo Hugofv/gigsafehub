@@ -33,10 +33,13 @@ seoRouter.get('/sitemap.xml', async (req: Request, res: Response) => {
       },
     });
 
-    // Load categories to build full paths for category and article URLs
-    // We load all categories (including inactive) to ensure historical URLs
-    // for articles remain correct even if a category is later hidden from the UI.
+    // Load ONLY active categories to build full paths for category and article URLs.
+    // This ensures that paths in the sitemap never include inactive sections
+    // like "/comparador" once they are disabled in the taxonomy.
     const categories = await prisma.category.findMany({
+      where: {
+        isActive: true,
+      },
       select: {
         id: true,
         parentId: true,
@@ -49,6 +52,7 @@ seoRouter.get('/sitemap.xml', async (req: Request, res: Response) => {
     const articles = await prisma.article.findMany({
       where: {
         robotsIndex: true,
+
       },
       include: {
         category: {

@@ -7,6 +7,6 @@ export const config = {
     : ['http://localhost:3000', 'http://localhost:3001'],
   databaseUrl: process.env.DATABASE_URL || '',
   logLevel: process.env.LOG_LEVEL || 'info',
-  baseUrl: process.env.BASE_URL || 'http://localhost:4000',
+  baseUrl: process.env.BASE_URL || 'http://localhost:3000',
 };
 
