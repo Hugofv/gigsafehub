@@ -1,0 +1,16 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "pnpm"]
+
+[phases.install]
+cmds = [
+  # Install all workspace dependencies using pnpm
+  "pnpm install --frozen-lockfile"
+]
+
+# We intentionally do NOT define a [phases.build] or [start] here,
+# because each Railway service (API and Web) already defines its own
+# buildCommand and startCommand in its respective railway.json or
+# service settings. This file only ensures Nixpacks uses pnpm instead
+# of npm so that `workspace:*` dependencies work correctly.
+
+

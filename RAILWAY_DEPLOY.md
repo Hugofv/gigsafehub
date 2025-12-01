@@ -8,9 +8,59 @@ Este guia explica como fazer deploy do GigSafeHub na Railway.
 2. Git repository conectado
 3. PostgreSQL database na Railway (ou externo)
 
+## 🏗️ Arquitetura de Deploy
+
+### Opção A: 2 Serviços Separados (✅ Recomendado para Produção)
+
+**Estrutura:**
+- **Serviço 1**: API (Express/Node.js) - Backend
+- **Serviço 2**: Web (Next.js) - Frontend
+- **Serviço 3**: PostgreSQL Database
+
+**Vantagens:**
+- ✅ **Escalabilidade independente**: Escale API e Web separadamente conforme necessidade
+- ✅ **Isolamento de falhas**: Se um serviço cair, o outro continua funcionando
+- ✅ **Deploys independentes**: Atualize API sem afetar Web e vice-versa
+- ✅ **Otimização de recursos**: Configure recursos diferentes para cada serviço
+- ✅ **Melhor para produção**: Arquitetura profissional e robusta
+- ✅ **Logs separados**: Mais fácil debugar problemas específicos
+
+**Desvantagens:**
+- ⚠️ Mais serviços para gerenciar (mas Railway facilita isso)
+- ⚠️ Custo ligeiramente maior (mas ainda muito acessível)
+
+**Custo estimado**: ~$10-20/mês (2 serviços + database)
+
+---
+
+### Opção B: 1 Serviço Único (⚠️ Não recomendado para produção)
+
+**Estrutura:**
+- **Serviço 1**: API + Web juntos (usando Next.js API Routes ou proxy)
+- **Serviço 2**: PostgreSQL Database
+
+**Como fazer:**
+- Usar Next.js API Routes em vez de API Express separada
+- Ou usar Next.js como proxy reverso para a API Express no mesmo serviço
+
+**Vantagens:**
+- ✅ Mais barato (1 serviço)
+- ✅ Mais simples de gerenciar inicialmente
+
+**Desvantagens:**
+- ❌ **Não escalável**: API e Web compartilham os mesmos recursos
+- ❌ **Deploys acoplados**: Qualquer mudança força rebuild de tudo
+- ❌ **Risco maior**: Se um componente falhar, tudo para
+- ❌ **Performance**: Next.js e Express competem pelos mesmos recursos
+- ❌ **Não recomendado para produção**
+
+**Custo estimado**: ~$5-10/mês (1 serviço + database)
+
+---
+
 ## 🚀 Deploy
 
-### Opção 1: Deploy via GitHub (Recomendado)
+### Opção 1: Deploy via GitHub (Recomendado) - 2 Serviços
 
 1. **Conecte seu repositório**:
    - Acesse [Railway Dashboard](https://railway.app/dashboard)
@@ -182,8 +232,16 @@ Após o deploy:
 **Solução:**
 ```bash
 # Adicione ao build command:
-cd ../.. && pnpm install && cd apps/api && pnpm build
+cd ../.. && pnpm install --frozen-lockfile && cd apps/api && pnpm build
 ```
+
+**Erro: "ERR_PNPM_NO_SCRIPT_OR_SERVER Missing script start or file server.js"**
+- ⚠️ **CAUSA**: O Railway está tentando executar `pnpm start` no diretório raiz do projeto
+- **SOLUÇÃO**: Configure o `Root Directory` no Settings de cada serviço:
+  - Para o serviço API: `apps/api`
+  - Para o serviço Web: `apps/web`
+- **Verificação**: No Railway Dashboard → Service → Settings → Root Directory deve estar configurado
+- **Nota**: Os arquivos `railway.json` em `apps/api/` e `apps/web/` já estão configurados corretamente
 
 ### Database Connection Fails
 
@@ -229,13 +287,22 @@ Para atualizar o deploy:
 ## 💰 Custos
 
 Railway oferece:
-- **Free tier**: $5 créditos/mês
-- **Hobby**: $20/mês
-- **Pro**: $100/mês
+- **Free tier**: $5 créditos/mês (suficiente para testes)
+- **Hobby**: $20/mês (recomendado para produção pequena/média)
+- **Pro**: $100/mês (para alta escala)
 
-Para produção, considere:
-- PostgreSQL: ~$5-10/mês
-- 2 serviços (API + Web): ~$10-20/mês
+### Custo Estimado - 2 Serviços (Recomendado):
+- PostgreSQL Database: ~$5-10/mês
+- API Service: ~$5-10/mês
+- Web Service: ~$5-10/mês
+- **Total**: ~$15-30/mês
+
+### Custo Estimado - 1 Serviço (Não recomendado):
+- PostgreSQL Database: ~$5-10/mês
+- Serviço único (API + Web): ~$5-10/mês
+- **Total**: ~$10-20/mês
+
+**Nota**: A diferença de custo é pequena, mas os benefícios de 2 serviços são significativos para produção.
 
 ## 🔐 Segurança
 
