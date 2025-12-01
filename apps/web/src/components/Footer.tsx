@@ -19,12 +19,18 @@ const Footer: React.FC = () => {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href={getLink('/about')} className="hover:text-white transition-colors">
+                <Link 
+                  href={getLink(locale === 'pt-BR' ? '/sobre-nos' : '/about')} 
+                  className="hover:text-white transition-colors"
+                >
                   {locale === 'pt-BR' ? 'Sobre o GigSafeHub' : 'About GigSafeHub'}
                 </Link>
               </li>
               <li>
-                <Link href={getLink('/about#mission')} className="hover:text-white transition-colors">
+                <Link 
+                  href={getLink(locale === 'pt-BR' ? '/sobre-nos#mission' : '/about#mission')} 
+                  className="hover:text-white transition-colors"
+                >
                   {locale === 'pt-BR' ? 'Nossa Missão' : 'Our Mission'}
                 </Link>
               </li>

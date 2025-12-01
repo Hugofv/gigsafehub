@@ -30,6 +30,16 @@ export function middleware(request: NextRequest) {
       if (slug === 'termos-de-uso') {
         return NextResponse.redirect(new URL('/en-US/terms-of-use', request.url));
       }
+      if (slug === 'sobre-nos') {
+        return NextResponse.redirect(new URL('/en-US/about', request.url));
+      }
+    }
+
+    // Redirect old /about slug to locale-specific slug
+    if (slug === 'about') {
+      if (locale === 'pt-BR') {
+        return NextResponse.redirect(new URL('/pt-BR/sobre-nos', request.url));
+      }
     }
   }
 

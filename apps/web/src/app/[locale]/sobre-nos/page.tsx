@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: AboutPageProps): Promise<Meta
     ? 'sobre gigsafehub, missão, valores, gig economy, seguros para freelancers, comparação de seguros, insurtech'
     : 'about gigsafehub, mission, values, gig economy, insurance for freelancers, insurance comparison, insurtech';
 
-  const pageUrl = `${baseUrl}/${locale}/about`;
+  const pageUrl = `${baseUrl}/${locale}/sobre-nos`;
   const currentDate = new Date().toISOString();
 
   return {
@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: AboutPageProps): Promise<Meta
 export default async function AboutPage({ params }: AboutPageProps) {
   const { locale } = await params;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const pageUrl = `${baseUrl}/${locale}/about`;
+  const pageUrl = `${baseUrl}/${locale}/sobre-nos`;
   const currentDate = new Date().toISOString();
 
   const breadcrumbItems = [
@@ -94,3 +94,4 @@ export default async function AboutPage({ params }: AboutPageProps) {
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+

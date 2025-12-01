@@ -52,16 +52,31 @@ export default function TermsPageClient({ locale }: TermsPageClientProps) {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <header className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-            {t('legal.termsTitle')}
+            {t('legal.termsTitle')} – GigSafeHub
           </h1>
           <p className="text-slate-600">
             <time dateTime={lastUpdated} className="font-medium">
-              {t('legal.lastUpdated')}: {formattedDate}
+              {locale === 'pt-BR' ? 'Atualizado em' : 'Last Updated'}: {formattedDate}
             </time>
           </p>
         </header>
 
         <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8 md:p-12">
+          {/* Introduction */}
+          <div className="prose prose-lg max-w-none prose-slate [&_ul]:list-none mb-8">
+            <p className="text-slate-700 leading-relaxed">
+              {locale === 'pt-BR' ? (
+                <>
+                  Bem-vindo ao GigSafeHub. Ao acessar ou utilizar nosso site, você concorda com estes Termos de Uso. Leia atentamente, pois eles estabelecem regras, responsabilidades e limitações importantes para o uso de nossa plataforma de comparação e educação sobre seguros voltada para trabalhadores da Gig Economy.
+                </>
+              ) : (
+                <>
+                  Welcome to GigSafeHub. By accessing or using our website, you agree to these Terms of Use. Please read carefully, as they establish important rules, responsibilities, and limitations for using our insurance comparison and education platform for Gig Economy workers.
+                </>
+              )}
+            </p>
+          </div>
+
           {/* Table of Contents */}
           <nav
             aria-label="Table of contents"
@@ -87,25 +102,46 @@ export default function TermsPageClient({ locale }: TermsPageClientProps) {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <a
+                href="#platform-objective"
+                className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
+              >
+                <span className="text-brand-400 group-hover:text-brand-600">•</span>
+                {locale === 'pt-BR' ? '1. Objetivo da Plataforma' : '1. Platform Objective'}
+              </a>
+              <a
                 href="#acceptance"
                 className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
               >
                 <span className="text-brand-400 group-hover:text-brand-600">•</span>
-                {t('legal.acceptance')}
+                {locale === 'pt-BR' ? '2. Aceitação dos Termos' : '2. Acceptance of Terms'}
               </a>
               <a
-                href="#use-of-service"
+                href="#permitted-use"
                 className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
               >
                 <span className="text-brand-400 group-hover:text-brand-600">•</span>
-                {t('legal.useOfService')}
+                {locale === 'pt-BR' ? '3. Uso Permitido da Plataforma' : '3. Permitted Use of Platform'}
               </a>
               <a
-                href="#user-accounts"
+                href="#information-nature"
                 className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
               >
                 <span className="text-brand-400 group-hover:text-brand-600">•</span>
-                {t('legal.userAccounts')}
+                {locale === 'pt-BR' ? '4. Natureza das Informações' : '4. Information Nature'}
+              </a>
+              <a
+                href="#partners"
+                className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
+              >
+                <span className="text-brand-400 group-hover:text-brand-600">•</span>
+                {locale === 'pt-BR' ? '5. Relacionamento com Parceiros' : '5. Partner Relationships'}
+              </a>
+              <a
+                href="#registration"
+                className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
+              >
+                <span className="text-brand-400 group-hover:text-brand-600">•</span>
+                {locale === 'pt-BR' ? '6. Cadastro e Interações' : '6. Registration and Interactions'}
               </a>
               <a
                 href="#intellectual-property"
@@ -115,277 +151,595 @@ export default function TermsPageClient({ locale }: TermsPageClientProps) {
                 {t('legal.intellectualProperty')}
               </a>
               <a
-                href="#disclaimer"
+                href="#external-links"
                 className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
               >
                 <span className="text-brand-400 group-hover:text-brand-600">•</span>
-                {t('legal.disclaimer')}
+                {locale === 'pt-BR' ? '8. Links Externos' : '8. External Links'}
+              </a>
+              <a
+                href="#user-responsibility"
+                className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
+              >
+                <span className="text-brand-400 group-hover:text-brand-600">•</span>
+                {locale === 'pt-BR' ? '9. Responsabilidade do Usuário' : '9. User Responsibility'}
               </a>
               <a
                 href="#limitation-liability"
                 className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
               >
                 <span className="text-brand-400 group-hover:text-brand-600">•</span>
-                {t('legal.limitationOfLiability')}
+                {locale === 'pt-BR' ? '10. Limitação de Responsabilidade' : '10. Limitation of Liability'}
               </a>
               <a
-                href="#indemnification"
+                href="#cookies-data"
                 className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
               >
                 <span className="text-brand-400 group-hover:text-brand-600">•</span>
-                {t('legal.indemnification')}
-              </a>
-              <a
-                href="#governing-law"
-                className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
-              >
-                <span className="text-brand-400 group-hover:text-brand-600">•</span>
-                {t('legal.governingLaw')}
+                {locale === 'pt-BR' ? '11. Cookies e Dados' : '11. Cookies and Data'}
               </a>
               <a
                 href="#terms-changes"
                 className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
               >
                 <span className="text-brand-400 group-hover:text-brand-600">•</span>
-                {t('legal.changesToTerms')}
+                {locale === 'pt-BR' ? '12. Modificações nos Termos' : '12. Changes to Terms'}
               </a>
               <a
                 href="#contact"
                 className="text-sm text-slate-700 hover:text-brand-600 hover:bg-white px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-2 group"
               >
                 <span className="text-brand-400 group-hover:text-brand-600">•</span>
-                {t('legal.contactUs')}
+                {locale === 'pt-BR' ? '13. Contato' : '13. Contact'}
               </a>
             </div>
           </nav>
 
-          <div className="prose prose-lg max-w-none prose-slate">
-            <section id="acceptance" className="mb-12 scroll-mt-8">
+          <div className="prose prose-lg max-w-none prose-slate [&_ul]:list-none">
+            {/* Section 1: Platform Objective */}
+            <section id="platform-objective" className="mb-12 scroll-mt-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.acceptance')}
-              </h2>
-            <p className="text-slate-700 leading-relaxed mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  Ao acessar e usar o GigSafeHub, você aceita e concorda em ficar vinculado aos termos e
-                  condições desta política. Se você não concordar com qualquer parte destes termos,
-                  não deve usar nosso serviço.
-                </>
-              ) : (
-                <>
-                  By accessing and using GigSafeHub, you accept and agree to be bound by the terms and
-                  conditions of this policy. If you do not agree to any part of these terms,
-                  you should not use our service.
-                </>
-              )}
-            </p>
-          </section>
-
-            <section id="use-of-service" className="mb-12 scroll-mt-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.useOfService')}
-              </h2>
-            <p className="text-slate-700 leading-relaxed mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  Você concorda em usar nosso serviço apenas para fins legais e de acordo com estes Termos.
-                  Você não deve:
-                </>
-              ) : (
-                <>
-                  You agree to use our service only for lawful purposes and in accordance with these Terms.
-                  You must not:
-                </>
-              )}
-            </p>
-            <ul className="text-slate-700 space-y-2 mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  <li className="pl-8">Violar qualquer lei ou regulamento aplicável</li>
-                  <li className="pl-8">Infringir os direitos de propriedade intelectual de terceiros</li>
-                  <li className="pl-8">Transmitir qualquer conteúdo malicioso, vírus ou código prejudicial</li>
-                  <li className="pl-8">Tentar obter acesso não autorizado ao nosso sistema</li>
-                  <li className="pl-8">Usar o serviço para qualquer propósito fraudulento ou enganoso</li>
-                </>
-              ) : (
-                <>
-                  <li className="pl-8">Violate any applicable law or regulation</li>
-                  <li className="pl-8">Infringe upon the intellectual property rights of others</li>
-                  <li className="pl-8">Transmit any malicious content, viruses, or harmful code</li>
-                  <li className="pl-8">Attempt to gain unauthorized access to our system</li>
-                  <li className="pl-8">Use the service for any fraudulent or deceptive purpose</li>
-                </>
-              )}
-            </ul>
-          </section>
-
-            <section id="user-accounts" className="mb-12 scroll-mt-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.userAccounts')}
-              </h2>
-            <p className="text-slate-700 leading-relaxed mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  Se você criar uma conta em nosso site, é responsável por manter a confidencialidade de
-                  sua conta e senha. Você concorda em aceitar responsabilidade por todas as atividades que
-                  ocorram sob sua conta.
-                </>
-              ) : (
-                <>
-                  If you create an account on our website, you are responsible for maintaining the
-                  confidentiality of your account and password. You agree to accept responsibility for
-                  all activities that occur under your account.
-                </>
-              )}
-            </p>
-          </section>
-
-            <section id="intellectual-property" className="mb-12 scroll-mt-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.intellectualProperty')}
-              </h2>
-            <p className="text-slate-700 leading-relaxed mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  Todo o conteúdo do site, incluindo textos, gráficos, logos, ícones, imagens, clipes de áudio,
-                  downloads digitais e compilações de dados, é propriedade do GigSafeHub ou de seus fornecedores
-                  de conteúdo e está protegido por leis de direitos autorais.
-                </>
-              ) : (
-                <>
-                  All content on the website, including text, graphics, logos, icons, images, audio clips,
-                  digital downloads, and data compilations, is the property of GigSafeHub or its content
-                  suppliers and is protected by copyright laws.
-                </>
-              )}
-            </p>
-          </section>
-
-            <section id="disclaimer" className="mb-12 scroll-mt-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.disclaimer')}
-              </h2>
-            <p className="text-slate-700 leading-relaxed mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  As informações fornecidas no GigSafeHub são apenas para fins informativos gerais.
-                  Não fornecemos aconselhamento financeiro, legal ou profissional. Você deve consultar
-                  profissionais qualificados antes de tomar decisões financeiras importantes.
-                </>
-              ) : (
-                <>
-                  The information provided on GigSafeHub is for general informational purposes only.
-                  We do not provide financial, legal, or professional advice. You should consult with
-                  qualified professionals before making important financial decisions.
-                </>
-              )}
-            </p>
-          </section>
-
-            <section id="limitation-liability" className="mb-12 scroll-mt-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.limitationOfLiability')}
-              </h2>
-            <p className="text-slate-700 leading-relaxed mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  Na máxima extensão permitida por lei, o GigSafeHub não será responsável por quaisquer
-                  danos diretos, indiretos, incidentais, especiais ou consequenciais resultantes do uso
-                  ou incapacidade de usar nosso serviço.
-                </>
-              ) : (
-                <>
-                  To the maximum extent permitted by law, GigSafeHub shall not be liable for any direct,
-                  indirect, incidental, special, or consequential damages resulting from the use or
-                  inability to use our service.
-                </>
-              )}
-            </p>
-          </section>
-
-            <section id="indemnification" className="mb-12 scroll-mt-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.indemnification')}
-              </h2>
-            <p className="text-slate-700 leading-relaxed mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  Você concorda em indenizar e isentar o GigSafeHub de qualquer reclamação, dano,
-                  obrigação, perda, responsabilidade, custo ou dívida, e despesas (incluindo honorários
-                  advocatícios) decorrentes de seu uso do serviço ou violação destes Termos.
-                </>
-              ) : (
-                <>
-                  You agree to indemnify and hold harmless GigSafeHub from any claim, damage, obligation,
-                  loss, liability, cost, or debt, and expenses (including attorney&apos;s fees) arising
-                  from your use of the service or violation of these Terms.
-                </>
-              )}
-            </p>
-          </section>
-
-            <section id="governing-law" className="mb-12 scroll-mt-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.governingLaw')}
-              </h2>
-            <p className="text-slate-700 leading-relaxed mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  Estes Termos serão regidos e interpretados de acordo com as leis do Brasil, sem dar
-                  efeito a quaisquer princípios de conflitos de leis.
-                </>
-              ) : (
-                <>
-                  These Terms shall be governed and construed in accordance with the laws of the United States,
-                  without regard to its conflict of law provisions.
-                </>
-              )}
-            </p>
-          </section>
-
-            <section id="terms-changes" className="mb-12 scroll-mt-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.changesToTerms')}
-              </h2>
-            <p className="text-slate-700 leading-relaxed mb-4">
-              {locale === 'pt-BR' ? (
-                <>
-                  Reservamo-nos o direito de modificar ou substituir estes Termos a qualquer momento.
-                  Se uma revisão for material, tentaremos fornecer pelo menos 30 dias de aviso antes
-                  de quaisquer novos termos entrarem em vigor.
-                </>
-              ) : (
-                <>
-                  We reserve the right to modify or replace these Terms at any time. If a revision is
-                  material, we will try to provide at least 30 days notice prior to any new terms taking effect.
-                </>
-              )}
-            </p>
-          </section>
-
-            <section id="contact" className="mb-12 scroll-mt-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                {t('legal.contactUs')}
+                {locale === 'pt-BR' ? '1. Objetivo da Plataforma' : '1. Platform Objective'}
               </h2>
               <p className="text-slate-700 leading-relaxed mb-4">
                 {locale === 'pt-BR' ? (
                   <>
-                    Se você tiver dúvidas sobre estes Termos de Uso, entre em contato conosco através
-                    da página de contato ou envie um email para{' '}
-                    <a href="mailto:contato@gigsafehub.com" className="text-brand-600 hover:text-brand-700 underline">
-                      contato@gigsafehub.com
-                    </a>
+                    O GigSafeHub é uma plataforma informativa que oferece:
                   </>
                 ) : (
                   <>
-                    If you have questions about these Terms of Use, please contact us through the contact page
-                    or send an email to{' '}
-                    <a href="mailto:contato@gigsafehub.com" className="text-brand-600 hover:text-brand-700 underline">
-                      contato@gigsafehub.com
-                    </a>
+                    GigSafeHub is an informative platform that offers:
                   </>
                 )}
               </p>
+              <ul className="text-slate-700 space-y-2 mb-4">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Comparação de seguros e produtos financeiros;' : 'Comparison of insurance and financial products;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Conteúdos educativos sobre proteção financeira, seguros e riscos;' : 'Educational content about financial protection, insurance, and risks;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Ferramentas de recomendação e apoio para gig workers.' : 'Recommendation tools and support for gig workers.'}
+                </li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Nosso propósito é fornecer informações independentes, imparciais e acessíveis, conforme definido em nossa missão oficial.
+                  </>
+                ) : (
+                  <>
+                    Our purpose is to provide independent, impartial, and accessible information, as defined in our official mission.
+                  </>
+                )}
+              </p>
+              <div className="bg-amber-50 border-l-4 border-amber-400 p-4 my-4">
+                <p className="text-slate-800 font-semibold mb-2">
+                  {locale === 'pt-BR' ? 'Importante:' : 'Important:'}
+                </p>
+                <p className="text-slate-700">
+                  {locale === 'pt-BR' ? (
+                    <>
+                      O GigSafeHub não vende seguros diretamente. As contratações finais são feitas com seguradoras ou parceiros autorizados.
+                    </>
+                  ) : (
+                    <>
+                      GigSafeHub does not sell insurance directly. Final contracts are made with insurers or authorized partners.
+                    </>
+                  )}
+                </p>
+              </div>
+            </section>
+
+            {/* Section 2: Acceptance of Terms */}
+            <section id="acceptance" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '2. Aceitação dos Termos' : '2. Acceptance of Terms'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Ao acessar o site, utilizar o comparador ou consumir qualquer conteúdo, você declara que:
+                  </>
+                ) : (
+                  <>
+                    By accessing the site, using the comparator, or consuming any content, you declare that:
+                  </>
+                )}
+              </p>
+              <ul className="text-slate-700 space-y-2 mb-4">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Leu e concordou com estes Termos;' : 'You have read and agreed to these Terms;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'É maior de 18 anos ou possui autorização legal;' : 'You are 18 years or older or have legal authorization;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Não utilizará o site de forma indevida.' : 'You will not use the site improperly.'}
+                </li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Caso não concorde, não utilize a plataforma.
+                  </>
+                ) : (
+                  <>
+                    If you do not agree, do not use the platform.
+                  </>
+                )}
+              </p>
+            </section>
+
+            {/* Section 3: Permitted Use */}
+            <section id="permitted-use" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '3. Uso Permitido da Plataforma' : '3. Permitted Use of Platform'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Você pode usar o GigSafeHub para:
+                  </>
+                ) : (
+                  <>
+                    You can use GigSafeHub to:
+                  </>
+                )}
+              </p>
+              <ul className="text-slate-700 space-y-2 mb-6">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Ler artigos e guias;' : 'Read articles and guides;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Comparar produtos de seguros;' : 'Compare insurance products;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Solicitar recomendações e orientações;' : 'Request recommendations and guidance;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Entrar em contato com nossa equipe;' : 'Contact our team;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Compartilhar conteúdos citando a fonte.' : 'Share content citing the source.'}
+                </li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed mb-4 font-semibold">
+                {locale === 'pt-BR' ? 'É proibido:' : 'It is prohibited:'}
+              </p>
+              <ul className="text-slate-700 space-y-2">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Copiar grandes trechos de conteúdo sem autorização;' : 'Copy large portions of content without authorization;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Utilizar robôs, scraping ou automações sem consentimento;' : 'Use robots, scraping, or automation without consent;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Distribuir informações falsas ou difamatórias;' : 'Distribute false or defamatory information;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Invadir sistemas, alterar código ou comprometer a segurança.' : 'Invade systems, alter code, or compromise security.'}
+                </li>
+              </ul>
+            </section>
+
+            {/* Section 4: Information Nature */}
+            <section id="information-nature" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '4. Natureza das Informações e Limitadores' : '4. Information Nature and Limitations'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Apesar de nossa equipe fazer análises criteriosas, o GigSafeHub não garante que:
+                  </>
+                ) : (
+                  <>
+                    Despite our team making careful analyses, GigSafeHub does not guarantee that:
+                  </>
+                )}
+              </p>
+              <ul className="text-slate-700 space-y-2 mb-4">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Os preços exibidos estejam sempre atualizados;' : 'The displayed prices are always up to date;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'As condições dos seguros sejam estáveis (podem mudar a qualquer momento pela seguradora);' : 'Insurance conditions are stable (they may change at any time by the insurer);'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'As informações substituam aconselhamento profissional especializado.' : 'The information replaces specialized professional advice.'}
+                </li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed">
+                {locale === 'pt-BR' ? (
+                  <>
+                    As recomendações são educacionais, baseadas em critérios imparciais e orientados à segurança do gig worker, conforme nossa missão central.
+                  </>
+                ) : (
+                  <>
+                    Recommendations are educational, based on impartial criteria and oriented to gig worker safety, in accordance with our core mission.
+                  </>
+                )}
+              </p>
+            </section>
+
+            {/* Section 5: Partners */}
+            <section id="partners" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '5. Relacionamento com Seguradoras e Parceiros' : '5. Relationship with Insurers and Partners'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    O GigSafeHub pode receber remuneração ao indicar seguradoras parceiras, mas isso não influencia:
+                  </>
+                ) : (
+                  <>
+                    GigSafeHub may receive compensation for referring partner insurers, but this does not influence:
+                  </>
+                )}
+              </p>
+              <ul className="text-slate-700 space-y-2 mb-4">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'As análises publicadas' : 'Published analyses'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'As avaliações de produtos' : 'Product evaluations'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'O posicionamento dos artigos' : 'Article positioning'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'As comparações exibidas' : 'Displayed comparisons'}
+                </li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Nosso compromisso é com a transparência, independência e imparcialidade, valores fundamentais do projeto.
+                  </>
+                ) : (
+                  <>
+                    Our commitment is to transparency, independence, and impartiality, fundamental values of the project.
+                  </>
+                )}
+              </p>
+            </section>
+
+            {/* Section 6: Registration */}
+            <section id="registration" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '6. Cadastro e Interações' : '6. Registration and Interactions'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Ao preencher formulários, você concorda em fornecer informações verdadeiras e atualizadas.
+                    Podemos entrar em contato por e-mail ou telefone (somente se você fornecer esses dados voluntariamente).
+                  </>
+                ) : (
+                  <>
+                    By filling out forms, you agree to provide true and updated information.
+                    We may contact you by email or phone (only if you voluntarily provide this data).
+                  </>
+                )}
+              </p>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Você é responsável por:
+                  </>
+                ) : (
+                  <>
+                    You are responsible for:
+                  </>
+                )}
+              </p>
+              <ul className="text-slate-700 space-y-2">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Manter seus dados corretos;' : 'Keeping your data correct;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Não enviar informações de terceiros sem consentimento;' : 'Not sending third-party information without consent;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Utilizar os recursos da plataforma de forma lícita.' : 'Using platform resources lawfully.'}
+                </li>
+              </ul>
+            </section>
+
+            {/* Section 7: Intellectual Property */}
+            <section id="intellectual-property" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '7. Propriedade Intelectual' : '7. Intellectual Property'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Todo o conteúdo do site — textos, imagens, gráficos, artigos, comparadores, marca e identidade visual — pertence ao GigSafeHub.
+                  </>
+                ) : (
+                  <>
+                    All site content — texts, images, graphics, articles, comparators, brand, and visual identity — belongs to GigSafeHub.
+                  </>
+                )}
+              </p>
+              <p className="text-slate-700 leading-relaxed mb-4 font-semibold">
+                {locale === 'pt-BR' ? 'Proibido:' : 'Prohibited:'}
+              </p>
+              <ul className="text-slate-700 space-y-2 mb-6">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Copiar, republicar ou distribuir conteúdo sem autorização;' : 'Copy, republish, or distribute content without authorization;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Usar nossa marca comercial indevidamente;' : 'Use our trademark improperly;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Criar sites ou serviços derivados usando nossa identidade.' : 'Create sites or derivative services using our identity.'}
+                </li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed mb-4 font-semibold">
+                {locale === 'pt-BR' ? 'Permitido:' : 'Permitted:'}
+              </p>
+              <ul className="text-slate-700 space-y-2">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Citar trechos com link para a fonte;' : 'Quote excerpts with link to source;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Compartilhar conteúdos em redes sociais.' : 'Share content on social networks.'}
+                </li>
+              </ul>
+            </section>
+
+            {/* Section 8: External Links */}
+            <section id="external-links" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '8. Links Externos' : '8. External Links'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Algumas páginas incluem links para sites externos (seguradoras, parceiros ou materiais educativos). O GigSafeHub não se responsabiliza por:
+                  </>
+                ) : (
+                  <>
+                    Some pages include links to external sites (insurers, partners, or educational materials). GigSafeHub is not responsible for:
+                  </>
+                )}
+              </p>
+              <ul className="text-slate-700 space-y-2 mb-4">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Conteúdos externos;' : 'External content;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Políticas de privacidade desses serviços;' : 'Privacy policies of these services;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Informações divergentes apresentadas fora da plataforma.' : 'Divergent information presented outside the platform.'}
+                </li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Ao acessar links externos, você estará sujeito aos termos e políticas do site de destino.
+                  </>
+                ) : (
+                  <>
+                    By accessing external links, you will be subject to the terms and policies of the destination site.
+                  </>
+                )}
+              </p>
+            </section>
+
+            {/* Section 9: User Responsibility */}
+            <section id="user-responsibility" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '9. Responsabilidade do Usuário' : '9. User Responsibility'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Você concorda em:
+                  </>
+                ) : (
+                  <>
+                    You agree to:
+                  </>
+                )}
+              </p>
+              <ul className="text-slate-700 space-y-2">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Utilizar as informações de modo responsável;' : 'Use information responsibly;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Não prejudicar a experiência de outros usuários;' : 'Not harm the experience of other users;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Respeitar leis de proteção de dados (LGPD);' : 'Respect data protection laws (LGPD);'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Não tentar explorar vulnerabilidades do sistema.' : 'Not attempt to exploit system vulnerabilities.'}
+                </li>
+              </ul>
+            </section>
+
+            {/* Section 10: Limitation of Liability */}
+            <section id="limitation-liability" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '10. Limitação de Responsabilidade' : '10. Limitation of Liability'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    O GigSafeHub não se responsabiliza por:
+                  </>
+                ) : (
+                  <>
+                    GigSafeHub is not responsible for:
+                  </>
+                )}
+              </p>
+              <ul className="text-slate-700 space-y-2 mb-4">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Decisões tomadas com base nas informações do site;' : 'Decisions made based on site information;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Perdas financeiras decorrentes da contratação ou não contratação de seguros;' : 'Financial losses resulting from contracting or not contracting insurance;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Dados incorretos fornecidos por seguradoras parceiras;' : 'Incorrect data provided by partner insurers;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Interrupções temporárias no site.' : 'Temporary site interruptions.'}
+                </li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Nosso papel é informar, comparar e educar, não garantir resultado financeiro ou cobertura específica.
+                  </>
+                ) : (
+                  <>
+                    Our role is to inform, compare, and educate, not to guarantee financial results or specific coverage.
+                  </>
+                )}
+              </p>
+            </section>
+
+            {/* Section 11: Cookies and Data */}
+            <section id="cookies-data" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '11. Cookies e Dados' : '11. Cookies and Data'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Ao utilizar o site, você concorda com o uso de cookies e armazenamento de dados conforme nossa Política de Privacidade.
+                  </>
+                ) : (
+                  <>
+                    By using the site, you agree to the use of cookies and data storage in accordance with our Privacy Policy.
+                  </>
+                )}
+              </p>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Esses dados são usados para:
+                  </>
+                ) : (
+                  <>
+                    This data is used to:
+                  </>
+                )}
+              </p>
+              <ul className="text-slate-700 space-y-2 mb-4">
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Melhorar sua experiência;' : 'Improve your experience;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Personalizar conteúdo;' : 'Personalize content;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Criar recomendações;' : 'Create recommendations;'}
+                </li>
+                <li className="pl-8">
+                  {locale === 'pt-BR' ? 'Análises estatísticas.' : 'Statistical analyses.'}
+                </li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed italic">
+                {locale === 'pt-BR' ? (
+                  <>
+                    (Lembre-se: seus dados nunca são vendidos. Veja detalhes na Política de Privacidade.)
+                  </>
+                ) : (
+                  <>
+                    (Remember: your data is never sold. See details in the Privacy Policy.)
+                  </>
+                )}
+              </p>
+            </section>
+
+            {/* Section 12: Changes to Terms */}
+            <section id="terms-changes" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '12. Modificações nos Termos de Uso' : '12. Changes to Terms of Use'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    O GigSafeHub pode atualizar estes Termos a qualquer momento.
+                    A versão mais recente sempre estará disponível nesta página.
+                  </>
+                ) : (
+                  <>
+                    GigSafeHub may update these Terms at any time.
+                    The most recent version will always be available on this page.
+                  </>
+                )}
+              </p>
+              <p className="text-slate-700 leading-relaxed">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Se houver mudanças relevantes, informaremos por e-mail ou aviso no site.
+                  </>
+                ) : (
+                  <>
+                    If there are relevant changes, we will notify you by email or notice on the site.
+                  </>
+                )}
+              </p>
+            </section>
+
+            {/* Section 13: Contact */}
+            <section id="contact" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? '13. Contato' : '13. Contact'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Para dúvidas sobre estes Termos de Uso:
+                  </>
+                ) : (
+                  <>
+                    For questions about these Terms of Use:
+                  </>
+                )}
+              </p>
+              <div className="space-y-2">
+                <p className="text-slate-700">
+                  <a href="mailto:contato@gigsafehub.com" className="text-brand-600 hover:text-brand-700 underline">
+                    📩 contato@gigsafehub.com
+                  </a>
+                </p>
+                <p className="text-slate-700">
+                  <a href="https://gigsafehub.com" className="text-brand-600 hover:text-brand-700 underline">
+                    🌐 gigsafehub.com
+                  </a>
+                </p>
+              </div>
             </section>
           </div>
 
@@ -458,4 +812,3 @@ export default function TermsPageClient({ locale }: TermsPageClientProps) {
     </div>
   );
 }
-

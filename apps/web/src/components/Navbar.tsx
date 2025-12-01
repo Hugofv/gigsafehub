@@ -175,7 +175,10 @@ const Navbar: React.FC = () => {
                 );
               })}
 
-              <Link href={getLink('/about')} className={linkClass('/about')}>
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/sobre-nos' : '/about')}
+                className={linkClass(locale === 'pt-BR' ? '/sobre-nos' : '/about')}
+              >
                 {t('nav.about')}
               </Link>
             </div>
@@ -286,10 +289,10 @@ const Navbar: React.FC = () => {
             })}
 
             <Link
-              href={getLink('/about')}
+              href={getLink(locale === 'pt-BR' ? '/sobre-nos' : '/about')}
               onClick={closeMobileMenu}
               className={`block px-3 py-2 text-sm font-medium rounded-md ${
-                isActive('/about')
+                isActive(locale === 'pt-BR' ? '/sobre-nos' : '/about')
                   ? 'bg-navy-50 text-navy-700'
                   : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
               }`}
