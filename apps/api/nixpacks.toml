@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "pnpm"]
+
+[phases.install]
+cmds = [
+  "cd /app/..",                # go to monorepo root
+  "pnpm install --frozen-lockfile",
+  "cd /app"                    # return to service root (apps/api)
+]
+
+
