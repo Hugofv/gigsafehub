@@ -118,3 +118,51 @@ export function generateWebSiteStructuredData() {
   };
 }
 
+export function generateLegalDocumentStructuredData(document: {
+  name: string;
+  description: string;
+  url: string;
+  datePublished: string;
+  dateModified: string;
+  locale: string;
+  publisher?: {
+    name: string;
+    url: string;
+  };
+}) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': document.url,
+    name: document.name,
+    description: document.description,
+    url: document.url,
+    datePublished: document.datePublished,
+    dateModified: document.dateModified,
+    inLanguage: document.locale === 'pt-BR' ? 'pt-BR' : 'en-US',
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'GigSafeHub',
+      url: baseUrl,
+    },
+    publisher: document.publisher || {
+      '@type': 'Organization',
+      name: 'GigSafeHub',
+      url: baseUrl,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${baseUrl}/logo.png`,
+      },
+    },
+    mainEntity: {
+      '@type': 'LegalDocument',
+      name: document.name,
+      description: document.description,
+      datePublished: document.datePublished,
+      dateModified: document.dateModified,
+    },
+  };
+}
+

@@ -214,6 +214,30 @@ export const TRANSLATIONS = {
       goToHome: 'Go to Home',
       compareSelected: 'Compare Selected',
       youCanOnlyCompare: 'You can only compare up to 3 products.'
+    },
+    legal: {
+      privacyTitle: 'Privacy Policy',
+      termsTitle: 'Terms of Use',
+      lastUpdated: 'Last Updated',
+      effectiveDate: 'Effective Date',
+      introduction: 'Introduction',
+      informationWeCollect: 'Information We Collect',
+      howWeUseInformation: 'How We Use Your Information',
+      dataProtection: 'Data Protection',
+      yourRights: 'Your Rights',
+      cookies: 'Cookies',
+      thirdPartyServices: 'Third-Party Services',
+      changesToPolicy: 'Changes to This Policy',
+      contactUs: 'Contact Us',
+      acceptance: 'Acceptance of Terms',
+      useOfService: 'Use of Service',
+      userAccounts: 'User Accounts',
+      intellectualProperty: 'Intellectual Property',
+      disclaimer: 'Disclaimer',
+      limitationOfLiability: 'Limitation of Liability',
+      indemnification: 'Indemnification',
+      governingLaw: 'Governing Law',
+      changesToTerms: 'Changes to Terms'
     }
   },
   'pt-BR': {
@@ -277,6 +301,30 @@ export const TRANSLATIONS = {
       goToHome: 'Ir para Início',
       compareSelected: 'Comparar Selecionados',
       youCanOnlyCompare: 'Você só pode comparar até 3 produtos.'
+    },
+    legal: {
+      privacyTitle: 'Política de Privacidade',
+      termsTitle: 'Termos de Uso',
+      lastUpdated: 'Última Atualização',
+      effectiveDate: 'Data de Vigência',
+      introduction: 'Introdução',
+      informationWeCollect: 'Informações que Coletamos',
+      howWeUseInformation: 'Como Usamos Suas Informações',
+      dataProtection: 'Proteção de Dados',
+      yourRights: 'Seus Direitos',
+      cookies: 'Cookies',
+      thirdPartyServices: 'Serviços de Terceiros',
+      changesToPolicy: 'Alterações nesta Política',
+      contactUs: 'Entre em Contato',
+      acceptance: 'Aceitação dos Termos',
+      useOfService: 'Uso do Serviço',
+      userAccounts: 'Contas de Usuário',
+      intellectualProperty: 'Propriedade Intelectual',
+      disclaimer: 'Aviso Legal',
+      limitationOfLiability: 'Limitação de Responsabilidade',
+      indemnification: 'Indenização',
+      governingLaw: 'Lei Aplicável',
+      changesToTerms: 'Alterações nos Termos'
     }
   }
 };

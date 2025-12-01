@@ -34,12 +34,18 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href={getLink('/privacy')} className="hover:text-white transition-colors">
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/politicas-e-privacidade' : '/privacy-and-policies')}
+                  className="hover:text-white transition-colors"
+                >
                   {locale === 'pt-BR' ? 'Política de Privacidade' : 'Privacy Policy'}
                 </Link>
               </li>
               <li>
-                <Link href={getLink('/terms')} className="hover:text-white transition-colors">
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/termos-de-uso' : '/terms-of-use')}
+                  className="hover:text-white transition-colors"
+                >
                   {locale === 'pt-BR' ? 'Termos de Uso' : 'Terms of Use'}
                 </Link>
               </li>
