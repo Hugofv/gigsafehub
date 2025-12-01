@@ -112,12 +112,12 @@ export default function HomeClient({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10">
             <div className="text-center">
               {/* Badge */}
-              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/20 backdrop-blur-sm border border-brand-400/30 mb-8 ${shouldAnimate ? 'animate-fade-in' : ''}`}>
+              {/* <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/20 backdrop-blur-sm border border-brand-400/30 mb-8 ${shouldAnimate ? 'animate-fade-in' : ''}`}>
                 <span className={`w-2 h-2 bg-brand-400 rounded-full ${shouldAnimate ? 'animate-pulse' : ''}`}></span>
                 <span className="text-sm font-medium text-brand-200">
                   {locale === 'pt-BR' ? 'Confiado por mais de 10.000 freelancers' : 'Trusted by 10,000+ freelancers'}
                 </span>
-              </div>
+              </div> */}
 
               <h1 className={`text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 ${shouldAnimate ? 'animate-fade-in-up' : ''}`}>
                 {locale === 'pt-BR' ? (

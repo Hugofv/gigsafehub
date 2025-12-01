@@ -33,31 +33,98 @@ seoRouter.get('/sitemap.xml', async (req: Request, res: Response) => {
       },
     });
 
+    // Load categories to build full paths for category and article URLs
+    // We load all categories (including inactive) to ensure historical URLs
+    // for articles remain correct even if a category is later hidden from the UI.
+    const categories = await prisma.category.findMany({
+      select: {
+        id: true,
+        parentId: true,
+        slug: true,
+        slugEn: true,
+        slugPt: true,
+      },
+    });
+
     const articles = await prisma.article.findMany({
       where: {
         robotsIndex: true,
       },
-      select: {
-        slug: true,
-        locale: true,
-        lastModified: true,
-        sitemapPriority: true,
-        sitemapChangefreq: true,
-        updatedAt: true,
+      include: {
+        category: {
+          select: {
+            id: true,
+            parentId: true,
+            slug: true,
+            slugEn: true,
+            slugPt: true,
+          },
+        },
       },
     });
 
     const urls: string[] = [];
 
-    // Static pages
+    // Helper to build localized category path from a categoryId
+    const buildCategoryPath = (categoryId: string, allCats: any[], locale: 'pt-BR' | 'en-US'): string[] => {
+      const path: string[] = [];
+      let current = allCats.find((c) => c.id === categoryId);
+
+      while (current) {
+        const slug =
+          locale === 'pt-BR' && current.slugPt
+            ? current.slugPt
+            : locale === 'en-US' && current.slugEn
+            ? current.slugEn
+            : current.slug;
+
+        path.unshift(slug);
+
+        if (current.parentId) {
+          current = allCats.find((c) => c.id === current.parentId);
+        } else {
+          current = undefined;
+        }
+      }
+
+      return path;
+    };
+
+    // Static pages (localized home, listings, legal pages, about)
     urls.push(
+      // Home
       `<url><loc>${BASE_URL}/en-US</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`,
       `<url><loc>${BASE_URL}/pt-BR</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`,
+      // Reviews listing
       `<url><loc>${BASE_URL}/en-US/reviews</loc><changefreq>daily</changefreq><priority>0.9</priority></url>`,
       `<url><loc>${BASE_URL}/pt-BR/reviews</loc><changefreq>daily</changefreq><priority>0.9</priority></url>`,
+      // Articles listing
       `<url><loc>${BASE_URL}/en-US/articles</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`,
-      `<url><loc>${BASE_URL}/pt-BR/articles</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`
+      `<url><loc>${BASE_URL}/pt-BR/articles</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`,
+      // Legal pages - Privacy Policy
+      `<url><loc>${BASE_URL}/en-US/privacy-and-policies</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      `<url><loc>${BASE_URL}/pt-BR/politicas-e-privacidade</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      // Legal pages - Terms of Use
+      `<url><loc>${BASE_URL}/en-US/terms-of-use</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      `<url><loc>${BASE_URL}/pt-BR/termos-de-uso</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      // About pages
+      `<url><loc>${BASE_URL}/en-US/about</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      `<url><loc>${BASE_URL}/pt-BR/sobre-nos</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`
     );
+
+    // Category pages (all active categories with localized slugs)
+    (['en-US', 'pt-BR'] as const).forEach((locale) => {
+      categories.forEach((category) => {
+        const pathSegments = buildCategoryPath(category.id, categories, locale);
+        if (pathSegments.length === 0) {
+          return;
+        }
+        const locUrl = `${BASE_URL}/${locale}/${pathSegments.join('/')}`;
+        urls.push(
+          `<url><loc>${locUrl}</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>`
+        );
+      });
+    });
 
     // Products
     products.forEach((product) => {
@@ -71,23 +138,54 @@ seoRouter.get('/sitemap.xml', async (req: Request, res: Response) => {
       );
     });
 
-    // Articles
+    // Articles (use localized slugs and full category path when available)
     articles.forEach((article) => {
       const lastmod = article.lastModified || article.updatedAt;
       const priority = article.sitemapPriority || 0.9;
       const changefreq = article.sitemapChangefreq || 'monthly';
-      const locale = article.locale === 'en_US' ? 'en-US' : article.locale === 'pt_BR' ? 'pt-BR' : 'en-US';
 
-      if (article.locale === 'Both') {
+      const targetLocales: Array<'en-US' | 'pt-BR'> =
+        article.locale === 'Both'
+          ? ['en-US', 'pt-BR']
+          : article.locale === 'pt_BR'
+          ? ['pt-BR']
+          : ['en-US'];
+
+      targetLocales.forEach((locale) => {
+        const localizedSlug =
+          locale === 'pt-BR' && article.slugPt
+            ? article.slugPt
+            : locale === 'en-US' && article.slugEn
+            ? article.slugEn
+            : article.slug;
+
+        let path = `${BASE_URL}/${locale}`;
+
+        // Prefer category from relation (article.category) when present,
+        // otherwise fall back to raw categoryId.
+        const categoryIdFromRelation = article.category?.id;
+        const categoryId =
+          (typeof categoryIdFromRelation === 'string' && categoryIdFromRelation) ||
+          (typeof article.categoryId === 'string' && article.categoryId) ||
+          null;
+
+        const categoryPathSegments =
+          categoryId !== null ? buildCategoryPath(categoryId, categories, locale) : [];
+
+        if (categoryPathSegments.length > 0) {
+          // Category found and active: use full category path
+          path += `/${categoryPathSegments.join('/')}`;
+        } else {
+          // Fallback to /articles when no active category is associated
+          path += '/articles';
+        }
+
+        const url = `${path}/${localizedSlug}`;
+
         urls.push(
-          `<url><loc>${BASE_URL}/en-US/articles/${article.slug}</loc><lastmod>${lastmod.toISOString()}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`,
-          `<url><loc>${BASE_URL}/pt-BR/articles/${article.slug}</loc><lastmod>${lastmod.toISOString()}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`
+          `<url><loc>${url}</loc><lastmod>${lastmod.toISOString()}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`
         );
-      } else {
-        urls.push(
-          `<url><loc>${BASE_URL}/${locale}/articles/${article.slug}</loc><lastmod>${lastmod.toISOString()}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`
-        );
-      }
+      });
     });
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
