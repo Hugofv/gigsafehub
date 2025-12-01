@@ -17,6 +17,9 @@ export interface Category {
   country?: string;
   icon?: string;
   order?: number;
+  isActive?: boolean;
+  showInNavbar?: boolean;
+  showInFooter?: boolean;
   metaTitle?: string;
   metaDescription?: string;
   metaKeywords?: string;
