@@ -71,22 +71,21 @@ Este guia explica como fazer deploy do GigSafeHub na Railway.
 2. **Configure os serviços**:
    
    **Serviço 1: API**
-   - Root Directory: `apps/api` (⚠️ **IMPORTANTE**: Configure no Settings do serviço)
-   - Build Command: `cd ../.. && pnpm install --frozen-lockfile && cd apps/api && pnpm build`
-   - Start Command: `node dist/index.js` (ou deixe vazio para usar o `railway.json`)
+   - Root Directory: `.` (raiz do repositório – **recomendado para monorepo com pnpm**)
+   - Build Command: `pnpm install --frozen-lockfile && pnpm --filter api build`
+   - Start Command: `pnpm --filter api start`
    - Port: Railway detecta automaticamente via `PORT` env var
-   - **Nota**: O arquivo `apps/api/railway.json` já está configurado, mas você pode sobrescrever no dashboard
    - **Importante**: Após o primeiro deploy, execute migrações:
      ```bash
      railway run --service api pnpm prisma migrate deploy
      ```
 
    **Serviço 2: Web**
-   - Root Directory: `apps/web` (⚠️ **IMPORTANTE**: Configure no Settings do serviço)
-   - Build Command: `cd ../.. && pnpm install --frozen-lockfile && cd apps/web && pnpm build`
-   - Start Command: `pnpm start` (ou deixe vazio para usar o `railway.json`)
+   - Root Directory: `.` (raiz do repositório – usa o mesmo workspace pnpm)
+   - Build Command: `pnpm install --frozen-lockfile && pnpm --filter web build`
+   - Start Command: `pnpm --filter web start`
    - Port: Railway detecta automaticamente via `PORT` env var
-   - **Nota**: O arquivo `apps/web/railway.json` já está configurado, mas você pode sobrescrever no dashboard
+   - **Nota**: Como o root é o monorepo, o pnpm consegue resolver `workspace:*` sem erros
 
 3. **Adicione PostgreSQL Database**:
    - No projeto Railway, clique em "+ New"
