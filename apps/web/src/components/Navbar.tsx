@@ -209,12 +209,12 @@ const Navbar: React.FC = () => {
               </button>
             </div>
 
-            <Link
+            {/* <Link
               href={getLink('/calculator')}
               className="hidden sm:block px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold text-white bg-orange-500 rounded-full hover:bg-orange-600 transition shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transform hover:-translate-y-0.5"
             >
               {t('nav.getQuote')}
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
@@ -300,13 +300,13 @@ const Navbar: React.FC = () => {
               {t('nav.about')}
             </Link>
 
-            <Link
+            {/* <Link
               href={getLink('/calculator')}
               onClick={closeMobileMenu}
               className="block px-3 py-2 text-sm font-bold text-white bg-orange-500 rounded-md hover:bg-orange-600 transition mt-2 text-center"
             >
               {t('nav.getQuote')}
-            </Link>
+            </Link> */}
           </div>
         </div>
       )}

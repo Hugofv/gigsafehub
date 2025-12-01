@@ -19,16 +19,16 @@ const Footer: React.FC = () => {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link 
-                  href={getLink(locale === 'pt-BR' ? '/sobre-nos' : '/about')} 
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/sobre-nos' : '/about')}
                   className="hover:text-white transition-colors"
                 >
                   {locale === 'pt-BR' ? 'Sobre o GigSafeHub' : 'About GigSafeHub'}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href={getLink(locale === 'pt-BR' ? '/sobre-nos#mission' : '/about#mission')} 
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/sobre-nos#mission' : '/about#mission')}
                   className="hover:text-white transition-colors"
                 >
                   {locale === 'pt-BR' ? 'Nossa Missão' : 'Our Mission'}
@@ -93,7 +93,7 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Tools */}
-          <div>
+          {/* <div>
             <h3 className="text-white font-semibold mb-4">
               {locale === 'pt-BR' ? 'Ferramentas' : 'Tools'}
             </h3>
@@ -114,7 +114,7 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Content */}
           <div>
