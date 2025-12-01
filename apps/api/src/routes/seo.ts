@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { config } from '../config';
 
-export const seoRouter = Router();
+export const seoRouter: Router = Router();
 
 const BASE_URL = config.baseUrl;
 
@@ -167,11 +167,20 @@ seoRouter.get('/meta', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Type and slug are required' });
     }
 
+    // Validate and convert query parameters to strings
+    const typeStr = Array.isArray(type) ? type[0] : type;
+    const slugStr = Array.isArray(slug) ? slug[0] : slug;
+    const localeStr = Array.isArray(locale) ? locale[0] : locale;
+
+    if (typeof typeStr !== 'string' || typeof slugStr !== 'string' || typeof localeStr !== 'string') {
+      return res.status(400).json({ error: 'Invalid query parameters' });
+    }
+
     let metaData: any = {};
 
-    if (type === 'product') {
+    if (typeStr === 'product') {
       const product = await prisma.financialProduct.findUnique({
-        where: { slug: slug as string },
+        where: { slug: slugStr },
         select: {
           name: true,
           description: true,
@@ -200,12 +209,12 @@ seoRouter.get('/meta', async (req: Request, res: Response) => {
         ogDescription: product.ogDescription || product.metaDescription || product.description.substring(0, 200),
         ogImage: product.ogImage || product.logoUrl,
         ogType: 'product',
-        canonicalUrl: product.canonicalUrl || `${BASE_URL}/${locale}/reviews/${slug}`,
-        structuredData: product.structuredData ? JSON.parse(product.structuredData) : generateProductStructuredData(product, locale),
+        canonicalUrl: product.canonicalUrl || `${BASE_URL}/${localeStr}/reviews/${slugStr}`,
+        structuredData: product.structuredData ? JSON.parse(product.structuredData) : generateProductStructuredData(product, localeStr),
       };
-    } else if (type === 'article') {
+    } else if (typeStr === 'article') {
       const article = await prisma.article.findUnique({
-        where: { slug: slug as string },
+        where: { slug: slugStr },
         select: {
           title: true,
           excerpt: true,
@@ -236,8 +245,8 @@ seoRouter.get('/meta', async (req: Request, res: Response) => {
         ogDescription: article.ogDescription || article.metaDescription || article.excerpt.substring(0, 200),
         ogImage: article.ogImage || article.imageUrl,
         ogType: 'article',
-        canonicalUrl: article.canonicalUrl || `${BASE_URL}/${locale}/articles/${slug}`,
-        structuredData: article.structuredData ? JSON.parse(article.structuredData) : generateArticleStructuredData(article, locale),
+        canonicalUrl: article.canonicalUrl || `${BASE_URL}/${localeStr}/articles/${slugStr}`,
+        structuredData: article.structuredData ? JSON.parse(article.structuredData) : generateArticleStructuredData(article, localeStr),
         publishedTime: article.date.toISOString(),
         readingTime: article.readingTime,
       };

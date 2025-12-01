@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { config } from '../config';
 
-export const healthRouter = Router();
+export const healthRouter: Router = Router();
 
 const startTime = Date.now();
 
@@ -30,7 +30,7 @@ const startTime = Date.now();
  */
 healthRouter.get('/', (req: Request, res: Response) => {
   const uptime = Math.floor((Date.now() - startTime) / 1000);
-  
+
   res.json({
     status: 'ok',
     uptime,

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 
-export const faqRouter = Router();
+export const faqRouter: Router = Router();
 
 /**
  * @swagger

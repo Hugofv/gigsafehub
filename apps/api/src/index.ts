@@ -9,7 +9,6 @@ import pinoHttp from 'pino-http';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { healthRouter } from './routes/health';
-import { quotesRouter } from './routes/quotes';
 import { authRouter } from './routes/auth';
 import { productsRouter } from './routes/products';
 import { articlesRouter } from './routes/articles';
@@ -122,7 +121,6 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use('/health', healthRouter);
-app.use('/api/quotes', quotesRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/articles', articlesRouter);

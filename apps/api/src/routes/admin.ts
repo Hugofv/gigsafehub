@@ -3,7 +3,7 @@ import { prisma } from '../lib/prisma';
 import { z } from 'zod';
 import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
 
-export const adminRouter = Router();
+export const adminRouter: Router = Router();
 
 // Apply authentication and admin middleware to all routes
 adminRouter.use(authenticate);
@@ -76,7 +76,12 @@ adminRouter.get('/categories/:id', async (req: Request, res: Response) => {
 adminRouter.post('/categories', async (req: Request, res: Response) => {
   try {
     const data = categorySchema.parse(req.body);
-    const category = await prisma.category.create({ data });
+    // Convert null parentId to undefined for Prisma
+    const createData: any = {
+      ...data,
+      parentId: data.parentId === null ? undefined : data.parentId,
+    };
+    const category = await prisma.category.create({ data: createData });
     res.status(201).json(category);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -89,9 +94,14 @@ adminRouter.post('/categories', async (req: Request, res: Response) => {
 adminRouter.put('/categories/:id', async (req: Request, res: Response) => {
   try {
     const data = categorySchema.partial().parse(req.body);
+    // Convert null parentId to undefined for Prisma
+    const updateData: any = {
+      ...data,
+      parentId: data.parentId === null ? undefined : data.parentId,
+    };
     const category = await prisma.category.update({
       where: { id: req.params.id },
-      data,
+      data: updateData,
     });
     res.json(category);
   } catch (error: any) {
@@ -129,7 +139,7 @@ const productSchema = z.object({
   slugEn: z.string().optional(),
   slugPt: z.string().optional(),
   categoryId: z.string(),
-  country: z.string().optional().nullable(),
+  country: z.enum(['BR', 'US', 'UK', 'CA', 'AU', 'DE', 'FR', 'ES', 'PT', 'MX', 'AR', 'CL', 'CO', 'Other']).optional().nullable(),
   rating: z.number().default(0),
   reviewsCount: z.number().int().default(0),
   description: z.string(),
@@ -187,7 +197,12 @@ adminRouter.get('/products/:id', async (req: Request, res: Response) => {
 adminRouter.post('/products', async (req: Request, res: Response) => {
   try {
     const data = productSchema.parse(req.body);
-    const product = await prisma.financialProduct.create({ data });
+    // Convert null country to undefined for Prisma
+    const createData: any = {
+      ...data,
+      country: data.country === null ? undefined : data.country,
+    };
+    const product = await prisma.financialProduct.create({ data: createData });
     res.status(201).json(product);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -200,9 +215,15 @@ adminRouter.post('/products', async (req: Request, res: Response) => {
 adminRouter.put('/products/:id', async (req: Request, res: Response) => {
   try {
     const data = productSchema.partial().parse(req.body);
+    // Convert null country to undefined and handle categoryId
+    const updateData: any = {
+      ...data,
+      country: data.country === null ? undefined : data.country,
+      categoryId: data.categoryId === null ? undefined : data.categoryId,
+    };
     const product = await prisma.financialProduct.update({
       where: { id: req.params.id },
-      data,
+      data: updateData,
     });
     res.json(product);
   } catch (error: any) {

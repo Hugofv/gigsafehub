@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 
-export const productsRouter = Router();
+export const productsRouter: Router = Router();
 
 /**
  * @swagger
@@ -125,6 +125,7 @@ productsRouter.get('/:identifier', async (req: Request, res: Response) => {
         ],
       },
       include: {
+        category: true,
         pros: true,
         cons: true,
         features: true,
@@ -136,6 +137,7 @@ productsRouter.get('/:identifier', async (req: Request, res: Response) => {
       product = await prisma.financialProduct.findUnique({
         where: { slug: identifier },
         include: {
+          category: true,
           pros: true,
           cons: true,
           features: true,
