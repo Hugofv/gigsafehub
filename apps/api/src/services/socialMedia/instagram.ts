@@ -44,11 +44,49 @@ export async function postToInstagram(options: InstagramPostOptions): Promise<In
     };
   }
 
+  // Validate image URL
+  if (!options.imageUrl) {
+    return {
+      success: false,
+      error: 'Image URL is required for Instagram posts',
+    };
+  }
+
+  // Ensure image URL is absolute and accessible
+  let imageUrl = options.imageUrl;
+  if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+    // If relative URL, make it absolute using baseUrl
+    const baseUrl = 'https://gigsafehub.com';
+    imageUrl = `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+  }
+
+  // Validate that the URL points to an image (non-blocking - Instagram API will validate too)
   try {
+    const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
+    const contentType = imageResponse.headers.get('content-type');
+
+    if (!contentType || !contentType.startsWith('image/')) {
+      // Warn but don't block - Instagram API will validate and return a better error
+      console.warn(`Warning: Image URL may not be valid (content-type: ${contentType || 'unknown'}). URL: ${imageUrl}`);
+    }
+
+    if (!imageResponse.ok) {
+      // Warn but don't block - Instagram API will validate and return a better error
+      console.warn(`Warning: Image URL returned HTTP ${imageResponse.status}. URL: ${imageUrl}`);
+    }
+  } catch (error: any) {
+    // Warn but don't block - Instagram API will validate and return a better error
+    console.warn(`Warning: Could not validate image URL: ${error.message}. URL: ${imageUrl}`);
+  }
+
+  try {
+    // Build caption with text and optional link
+    const caption = options.caption + (options.link ? `\n\nRead more: ${options.link}` : '');
+
     // Step 1: Create a container (media upload) for the image
     const createContainerParams = new URLSearchParams({
-      image_url: options.imageUrl,
-      caption: options.caption + (options.link ? `\n\nRead more: ${options.link}` : ''),
+      image_url: imageUrl,
+      caption: caption,
       access_token: accessToken,
     });
 
@@ -66,9 +104,19 @@ export async function postToInstagram(options: InstagramPostOptions): Promise<In
     const containerData = (await containerResponse.json()) as InstagramContainerResponse;
 
     if (!containerResponse.ok) {
+      const errorMessage = containerData.error?.message || 'Failed to create Instagram media container';
+      const errorCode = containerData.error?.code;
+      const errorType = containerData.error?.type;
+
+      // Provide more detailed error message
+      let detailedError = errorMessage;
+      if (errorMessage.includes('media type') || errorMessage.includes('photo or video')) {
+        detailedError = `${errorMessage}. Please ensure the image URL (${imageUrl}) is publicly accessible and points to a valid image file (JPG, PNG, etc.).`;
+      }
+
       return {
         success: false,
-        error: containerData.error?.message || 'Failed to create Instagram media container',
+        error: detailedError + (errorCode ? ` (Code: ${errorCode}, Type: ${errorType})` : ''),
       };
     }
 
