@@ -86,8 +86,8 @@ export async function postToInstagram(options: InstagramPostOptions): Promise<In
   }
 
   try {
-    // Build caption with text and optional link
-    const caption = options.caption + (options.link ? `\n\nRead more: ${options.link}` : '');
+    // Build caption - message already includes "Read more" link, so don't duplicate
+    const caption = options.caption;
 
     // Step 1: Create a container (media upload) for the image
     const createContainerParams = new URLSearchParams({
