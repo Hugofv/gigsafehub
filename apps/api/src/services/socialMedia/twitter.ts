@@ -34,9 +34,43 @@ export async function postToTwitter(options: TwitterPostOptions): Promise<Twitte
 
       // Upload image if provided
       if (options.imageUrl) {
+        // Validate and normalize image URL
+        const productionBaseUrl = 'https://gigsafehub.com';
+        let imageUrl = options.imageUrl;
+
+        // Replace localhost with production URL
+        if (imageUrl.includes('localhost') || imageUrl.startsWith('http://localhost')) {
+          imageUrl = imageUrl.replace(/https?:\/\/localhost:\d+/, productionBaseUrl);
+        }
+
+        // Ensure image URL is absolute and accessible
+        if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+          // If relative URL, make it absolute using production URL
+          imageUrl = `${productionBaseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+        }
+
+        // Validate that the URL points to an image (non-blocking - Twitter API will validate too)
+        try {
+          const imageValidationResponse = await fetch(imageUrl, { method: 'HEAD' });
+          const contentType = imageValidationResponse.headers.get('content-type');
+
+          if (!contentType || !contentType.startsWith('image/')) {
+            // Warn but don't block - Twitter API will validate and return a better error
+            console.warn(`Warning: Image URL may not be valid (content-type: ${contentType || 'unknown'}). URL: ${imageUrl}`);
+          }
+
+          if (!imageValidationResponse.ok) {
+            // Warn but don't block - Twitter API will validate and return a better error
+            console.warn(`Warning: Image URL returned HTTP ${imageValidationResponse.status}. URL: ${imageUrl}`);
+          }
+        } catch (error: any) {
+          // Warn but don't block - Twitter API will validate and return a better error
+          console.warn(`Warning: Could not validate image URL: ${error.message}. URL: ${imageUrl}`);
+        }
+
         try {
           // Download image
-          const imageResponse = await fetch(options.imageUrl);
+          const imageResponse = await fetch(imageUrl);
           if (imageResponse.ok) {
             const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
 
@@ -46,9 +80,12 @@ export async function postToTwitter(options: TwitterPostOptions): Promise<Twitte
             });
             mediaId = mediaIdResponse;
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error('Error uploading image to Twitter:', error);
-          // Continue without image if upload fails
+          // Continue without image if upload fails, but provide better error message
+          if (error.message) {
+            console.error(`Twitter image upload error details: ${error.message}. URL: ${imageUrl}`);
+          }
         }
       }
 

@@ -53,11 +53,17 @@ export async function postToInstagram(options: InstagramPostOptions): Promise<In
   }
 
   // Ensure image URL is absolute and accessible
+  const productionBaseUrl = 'https://gigsafehub.com';
   let imageUrl = options.imageUrl;
+
+  // Replace localhost with production URL
+  if (imageUrl.includes('localhost') || imageUrl.startsWith('http://localhost')) {
+    imageUrl = imageUrl.replace(/https?:\/\/localhost:\d+/, productionBaseUrl);
+  }
+
   if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
-    // If relative URL, make it absolute using baseUrl
-    const baseUrl = 'https://gigsafehub.com';
-    imageUrl = `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+    // If relative URL, make it absolute using production URL
+    imageUrl = `${productionBaseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
   }
 
   // Validate that the URL points to an image (non-blocking - Instagram API will validate too)
@@ -80,8 +86,8 @@ export async function postToInstagram(options: InstagramPostOptions): Promise<In
   }
 
   try {
-    // Build caption with text and optional link
-    const caption = options.caption + (options.link ? `\n\nRead more: ${options.link}` : '');
+    // Build caption - message already includes "Read more" link, so don't duplicate
+    const caption = options.caption;
 
     // Step 1: Create a container (media upload) for the image
     const createContainerParams = new URLSearchParams({

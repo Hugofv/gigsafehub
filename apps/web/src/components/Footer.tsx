@@ -98,33 +98,33 @@ const Footer: React.FC = () => {
                       href={getLink(locale === 'pt-BR' ? '/seguros/seguros-para-motoristas' : '/insurance/insurance-for-drivers')} 
                       className="hover:text-white transition-colors"
                     >
-                      {locale === 'pt-BR' ? 'Motoristas' : 'Drivers'}
-                    </Link>
-                  </li>
-                  <li>
+                  {locale === 'pt-BR' ? 'Motoristas' : 'Drivers'}
+                </Link>
+              </li>
+              <li>
                     <Link 
                       href={getLink(locale === 'pt-BR' ? '/seguros/seguros-para-entregadores' : '/insurance/insurance-for-delivery')} 
                       className="hover:text-white transition-colors"
                     >
-                      {locale === 'pt-BR' ? 'Entregadores' : 'Delivery Workers'}
-                    </Link>
-                  </li>
-                  <li>
+                  {locale === 'pt-BR' ? 'Entregadores' : 'Delivery Workers'}
+                </Link>
+              </li>
+              <li>
                     <Link 
                       href={getLink(locale === 'pt-BR' ? '/seguros/seguros-para-freelancers' : '/insurance/insurance-for-freelancers')} 
                       className="hover:text-white transition-colors"
                     >
-                      {locale === 'pt-BR' ? 'Freelancers' : 'Freelancers'}
-                    </Link>
-                  </li>
-                  <li>
+                  {locale === 'pt-BR' ? 'Freelancers' : 'Freelancers'}
+                </Link>
+              </li>
+              <li>
                     <Link 
                       href={getLink(locale === 'pt-BR' ? '/seguros' : '/insurance')} 
                       className="hover:text-white transition-colors"
                     >
                       {locale === 'pt-BR' ? 'Ver Todos' : 'View All'}
-                    </Link>
-                  </li>
+                </Link>
+              </li>
                 </>
               )}
             </ul>
@@ -142,11 +142,11 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               {guidesPath && (
-                <li>
+              <li>
                   <Link href={getLink(`/${guidesPath}`)} className="hover:text-white transition-colors">
-                    {locale === 'pt-BR' ? 'Guias' : 'Guides'}
-                  </Link>
-                </li>
+                  {locale === 'pt-BR' ? 'Guias' : 'Guides'}
+                </Link>
+              </li>
               )}
               <li>
                 <Link href={getLink('/faq')} className="hover:text-white transition-colors">
