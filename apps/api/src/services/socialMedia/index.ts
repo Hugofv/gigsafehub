@@ -203,11 +203,13 @@ export async function postArticleToSocialMedia(
           };
         }
       } else if (platform === 'twitter') {
-        // Twitter has character limit, truncate if needed
-        const twitterText = message.length > 280 ? message.substring(0, 277) + '...' : message;
+        // Twitter has character limit, but we'll handle truncation in postToTwitter
+        // Remove "Read more:" from message since we'll add the link separately
+        const twitterText = message.replace(/\n\nRead more:.*$/, '').trim();
         const result = await postToTwitter({
           text: twitterText,
           imageUrl,
+          link: articleUrl,
         });
         results.push({
           platform,
