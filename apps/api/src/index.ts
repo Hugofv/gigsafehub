@@ -1,3 +1,12 @@
+// Load environment variables from .env file first
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load .env file from the apps/api directory
+// __dirname in dev: apps/api/src -> ../.env = apps/api/.env
+// __dirname in prod: apps/api/dist -> ../.env = apps/api/.env
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
 import express, { Express, Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
