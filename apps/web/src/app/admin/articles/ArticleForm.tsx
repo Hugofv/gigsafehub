@@ -19,12 +19,15 @@ const articleSchema = yup.object({
   content: yup.string().required('Content is required'),
   categoryId: yup.string().nullable().optional(),
   locale: yup.string().oneOf(['en_US', 'pt_BR', 'Both']).required('Locale is required'),
-  date: yup.string().required('Date is required'),
+  // Data/hora de publicação (permite agendar)
+  date: yup.string().required('Publication date/time is required'),
   partnerTag: yup.string().required('Partner tag is required'),
   imageUrl: yup.string().required('Image URL is required'),
   metaTitle: yup.string().optional(),
   metaDescription: yup.string().optional(),
   showInMenu: yup.boolean().optional().default(false),
+  // Flag de ativo (indexado) para controlar se o artigo está visível
+  robotsIndex: yup.boolean().optional().default(true),
 });
 
 type ArticleFormData = yup.InferType<typeof articleSchema>;
@@ -59,17 +62,23 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
           content: article.content || '',
           categoryId: article.categoryId || null,
           locale: article.locale || 'Both',
-          date: typeof article.date === 'string' ? article.date.split('T')[0] : new Date(article.date).toISOString().split('T')[0],
+          // Usa datetime-local (YYYY-MM-DDTHH:mm) para permitir agendamento preciso
+          date:
+            typeof article.date === 'string'
+              ? new Date(article.date).toISOString().slice(0, 16)
+              : new Date(article.date).toISOString().slice(0, 16),
           partnerTag: article.partnerTag || '',
           imageUrl: article.imageUrl || '',
           metaTitle: article.metaTitle || '',
           metaDescription: article.metaDescription || '',
           showInMenu: article.showInMenu || false,
+          robotsIndex: article.robotsIndex ?? true,
         }
       : {
           locale: 'Both',
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString().slice(0, 16),
           showInMenu: false,
+          robotsIndex: true,
         },
   });
 
@@ -81,6 +90,8 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
       const formData: Partial<Article> = {
         ...data,
         locale: data.locale as 'en_US' | 'pt_BR' | 'Both',
+        // Garante que robotsIndex siga o valor do formulário (ativo/inativo)
+        robotsIndex: data.robotsIndex,
       };
       if (isEditing && article) {
         await adminArticles.update(article.id, formData);
@@ -241,15 +252,20 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
             {errors.locale && <p className="mt-1 text-sm text-red-600">{errors.locale.message}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Date *</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Publication date/time *
+            </label>
             <input
-              type="date"
+              type="datetime-local"
               {...register('date')}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
                 errors.date ? 'border-red-300' : 'border-slate-300'
               }`}
             />
             {errors.date && <p className="mt-1 text-sm text-red-600">{errors.date.message}</p>}
+            <p className="text-xs text-slate-500 mt-1">
+              Use uma data futura para agendar a publicação do artigo.
+            </p>
           </div>
         </div>
 
@@ -297,21 +313,37 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
           </div>
         </div>
 
-        <div className="border-t pt-4">
-          <h3 className="font-semibold mb-3">Menu Settings</h3>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              {...register('showInMenu')}
-              className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
-            />
-            <label className="text-sm font-medium text-slate-700">
-              Show in Navigation Menu
-            </label>
+        <div className="border-t pt-4 space-y-4">
+          <div>
+            <h3 className="font-semibold mb-3">Menu & Visibility</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <input
+                type="checkbox"
+                {...register('showInMenu')}
+                className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
+              />
+              <label className="text-sm font-medium text-slate-700">
+                Show in Navigation Menu
+              </label>
+            </div>
+            <p className="text-xs text-slate-500 mb-3">
+              When enabled, this article will appear in the navigation menu (e.g., Guides menu)
+            </p>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                {...register('robotsIndex')}
+                className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
+              />
+              <label className="text-sm font-medium text-slate-700">
+                Active (index in search engines)
+              </label>
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
+              Disable to mark the article as inactive (it won&apos;t be indexed by search engines).
+            </p>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            When enabled, this article will appear in the navigation menu (e.g., Guides menu)
-          </p>
         </div>
 
             <div className="flex gap-4">

@@ -280,6 +280,8 @@ const articleSchema = z.object({
   canonicalUrl: z.string().optional(),
   structuredData: z.string().optional(),
   readingTime: z.number().int().optional(),
+  // Controla se o artigo está ativo (indexado) ou não
+  robotsIndex: z.boolean().optional().default(true),
 });
 
 adminRouter.get('/articles', async (req: Request, res: Response) => {

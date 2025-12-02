@@ -92,6 +92,9 @@ export interface Article {
   structuredData?: string;
   readingTime?: number;
   showInMenu?: boolean;
+  // Controla se o artigo está ativo (indexado) ou não
+  robotsIndex?: boolean;
+  robotsFollow?: boolean;
   meta?: {
     socialMedia?: {
       facebook?: { postId: string; postedAt: string };

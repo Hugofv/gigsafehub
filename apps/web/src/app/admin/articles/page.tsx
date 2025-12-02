@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,6 +14,10 @@ export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState<{ [key: string]: SocialMediaPlatform[] }>({});
+  const [search, setSearch] = useState('');
+  const [localeFilter, setLocaleFilter] = useState<'all' | 'en_US' | 'pt_BR' | 'Both'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'scheduled' | 'inactive'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   useEffect(() => {
     if (user) {
@@ -32,6 +36,67 @@ export default function ArticlesPage() {
       setLoading(false);
     }
   };
+
+  const getArticleStatus = (article: Article): 'active' | 'scheduled' | 'inactive' => {
+    const now = new Date();
+    const articleDate = new Date(article.date as any);
+    const isActiveFlag = article.robotsIndex ?? true;
+
+    if (!isActiveFlag) {
+      return 'inactive';
+    }
+
+    if (articleDate.getTime() > now.getTime()) {
+      return 'scheduled';
+    }
+
+    return 'active';
+  };
+
+  const filteredArticles = useMemo(() => {
+    let result = [...articles];
+
+    if (search.trim()) {
+      const term = search.toLowerCase();
+      result = result.filter(
+        (a) =>
+          a.title.toLowerCase().includes(term) ||
+          a.slug.toLowerCase().includes(term) ||
+          (a.category?.name?.toLowerCase().includes(term) ?? false)
+      );
+    }
+
+    if (localeFilter !== 'all') {
+      result = result.filter((a) => a.locale === localeFilter);
+    }
+
+    if (categoryFilter !== 'all') {
+      result = result.filter((a) => a.categoryId === categoryFilter);
+    }
+
+    if (statusFilter !== 'all') {
+      result = result.filter((a) => getArticleStatus(a) === statusFilter);
+    }
+
+    // Ordena por data (mais recentes primeiro) por padrão
+    result.sort((a, b) => {
+      const da = new Date(a.date as any).getTime();
+      const db = new Date(b.date as any).getTime();
+      return db - da;
+    });
+
+    return result;
+  }, [articles, search, localeFilter, statusFilter, categoryFilter]);
+
+  const categoryOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const article of articles) {
+      if (article.categoryId && article.category?.name) {
+        map.set(article.categoryId, article.category.name);
+      }
+    }
+    return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
+  }, [articles]);
 
 
   const handleDelete = async (id: string) => {
@@ -112,6 +177,60 @@ export default function ArticlesPage() {
         </Link>
       </div>
 
+      {/* Filters */}
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">Search</label>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by title, slug or category"
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">Locale</label>
+          <select
+            value={localeFilter}
+            onChange={(e) => setLocaleFilter(e.target.value as any)}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          >
+            <option value="all">All</option>
+            <option value="en_US">English</option>
+            <option value="pt_BR">Portuguese</option>
+            <option value="Both">Both</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          >
+            <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          >
+            <option value="all">All</option>
+            {categoryOptions.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-600"></div>
@@ -124,13 +243,17 @@ export default function ArticlesPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Title</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Category</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Locale</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Social Media</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {articles.map((article) => (
+              {filteredArticles.map((article) => {
+                const status = getArticleStatus(article);
+                const articleDate = new Date(article.date as any);
+                return (
                 <tr key={article.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4">
                     <div className="font-medium text-slate-900">{article.title}</div>
@@ -141,7 +264,24 @@ export default function ArticlesPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">{article.locale}</td>
                   <td className="px-6 py-4 text-sm text-slate-600">
-                    {typeof article.date === 'string' ? article.date : new Date(article.date).toLocaleDateString()}
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        status === 'active'
+                          ? 'bg-green-100 text-green-800'
+                          : status === 'scheduled'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {status === 'active'
+                        ? 'Ativo'
+                        : status === 'scheduled'
+                        ? 'Agendado'
+                        : 'Inativo'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600">
+                    {articleDate.toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
@@ -270,7 +410,7 @@ export default function ArticlesPage() {
                     </button>
                   </td>
                 </tr>
-              ))}
+              );})}
             </tbody>
           </table>
         </div>
