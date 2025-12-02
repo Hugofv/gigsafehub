@@ -218,6 +218,7 @@ model Article {
   robotsFollow    Boolean       @default(true)
   readingTime     Int?          // Estimated reading time in minutes
   showInMenu      Boolean       @default(false) // Control if article appears in navigation menu
+  meta            Json?         // Metadata for social media posts (stores post IDs per platform)
 
   relatedProducts ArticleProduct[]
   comments        Comment[]

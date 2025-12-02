@@ -28,7 +28,17 @@ export async function postArticleToSocialMedia(
   // Fetch article from database
   const article = await prisma.article.findUnique({
     where: { id: options.articleId },
-    include: { category: true },
+    include: {
+      category: {
+        select: {
+          id: true,
+          parentId: true,
+          slug: true,
+          slugEn: true,
+          slugPt: true,
+        },
+      },
+    },
   });
 
   if (!article) {
@@ -136,6 +146,11 @@ export async function postArticleToSocialMedia(
 
   const results: SocialMediaPostResult[] = [];
 
+  // Get current meta data or initialize empty object
+  const articleWithMeta = article as typeof article & { meta: Record<string, any> | null };
+  const currentMeta = (articleWithMeta.meta as Record<string, any>) || {};
+  const socialMediaMeta = currentMeta.socialMedia || {};
+
   // Post to each platform
   for (const platform of options.platforms) {
     try {
@@ -151,6 +166,14 @@ export async function postArticleToSocialMedia(
           postId: result.postId,
           error: result.error,
         });
+
+        // Save post ID if successful
+        if (result.success && result.postId) {
+          socialMediaMeta.facebook = {
+            postId: result.postId,
+            postedAt: new Date().toISOString(),
+          };
+        }
       } else if (platform === 'instagram') {
         if (!imageUrl) {
           results.push({
@@ -171,6 +194,14 @@ export async function postArticleToSocialMedia(
           postId: result.mediaId,
           error: result.error,
         });
+
+        // Save post ID if successful
+        if (result.success && result.mediaId) {
+          socialMediaMeta.instagram = {
+            postId: result.mediaId,
+            postedAt: new Date().toISOString(),
+          };
+        }
       } else if (platform === 'twitter') {
         // Twitter has character limit, truncate if needed
         const twitterText = message.length > 280 ? message.substring(0, 277) + '...' : message;
@@ -184,6 +215,14 @@ export async function postArticleToSocialMedia(
           postId: result.tweetId,
           error: result.error,
         });
+
+        // Save post ID if successful
+        if (result.success && result.tweetId) {
+          socialMediaMeta.twitter = {
+            postId: result.tweetId,
+            postedAt: new Date().toISOString(),
+          };
+        }
       }
     } catch (error: any) {
       results.push({
@@ -192,6 +231,19 @@ export async function postArticleToSocialMedia(
         error: error.message || 'Unknown error occurred',
       });
     }
+  }
+
+  // Update article meta with social media post IDs
+  if (Object.keys(socialMediaMeta).length > 0) {
+    await prisma.article.update({
+      where: { id: article.id },
+      data: {
+        meta: {
+          ...currentMeta,
+          socialMedia: socialMediaMeta,
+        },
+      } as any,
+    });
   }
 
   return results;

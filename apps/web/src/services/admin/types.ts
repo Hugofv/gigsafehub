@@ -92,6 +92,13 @@ export interface Article {
   structuredData?: string;
   readingTime?: number;
   showInMenu?: boolean;
+  meta?: {
+    socialMedia?: {
+      facebook?: { postId: string; postedAt: string };
+      instagram?: { postId: string; postedAt: string };
+      twitter?: { postId: string; postedAt: string };
+    };
+  } | null;
   createdAt?: string;
   updatedAt?: string;
 }
