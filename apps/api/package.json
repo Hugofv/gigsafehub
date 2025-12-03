@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@gigsafehub/types": "workspace:*",
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^5.0.0",
     "bcrypt": "^6.0.0",
     "compression": "^1.7.4",

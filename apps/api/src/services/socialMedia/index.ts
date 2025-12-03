@@ -1,6 +1,7 @@
 import { postToFacebook, type FacebookPostOptions, type FacebookPostResult } from './facebook';
 import { postToInstagram, type InstagramPostOptions, type InstagramPostResult } from './instagram';
 import { postToTwitter, type TwitterPostOptions, type TwitterPostResult } from './twitter';
+import { generateSocialMediaPost } from '../ai/gemini';
 import { prisma } from '../../lib/prisma';
 import { config } from '../../config';
 
@@ -129,22 +130,8 @@ export async function postArticleToSocialMedia(
     articleUrl = articleUrl.replace(/https?:\/\/localhost:\d+/, productionBaseUrl);
   }
 
-  // Determine locale from article for hashtags
-  const locale = article.locale === 'pt_BR' ? 'pt-BR' : article.locale === 'en_US' ? 'en-US' : 'pt-BR';
-  const isPortuguese = locale === 'pt-BR';
-
-  // Hashtags for Portuguese
-  const hashtagsPT = '#GigSafeHub #GigEconomy #GigWorkers #SeguroParaMotoristas #FreelancersBrasil #RendaExtra #Empreendedorismo #Insurtech #ProtecaoFinanceira #SideHustle #Entregadores #SeguroParaEntregadores';
-
-  // Hashtags for English
-  const hashtagsEN = '#GigSafeHub #GigEconomy #GigWorkers #GigWorkerInsurance #FinancialProtection #BestInsurance2025 #MotoristasDeApp #Freelancers #Insurtech #DeliveryWorkers #DriverInsurance';
-
-  const hashtags = isPortuguese ? hashtagsPT : hashtagsEN;
-
-  // Build message/caption with hashtags
-  const readMoreText = isPortuguese ? 'Leia mais:' : 'Read more:';
-  const defaultMessage = `${article.title}\n\n${article.excerpt}\n\n${readMoreText} ${articleUrl}\n\n${hashtags}`;
-  const message = options.customMessage ? `${options.customMessage}\n\n${hashtags}` : defaultMessage;
+  // Default message fallback (used if AI generation fails)
+  const defaultMessage = `${article.title}\n\n${article.excerpt}\n\nRead more: ${articleUrl}`;
 
   // Get image URL and normalize it (replace localhost with production URL)
   let imageUrl = article.ogImage || article.imageUrl;
@@ -167,9 +154,33 @@ export async function postArticleToSocialMedia(
   // Post to each platform
   for (const platform of options.platforms) {
     try {
+      // Generate platform-specific message if using AI (and not custom message)
+      let platformMessage: string;
+      if (options.customMessage) {
+        // Use custom message if provided
+        platformMessage = options.customMessage;
+      } else {
+        // Generate AI-powered post optimized for this specific platform
+        try {
+          const platformPost = await generateSocialMediaPost({
+            title: article.title,
+            excerpt: article.excerpt,
+            category: article.category?.name,
+            locale: article.locale,
+            platform,
+            articleUrl,
+          });
+          platformMessage = platformPost.message;
+        } catch (error: any) {
+          console.error(`Error generating AI post for ${platform}, using default:`, error);
+          // Fallback to default message if AI generation fails
+          platformMessage = defaultMessage;
+        }
+      }
+
       if (platform === 'facebook') {
         const result = await postToFacebook({
-          message,
+          message: platformMessage,
           link: articleUrl,
           imageUrl,
         });
@@ -197,7 +208,7 @@ export async function postArticleToSocialMedia(
           continue;
         }
         const result = await postToInstagram({
-          caption: message,
+          caption: platformMessage,
           imageUrl,
           link: articleUrl,
         });
@@ -217,11 +228,8 @@ export async function postArticleToSocialMedia(
         }
       } else if (platform === 'twitter') {
         // Twitter has character limit, but we'll handle truncation in postToTwitter
-        // Remove "Read more:" and URL from message since we'll add the link separately
-        // But keep the hashtags
-        const twitterText = message
-          .replace(/\n\n(Read more|Leia mais):\s*https?:\/\/[^\s]+/, '') // Remove "Read more: URL"
-          .trim();
+        // Remove "Read more:" from message since we'll add the link separately
+        const twitterText = platformMessage.replace(/\n\nRead more:.*$/, '').trim();
         const result = await postToTwitter({
           text: twitterText,
           imageUrl,

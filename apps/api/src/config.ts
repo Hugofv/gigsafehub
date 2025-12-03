@@ -8,6 +8,9 @@ export const config = {
   databaseUrl: process.env.DATABASE_URL || '',
   logLevel: process.env.LOG_LEVEL || 'info',
   baseUrl: process.env.BASE_URL || 'http://localhost:3000',
+  google: {
+    geminiApiKey: process.env.GEMINI_API_KEY || '',
+  },
   socialMedia: {
     facebook: {
       pageAccessToken: process.env.FACEBOOK_PAGE_ACCESS_TOKEN || '',
