@@ -28,7 +28,7 @@ export async function generateSocialMediaPost(
   }
 
   const genAI = new GoogleGenerativeAI(geminiApiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   // Determine language based on locale
   const language = options.locale === 'en_US' ? 'English' :
@@ -71,6 +71,8 @@ IMPORTANT:
 - Do NOT include "Read more:" or similar phrases
 - Focus on the value proposition and why someone should read the article
 - Use hashtags that are trending and relevant to gig economy, freelancing, insurance, financial security, or the specific topic
+- Some examples of hashtags: #gigeconomybrasil, #motoristadeapp, #seguroparagigworkers, #entregadoresbrasil, #autonomosbr, #protecaofinanceira, #freelancelife2025, #insurtechnews, #trabalhoporaplicativo, #gigworkersafety.
+- Always ask to comment and share the article.
 
 CRITICAL: You MUST respond with ONLY valid JSON in this exact format (no markdown, no code blocks, no explanations):
 {

@@ -172,6 +172,7 @@ export async function postArticleToSocialMedia(
             articleUrl,
           });
           platformMessage = platformPost.message;
+          console.log('platformMessage', platformMessage);
         } catch (error: any) {
           console.error(`Error generating AI post for ${platform}, using default:`, error);
           // Fallback to default message if AI generation fails
