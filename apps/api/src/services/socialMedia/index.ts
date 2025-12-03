@@ -129,9 +129,22 @@ export async function postArticleToSocialMedia(
     articleUrl = articleUrl.replace(/https?:\/\/localhost:\d+/, productionBaseUrl);
   }
 
-  // Build message/caption
-  const defaultMessage = `${article.title}\n\n${article.excerpt}\n\nRead more: ${articleUrl}`;
-  const message = options.customMessage || defaultMessage;
+  // Determine locale from article for hashtags
+  const locale = article.locale === 'pt_BR' ? 'pt-BR' : article.locale === 'en_US' ? 'en-US' : 'pt-BR';
+  const isPortuguese = locale === 'pt-BR';
+
+  // Hashtags for Portuguese
+  const hashtagsPT = '#GigSafeHub #GigEconomy #GigWorkers #SeguroParaMotoristas #FreelancersBrasil #RendaExtra #Empreendedorismo #Insurtech #ProtecaoFinanceira #SideHustle #Entregadores #SeguroParaEntregadores';
+
+  // Hashtags for English
+  const hashtagsEN = '#GigSafeHub #GigEconomy #GigWorkers #GigWorkerInsurance #FinancialProtection #BestInsurance2025 #MotoristasDeApp #Freelancers #Insurtech #DeliveryWorkers #DriverInsurance';
+
+  const hashtags = isPortuguese ? hashtagsPT : hashtagsEN;
+
+  // Build message/caption with hashtags
+  const readMoreText = isPortuguese ? 'Leia mais:' : 'Read more:';
+  const defaultMessage = `${article.title}\n\n${article.excerpt}\n\n${readMoreText} ${articleUrl}\n\n${hashtags}`;
+  const message = options.customMessage ? `${options.customMessage}\n\n${hashtags}` : defaultMessage;
 
   // Get image URL and normalize it (replace localhost with production URL)
   let imageUrl = article.ogImage || article.imageUrl;
@@ -204,8 +217,11 @@ export async function postArticleToSocialMedia(
         }
       } else if (platform === 'twitter') {
         // Twitter has character limit, but we'll handle truncation in postToTwitter
-        // Remove "Read more:" from message since we'll add the link separately
-        const twitterText = message.replace(/\n\nRead more:.*$/, '').trim();
+        // Remove "Read more:" and URL from message since we'll add the link separately
+        // But keep the hashtags
+        const twitterText = message
+          .replace(/\n\n(Read more|Leia mais):\s*https?:\/\/[^\s]+/, '') // Remove "Read more: URL"
+          .trim();
         const result = await postToTwitter({
           text: twitterText,
           imageUrl,

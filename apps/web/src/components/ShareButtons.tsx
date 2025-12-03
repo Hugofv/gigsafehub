@@ -25,9 +25,18 @@ export default function ShareButtons({ url, title, description, locale }: ShareB
 
   // Build beautiful, personalized messages for each platform
   const buildShareMessages = () => {
-    const hashtags = isPortuguese
-      ? '#Seguros #EconomiaGig #GigSafeHub'
-      : '#Insurance #GigEconomy #GigSafeHub';
+    // Hashtags for Portuguese
+    const hashtagsPT = '#GigSafeHub #GigEconomy #GigWorkers #SeguroParaMotoristas #FreelancersBrasil #RendaExtra #Empreendedorismo #Insurtech #ProtecaoFinanceira #SideHustle';
+
+    // Hashtags for English
+    const hashtagsEN = '#GigSafeHub #GigEconomy #GigWorkers #GigWorkerInsurance #FinancialProtection #BestInsurance2025 #MotoristasDeApp #Freelancers #Insurtech';
+
+    // Shorter hashtags for Twitter (to fit character limit)
+    const hashtagsPTTwitter = '#GigSafeHub #GigEconomy #GigWorkers #SeguroParaMotoristas #FreelancersBrasil #RendaExtra #Insurtech';
+    const hashtagsENTwitter = '#GigSafeHub #GigEconomy #GigWorkers #GigWorkerInsurance #FinancialProtection #BestInsurance2025';
+
+    const hashtags = isPortuguese ? hashtagsPT : hashtagsEN;
+    const hashtagsTwitter = isPortuguese ? hashtagsPTTwitter : hashtagsENTwitter;
 
     // Helper to truncate text to fit platform limits
     const truncate = (text: string, maxLength: number) => {
@@ -36,12 +45,15 @@ export default function ShareButtons({ url, title, description, locale }: ShareB
     };
 
     // Twitter/X - Limit 280 characters (URL counts as 23 chars)
-    // Calculate available space: 280 - 23 (URL) - formatting = ~250 chars
+    // Calculate available space considering hashtags
     const titleLength = title.length;
-    const descMaxLength = Math.max(0, 200 - titleLength);
+    const hashtagsLength = hashtagsTwitter.length;
+    // Reserve space for: title + newlines + hashtags + URL (23 chars) + buffer
+    const availableForDesc = 280 - titleLength - hashtagsLength - 25; // 25 for formatting and buffer
+    const descMaxLength = Math.max(0, availableForDesc);
     const twitterText = isPortuguese
-      ? `${title}\n\n${truncate(description || 'Artigo interessante sobre seguros para trabalhadores da economia gig.', descMaxLength)}\n\n${hashtags}`
-      : `${title}\n\n${truncate(description || 'Interesting article about insurance for gig economy workers.', descMaxLength)}\n\n${hashtags}`;
+      ? `${title}\n\n${truncate(description || 'Artigo interessante sobre seguros para trabalhadores da economia gig.', descMaxLength)}\n\n${hashtagsTwitter}`
+      : `${title}\n\n${truncate(description || 'Interesting article about insurance for gig economy workers.', descMaxLength)}\n\n${hashtagsTwitter}`;
     const twitterMessage = twitterText;
 
     // WhatsApp - More conversational and friendly
@@ -51,8 +63,8 @@ export default function ShareButtons({ url, title, description, locale }: ShareB
 
     // Telegram - Similar to WhatsApp but slightly shorter
     const telegramMessage = isPortuguese
-      ? `*${title}*\n\n${truncate(description || 'Artigo interessante sobre seguros para trabalhadores da economia gig.', 200)}\n\n*GigSafeHub* - Proteção para profissionais autônomos\n\n🔗 ${fullUrl}`
-      : `*${title}*\n\n${truncate(description || 'Interesting article about insurance for gig economy workers.', 200)}\n\n*GigSafeHub* - Protection for gig workers\n\n🔗 ${fullUrl}`;
+      ? `*${title}*\n\n${truncate(description || 'Artigo interessante sobre seguros para trabalhadores da economia gig.', 200)}\n\n*GigSafeHub* - Proteção para profissionais autônomos\n\n🔗 ${fullUrl}\n\n${hashtagsPT}`
+      : `*${title}*\n\n${truncate(description || 'Interesting article about insurance for gig economy workers.', 200)}\n\n*GigSafeHub* - Protection for gig workers\n\n🔗 ${fullUrl}\n\n${hashtagsEN}`;
 
     // Reddit - More descriptive title
     const redditTitle = isPortuguese
