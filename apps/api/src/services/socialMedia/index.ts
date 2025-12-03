@@ -4,6 +4,7 @@ import { postToTwitter, type TwitterPostOptions, type TwitterPostResult } from '
 import { generateSocialMediaPost } from '../ai/gemini';
 import { prisma } from '../../lib/prisma';
 import { config } from '../../config';
+import { Category } from '@prisma/client';
 
 export type SocialMediaPlatform = 'facebook' | 'instagram' | 'twitter';
 
@@ -165,7 +166,7 @@ export async function postArticleToSocialMedia(
           const platformPost = await generateSocialMediaPost({
             title: article.title,
             excerpt: article.excerpt,
-            category: article.category?.name,
+            category: (article.category as Category)?.name,
             locale: article.locale,
             platform,
             articleUrl,
