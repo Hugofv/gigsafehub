@@ -8,6 +8,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { adminArticles, type Article, type Category } from '@/services/admin';
 import ArticleDetailClient from '@/app/[locale]/articles/[slug]/ArticleDetailClient';
 import { I18nProvider } from '@/contexts/I18nContext';
+import Editor from '@monaco-editor/react';
 
 const articleSchema = yup.object({
   title: yup.string().required('Title is required'),
@@ -44,6 +45,7 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<ArticleFormData>({
@@ -201,13 +203,38 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Content *</label>
-          <textarea
-            {...register('content')}
-            className={`w-full px-4 py-2 border rounded-lg font-mono text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
-              errors.content ? 'border-red-300' : 'border-slate-300'
-            }`}
-            rows={10}
-          />
+          <div className={`border rounded-lg overflow-hidden ${
+            errors.content ? 'border-red-300' : 'border-slate-300'
+          }`}>
+            <Editor
+              height="400px"
+              defaultLanguage="html"
+              language="html"
+              value={watch('content') || ''}
+              onChange={(value) => setValue('content', value || '', { shouldValidate: true })}
+              theme="vs-light"
+              loading={
+                <div className="flex items-center justify-center h-[400px] bg-slate-50">
+                  <div className="text-slate-500">Loading editor...</div>
+                </div>
+              }
+              options={{
+                minimap: { enabled: false },
+                fontSize: 14,
+                lineNumbers: 'on',
+                wordWrap: 'on',
+                automaticLayout: true,
+                scrollBeyondLastLine: false,
+                formatOnPaste: true,
+                formatOnType: true,
+                tabSize: 2,
+                insertSpaces: true,
+                renderWhitespace: 'selection',
+                folding: true,
+                bracketPairColorization: { enabled: true },
+              }}
+            />
+          </div>
           {errors.content && <p className="mt-1 text-sm text-red-600">{errors.content.message}</p>}
         </div>
 
