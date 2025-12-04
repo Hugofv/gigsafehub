@@ -69,6 +69,13 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
             robots: {
               index: article.robotsIndex ?? true,
               follow: article.robotsFollow ?? true,
+              googleBot: {
+                index: article.robotsIndex ?? true,
+                follow: article.robotsFollow ?? true,
+                'max-video-preview': -1,
+                'max-image-preview': 'large',
+                'max-snippet': -1,
+              },
             },
           };
         }
