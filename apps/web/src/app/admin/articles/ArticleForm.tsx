@@ -212,12 +212,49 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
               language="html"
               value={watch('content') || ''}
               onChange={(value) => setValue('content', value || '', { shouldValidate: true })}
-              theme="vs-light"
+              theme="vs-dark"
               loading={
-                <div className="flex items-center justify-center h-[400px] bg-slate-50">
-                  <div className="text-slate-500">Loading editor...</div>
+                <div className="flex items-center justify-center h-[400px] bg-slate-900">
+                  <div className="text-slate-400">Loading editor...</div>
                 </div>
               }
+              onMount={(editor, monaco) => {
+                // Configure HTML autocomplete
+                monaco.languages.html.htmlDefaults.setOptions({
+                  format: {
+                    enabled: true,
+                  },
+                });
+
+                // Enable autocomplete suggestions
+                monaco.languages.setLanguageConfiguration('html', {
+                  comments: {
+                    blockComment: ['<!--', '-->'],
+                  },
+                  brackets: [
+                    ['<', '>'],
+                    ['{', '}'],
+                    ['[', ']'],
+                    ['(', ')'],
+                  ],
+                  autoClosingPairs: [
+                    { open: '<', close: '>' },
+                    { open: '{', close: '}' },
+                    { open: '[', close: ']' },
+                    { open: '(', close: ')' },
+                    { open: '"', close: '"' },
+                    { open: "'", close: "'" },
+                  ],
+                  surroundingPairs: [
+                    { open: '<', close: '>' },
+                    { open: '{', close: '}' },
+                    { open: '[', close: ']' },
+                    { open: '(', close: ')' },
+                    { open: '"', close: '"' },
+                    { open: "'", close: "'" },
+                  ],
+                });
+              }}
               options={{
                 minimap: { enabled: false },
                 fontSize: 14,
@@ -232,6 +269,47 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
                 renderWhitespace: 'selection',
                 folding: true,
                 bracketPairColorization: { enabled: true },
+                // Autocomplete options
+                suggestOnTriggerCharacters: true,
+                quickSuggestions: {
+                  other: true,
+                  comments: true,
+                  strings: true,
+                },
+                suggestSelection: 'first',
+                tabCompletion: 'on',
+                wordBasedSuggestions: 'allDocuments',
+                acceptSuggestionOnCommitCharacter: true,
+                acceptSuggestionOnEnter: 'on',
+                snippetSuggestions: 'top',
+                suggest: {
+                  showKeywords: true,
+                  showSnippets: true,
+                  showClasses: true,
+                  showFunctions: true,
+                  showVariables: true,
+                  showFields: true,
+                  showOperators: true,
+                  showUsers: true,
+                  showReferences: true,
+                  showFolders: true,
+                  showTypeParameters: true,
+                  showIssues: true,
+                  showColors: true,
+                  showFiles: true,
+                  showValues: true,
+                  showEnums: true,
+                  showEnumMembers: true,
+                  showStructs: true,
+                  showEvents: true,
+                  showUnits: true,
+                  showProperties: true,
+                  showMethods: true,
+                  showWords: true,
+                  showIcons: true,
+                  showModules: true,
+                  showConstants: true,
+                },
               }}
             />
           </div>
