@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useCategories } from '@/contexts/CategoriesContext';
 import { useTranslation } from '@/contexts/I18nContext';
 import { normalizeImageUrl } from '@/lib/imageUtils';
+import { formatArticleDate } from '@/lib/dateUtils';
 
 interface Article {
   id: string;
@@ -85,12 +86,7 @@ export default function ArticleList({
   };
 
   const formatDate = (date: string | Date) => {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return new Intl.DateTimeFormat(locale, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(d);
+    return formatArticleDate(date, locale);
   };
 
   const defaultViewAllLink = `/${locale}/articles`;

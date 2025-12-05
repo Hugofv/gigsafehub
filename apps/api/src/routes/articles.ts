@@ -39,13 +39,24 @@ articlesRouter.get('/', async (req: Request, res: Response) => {
     }
 
     // Build orderBy clause
-    const orderBy: any = {};
+    // Primary sort: date, Secondary sort: createdAt
+    let orderBy: any = [];
     if (sortBy === 'date') {
-      orderBy.date = sortOrder === 'asc' ? 'asc' : 'desc';
+      orderBy = [
+        { date: sortOrder === 'asc' ? 'asc' : 'desc' },
+        { createdAt: 'desc' },
+      ];
     } else if (sortBy === 'title') {
-      orderBy.title = sortOrder === 'asc' ? 'asc' : 'desc';
+      orderBy = [
+        { title: sortOrder === 'asc' ? 'asc' : 'desc' },
+        { date: 'desc' },
+        { createdAt: 'desc' },
+      ];
     } else {
-      orderBy.date = 'desc'; // Default
+      orderBy = [
+        { date: 'desc' }, // Default: date descending
+        { createdAt: 'desc' },
+      ];
     }
 
     const articles = await prisma.article.findMany({
@@ -410,9 +421,10 @@ articlesRouter.get('/menu', async (req: Request, res: Response) => {
           },
         },
       },
-      orderBy: {
-        date: 'desc',
-      },
+      orderBy: [
+        { date: 'desc' },
+        { createdAt: 'desc' },
+      ],
     });
 
     const formattedArticles = articles.map((article: any) => {

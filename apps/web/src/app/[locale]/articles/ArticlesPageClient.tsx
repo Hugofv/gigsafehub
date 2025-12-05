@@ -8,6 +8,7 @@ import { useCategories } from '@/contexts/CategoriesContext';
 import { useTranslation } from '@/contexts/I18nContext';
 import { normalizeImageUrl } from '@/lib/imageUtils';
 import { getLocalizedSlug } from '@/lib/slug';
+import { formatArticleDate } from '@/lib/dateUtils';
 
 interface Article {
   id: string;
@@ -104,12 +105,7 @@ export default function ArticlesPageClient({
   };
 
   const formatDate = (date: string | Date) => {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return new Intl.DateTimeFormat(locale, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(d);
+    return formatArticleDate(date, locale);
   };
 
   const getCategoryName = (category: RootCategory) => {

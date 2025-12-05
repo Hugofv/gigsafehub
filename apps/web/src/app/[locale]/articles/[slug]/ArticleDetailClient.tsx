@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '@/contexts/I18nContext';
 import { normalizeImageUrl } from '@/lib/imageUtils';
+import { formatArticleDateLong } from '@/lib/dateUtils';
 import CommentsSection from '@/components/Comments';
 import ShareButtons from '@/components/ShareButtons';
 
@@ -55,12 +56,7 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
   const categoryName = article.category?.name || (isComparisonArticle ? t('nav.compare') : t('nav.blog'));
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(locale === 'pt-BR' ? 'pt-BR' : 'en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    return formatArticleDateLong(dateString, locale === 'pt-BR' ? 'pt-BR' : 'en-US');
   };
 
   // Build article URL for sharing

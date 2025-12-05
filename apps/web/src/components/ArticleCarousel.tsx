@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCategories } from '@/contexts/CategoriesContext';
 import { normalizeImageUrl } from '@/lib/imageUtils';
+import { formatArticleDateLong } from '@/lib/dateUtils';
 
 interface Article {
   id: string;
@@ -85,12 +86,7 @@ export default function ArticleCarousel({ articles, locale }: ArticleCarouselPro
   };
 
   const formatDate = (date: string | Date) => {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return new Intl.DateTimeFormat(locale, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(d);
+    return formatArticleDateLong(date, locale);
   };
 
   const currentArticle = articles[currentIndex];

@@ -287,7 +287,10 @@ adminRouter.get('/articles', async (req: Request, res: Response) => {
   try {
     const articles = await prisma.article.findMany({
       include: { category: true },
-      orderBy: { date: 'desc' },
+      orderBy: [
+        { date: 'desc' },
+        { createdAt: 'desc' },
+      ],
     });
     res.json(articles);
   } catch (error) {

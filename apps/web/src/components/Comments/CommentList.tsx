@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { parseLocalDate } from '@/lib/dateUtils';
 import type { Comment } from '@/services/comments';
 
 interface CommentListProps {
@@ -22,14 +23,16 @@ export default function CommentList({ comments, locale }: CommentListProps) {
   }
 
   const formatDate = (dateString: string) => {
+    // For comments, we want to show date and time
+    // Comments have timestamps, so we parse them normally but format as local
     const date = new Date(dateString);
-    return date.toLocaleDateString(locale === 'pt-BR' ? 'pt-BR' : 'en-US', {
+    return new Intl.DateTimeFormat(locale === 'pt-BR' ? 'pt-BR' : 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    });
+    }).format(date);
   };
 
   return (

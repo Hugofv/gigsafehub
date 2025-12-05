@@ -95,9 +95,10 @@ menuRouter.get('/', async (req: Request, res: Response) => {
             },
           },
         },
-        orderBy: {
-          date: 'desc',
-        },
+        orderBy: [
+          { date: 'desc' },
+          { createdAt: 'desc' },
+        ],
         take: 50, // Limit to 50 menu articles for performance
       }),
     ]);
