@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { z } from 'zod';
 import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
+import { sanitizeArticleContent, sanitizeText } from '../utils/sanitize';
 
 export const adminRouter: Router = Router();
 
@@ -313,8 +314,19 @@ adminRouter.post('/articles', async (req: Request, res: Response) => {
   try {
     const data = articleSchema.parse(req.body);
 
+    // Sanitize content fields
+    const sanitizedData = {
+      ...data,
+      content: sanitizeArticleContent(data.content),
+      excerpt: sanitizeText(data.excerpt),
+      title: sanitizeText(data.title),
+      titleMenu: data.titleMenu ? sanitizeText(data.titleMenu) : undefined,
+      metaTitle: data.metaTitle ? sanitizeText(data.metaTitle) : undefined,
+      metaDescription: data.metaDescription ? sanitizeText(data.metaDescription) : undefined,
+    };
+
     // Normalize categoryId: convert empty string to null
-    let categoryId = data.categoryId;
+    let categoryId = sanitizedData.categoryId;
     if (categoryId === '' || categoryId === null || categoryId === undefined) {
       categoryId = null;
     } else {
@@ -332,9 +344,9 @@ adminRouter.post('/articles', async (req: Request, res: Response) => {
 
     const article = await prisma.article.create({
       data: {
-        ...data,
+        ...sanitizedData,
         categoryId: categoryId,
-        date: typeof data.date === 'string' ? new Date(data.date) : data.date,
+        date: typeof sanitizedData.date === 'string' ? new Date(sanitizedData.date) : sanitizedData.date,
       },
     });
     res.status(201).json(article);
@@ -358,6 +370,26 @@ adminRouter.put('/articles/:id', async (req: Request, res: Response) => {
   try {
     const data = articleSchema.partial().parse(req.body);
     const updateData: any = { ...data };
+
+    // Sanitize content fields if they are being updated
+    if (updateData.content) {
+      updateData.content = sanitizeArticleContent(updateData.content);
+    }
+    if (updateData.excerpt) {
+      updateData.excerpt = sanitizeText(updateData.excerpt);
+    }
+    if (updateData.title) {
+      updateData.title = sanitizeText(updateData.title);
+    }
+    if (updateData.titleMenu) {
+      updateData.titleMenu = sanitizeText(updateData.titleMenu);
+    }
+    if (updateData.metaTitle) {
+      updateData.metaTitle = sanitizeText(updateData.metaTitle);
+    }
+    if (updateData.metaDescription) {
+      updateData.metaDescription = sanitizeText(updateData.metaDescription);
+    }
 
     // Normalize categoryId: convert empty string to null
     if ('categoryId' in updateData) {
@@ -415,6 +447,41 @@ adminRouter.delete('/articles/:id', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Article not found' });
     }
     res.status(500).json({ error: 'Failed to delete article' });
+  }
+});
+
+// ============================================
+// IMAGE UPLOAD
+// ============================================
+
+import { upload } from '../middleware/upload';
+import { uploadImageToS3 } from '../services/s3/upload';
+
+adminRouter.post('/upload/image', upload.single('image'), async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    const folder = (req.body.folder as string) || 'articles';
+
+    const result = await uploadImageToS3({
+      file: req.file,
+      folder,
+      fileName: req.body.fileName,
+    });
+
+    res.json({
+      success: true,
+      url: result.url,
+      key: result.key,
+      bucket: result.bucket,
+    });
+  } catch (error: any) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to upload image',
+    });
   }
 });
 

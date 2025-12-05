@@ -28,6 +28,19 @@ const nextConfig = {
         protocol: 'http',
         hostname: '**',
       },
+      // AWS S3 patterns
+      {
+        protocol: 'https',
+        hostname: '*.s3.*.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.s3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 's3.*.amazonaws.com',
+      },
     ],
   },
 

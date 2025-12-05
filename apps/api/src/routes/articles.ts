@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../lib/prisma';
 import type { ContentLocale } from '@prisma/client';
+import { sanitizeText } from '../utils/sanitize';
 
 export const articlesRouter: Router = Router();
 
@@ -560,13 +561,17 @@ articlesRouter.post('/:articleId/comments', async (req: Request, res: Response) 
       return res.status(404).json({ error: 'Article not found' });
     }
 
+    // Sanitize comment data
+    const sanitizedName = sanitizeText(name.trim());
+    const sanitizedMessage = sanitizeText(message.trim());
+
     // Create comment (approved by default)
     const comment = await prisma.comment.create({
       data: {
         articleId,
-        name: name.trim(),
+        name: sanitizedName,
         email: email.trim().toLowerCase(),
-        message: message.trim(),
+        message: sanitizedMessage,
         isApproved: true, // Comments are approved by default
       },
     });

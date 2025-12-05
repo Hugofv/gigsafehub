@@ -40,6 +40,7 @@ interface ArticleFormProps {
 export default function ArticleForm({ article, categories, onSuccess, onCancel }: ArticleFormProps) {
   const toast = useToast();
   const isEditing = !!article;
+  const [uploadingImage, setUploadingImage] = React.useState(false);
 
   const {
     register,
@@ -371,13 +372,67 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Image URL *</label>
-            <input
-              {...register('imageUrl')}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
-                errors.imageUrl ? 'border-red-300' : 'border-slate-300'
-              }`}
-            />
-            {errors.imageUrl && <p className="mt-1 text-sm text-red-600">{errors.imageUrl.message}</p>}
+            <div className="space-y-2">
+              <input
+                {...register('imageUrl')}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
+                  errors.imageUrl ? 'border-red-300' : 'border-slate-300'
+                }`}
+                placeholder="https://..."
+              />
+              {errors.imageUrl && <p className="mt-1 text-sm text-red-600">{errors.imageUrl.message}</p>}
+
+              {/* Upload Image Section */}
+              <div className="border-t pt-3 mt-3">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Ou faça upload de uma imagem
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      // Validate file size (10MB max)
+                      if (file.size > 10 * 1024 * 1024) {
+                        toast.error('Arquivo muito grande. Tamanho máximo: 10MB');
+                        return;
+                      }
+
+                      setUploadingImage(true);
+                      try {
+                        const result = await adminArticles.uploadImage(file, 'articles');
+                        setValue('imageUrl', result.url);
+                        toast.success('Imagem enviada com sucesso!');
+                      } catch (error) {
+                        console.error('Error uploading image:', error);
+                        toast.error(error instanceof Error ? error.message : 'Erro ao fazer upload da imagem');
+                      } finally {
+                        setUploadingImage(false);
+                        // Reset input
+                        e.target.value = '';
+                      }
+                    }}
+                    disabled={uploadingImage}
+                    className="flex-1 text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 file:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                  {uploadingImage && (
+                    <div className="flex items-center text-sm text-slate-500">
+                      <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Enviando...
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Formatos aceitos: JPG, PNG, WebP, GIF (máx. 10MB)
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
