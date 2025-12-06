@@ -12,11 +12,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   // Don't add suffix, template from root layout will add it
   const title = locale === 'pt-BR'
-    ? 'GigSafeHub - Seguros e Proteção para Trabalhadores da Economia Gig | Comparador de Seguros'
-    : 'GigSafeHub - Insurance and Protection for Gig Economy Workers | Insurance Comparator';
+    ? 'GigSafeHub - Guias Especializados de Seguros para Trabalhadores da Gig Economy'
+    : 'GigSafeHub - Specialized Insurance Guides for Gig Economy Workers';
   const description = locale === 'pt-BR'
-    ? 'Compare seguros para motoristas de aplicativo, entregadores e freelancers. Encontre proteção financeira, compare apólices e descubra as melhores opções de seguro para trabalhadores da gig economy. Guias especializados, comparações imparciais e recomendações personalizadas.'
-    : 'Compare insurance for rideshare drivers, delivery workers, and freelancers. Find financial protection, compare policies, and discover the best insurance options for gig economy workers. Specialized guides, unbiased comparisons, and personalized recommendations.';
+    ? 'Aprenda como proteger sua renda, veículos e responsabilidade profissional. Guias especializados e artigos práticos criados por especialistas para motoristas de aplicativo, entregadores e freelancers. 100% gratuito e atualizado regularmente.'
+    : 'Learn how to protect your income, vehicles, and professional liability. Specialized guides and practical articles created by experts for rideshare drivers, delivery workers, and freelancers. 100% free and regularly updated.';
 
   const keywords = locale === 'pt-BR'
     ? [
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         'seguro para freelancers',
         'gig economy brasil',
         'proteção financeira',
-        'comparador de seguros',
+        'guias de seguros',
         'seguro responsabilidade civil',
         'seguro profissional',
         'seguro veículo',
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         'freelancer insurance',
         'gig economy insurance',
         'financial protection',
-        'insurance comparator',
+        'insurance guides',
         'general liability insurance',
         'professional liability insurance',
         'vehicle insurance',
