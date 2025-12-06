@@ -61,7 +61,10 @@ export default function HomeClient({
         ? '⚠️ Descubra seus riscos em 2 minutos'
         : '⚠️ Discover your risks in 2 minutes';
 
-      toast.warning(message, 6000); // Show for 6 seconds
+      const linkText = locale === 'pt-BR' ? 'Ver artigos' : 'View articles';
+      const articlesLink = getLink('/articles');
+
+      toast.warning(message, 8000, articlesLink, linkText); // Show for 8 seconds with link
       setToastShown(true);
       sessionStorage.setItem('home-toast-shown', 'true');
     }, 5000);

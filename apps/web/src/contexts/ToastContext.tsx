@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import Link from 'next/link';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -9,16 +10,18 @@ export interface Toast {
   message: string;
   type: ToastType;
   duration?: number;
+  link?: string;
+  linkText?: string;
 }
 
 interface ToastContextType {
   toasts: Toast[];
-  showToast: (message: string, type?: ToastType, duration?: number) => void;
+  showToast: (message: string, type?: ToastType, duration?: number, link?: string, linkText?: string) => void;
   removeToast: (id: string) => void;
-  success: (message: string, duration?: number) => void;
-  error: (message: string, duration?: number) => void;
-  info: (message: string, duration?: number) => void;
-  warning: (message: string, duration?: number) => void;
+  success: (message: string, duration?: number, link?: string, linkText?: string) => void;
+  error: (message: string, duration?: number, link?: string, linkText?: string) => void;
+  info: (message: string, duration?: number, link?: string, linkText?: string) => void;
+  warning: (message: string, duration?: number, link?: string, linkText?: string) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -43,9 +46,9 @@ export function ToastProvider({ children }: ToastProviderProps) {
   }, []);
 
   const showToast = useCallback(
-    (message: string, type: ToastType = 'info', duration: number = 5000) => {
+    (message: string, type: ToastType = 'info', duration: number = 5000, link?: string, linkText?: string) => {
       const id = Math.random().toString(36).substring(2, 9);
-      const newToast: Toast = { id, message, type, duration };
+      const newToast: Toast = { id, message, type, duration, link, linkText };
 
       setToasts((prev) => [...prev, newToast]);
 
@@ -59,20 +62,20 @@ export function ToastProvider({ children }: ToastProviderProps) {
     [removeToast]
   );
 
-  const success = useCallback((message: string, duration?: number) => {
-    showToast(message, 'success', duration);
+  const success = useCallback((message: string, duration?: number, link?: string, linkText?: string) => {
+    showToast(message, 'success', duration, link, linkText);
   }, [showToast]);
 
-  const error = useCallback((message: string, duration?: number) => {
-    showToast(message, 'error', duration);
+  const error = useCallback((message: string, duration?: number, link?: string, linkText?: string) => {
+    showToast(message, 'error', duration, link, linkText);
   }, [showToast]);
 
-  const info = useCallback((message: string, duration?: number) => {
-    showToast(message, 'info', duration);
+  const info = useCallback((message: string, duration?: number, link?: string, linkText?: string) => {
+    showToast(message, 'info', duration, link, linkText);
   }, [showToast]);
 
-  const warning = useCallback((message: string, duration?: number) => {
-    showToast(message, 'warning', duration);
+  const warning = useCallback((message: string, duration?: number, link?: string, linkText?: string) => {
+    showToast(message, 'warning', duration, link, linkText);
   }, [showToast]);
 
   return (
@@ -200,7 +203,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
 
   return (
     <div
-      className={`${styles.bg} ${styles.text} border rounded-lg shadow-lg p-4 flex items-start gap-3 pointer-events-auto animate-fade-in-up`}
+      className={`${styles.bg} ${styles.text} border rounded-lg shadow-lg p-4 flex items-start gap-3 pointer-events-auto animate-fade-in-up ${toast.link ? 'hover:shadow-xl transition-shadow' : ''}`}
       role="alert"
     >
       <div className={`${styles.iconBg} ${styles.icon} rounded-full p-1.5 flex-shrink-0`}>
@@ -208,9 +211,27 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium">{toast.message}</p>
+        {toast.link && (
+          <Link
+            href={toast.link}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            className="mt-2 inline-flex items-center gap-1 text-xs font-semibold underline hover:opacity-80"
+          >
+            {toast.linkText || 'Ver mais'}
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        )}
       </div>
       <button
-        onClick={onClose}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+        }}
         className={`${styles.text} hover:opacity-70 flex-shrink-0 ml-2`}
         aria-label="Close"
       >
