@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '@/contexts/I18nContext';
@@ -54,6 +54,170 @@ interface ArticleDetailClientProps {
   isComparison?: boolean;
 }
 
+// Component for inline CTA
+function InlineRelatedArticleCTA({
+  relatedArticle,
+  locale
+}: {
+  relatedArticle: RelatedArticle;
+  locale: string;
+}) {
+  const relatedSlug = locale === 'pt-BR' && relatedArticle.slugPt
+    ? relatedArticle.slugPt
+    : locale === 'en-US' && relatedArticle.slugEn
+      ? relatedArticle.slugEn
+      : relatedArticle.slug;
+  const relatedPath = `/${locale}/articles/${relatedSlug}`;
+
+  return (
+    <div className="my-8 py-6 px-4 border-l-4 border-brand-300 bg-slate-50 rounded-r">
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 mt-1">
+          <svg className="w-5 h-5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs text-slate-500 mb-1.5 uppercase tracking-wide">
+            {locale === 'pt-BR' ? 'Artigo Relacionado' : 'Related Article'}
+          </p>
+          <h4 className="text-base font-semibold text-slate-900 mb-1.5 leading-snug">
+            {relatedArticle.title}
+          </h4>
+          {relatedArticle.excerpt && (
+            <p className="text-sm text-slate-600 mb-3 line-clamp-2 leading-relaxed">
+              {relatedArticle.excerpt}
+            </p>
+          )}
+          <Link
+            href={relatedPath}
+            className="inline-flex items-center gap-1.5 text-sm text-brand-600 hover:text-brand-700 font-medium transition-colors"
+          >
+            {locale === 'pt-BR' ? 'Ler mais' : 'Read more'}
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Function to split content and insert CTAs
+function splitContentWithCTAs(
+  content: string,
+  relatedArticles: RelatedArticle[] | undefined
+): Array<{ type: 'html' | 'cta'; content?: string; article?: RelatedArticle }> {
+  if (!content || !relatedArticles || relatedArticles.length === 0) {
+    return [{ type: 'html', content }];
+  }
+
+  const parts: Array<{ type: 'html' | 'cta'; content?: string; article?: RelatedArticle }> = [];
+
+  // Split by closing section tags (</section>)
+  const sectionRegex = /<\/section>/gi;
+  const sectionMatches = Array.from(content.matchAll(sectionRegex));
+
+  if (sectionMatches.length >= 2) {
+    // We have multiple sections
+    let lastIndex = 0;
+    let ctaIndex = 0;
+
+    sectionMatches.forEach((match, index) => {
+      const sectionEnd = match.index! + match[0].length;
+      const sectionContent = content.substring(lastIndex, sectionEnd);
+
+      if (sectionContent.trim()) {
+        parts.push({ type: 'html', content: sectionContent });
+
+        // Insert CTA after first section
+        if (index === 0 && ctaIndex < relatedArticles.length) {
+          parts.push({ type: 'cta', article: relatedArticles[ctaIndex] });
+          ctaIndex++;
+        }
+        // Insert CTA in the middle (after second section if we have 3+ sections)
+        else if (index === 1 && sectionMatches.length >= 3 && ctaIndex < relatedArticles.length) {
+          parts.push({ type: 'cta', article: relatedArticles[ctaIndex] });
+          ctaIndex++;
+        }
+      }
+
+      lastIndex = sectionEnd;
+    });
+
+    // Add remaining content
+    if (lastIndex < content.length) {
+      const remaining = content.substring(lastIndex);
+      if (remaining.trim()) {
+        parts.push({ type: 'html', content: remaining });
+      }
+    }
+  } else {
+    // No sections, try splitting by closing h2 tags or paragraphs
+    const h2CloseRegex = /<\/h2>/gi;
+    const h2Matches = Array.from(content.matchAll(h2CloseRegex));
+
+    if (h2Matches.length >= 2) {
+      // Split by h2 tags
+      let lastIndex = 0;
+      let ctaIndex = 0;
+
+      h2Matches.forEach((match, index) => {
+        const h2End = match.index! + match[0].length;
+        const nextMatch = h2Matches[index + 1];
+        const sectionEnd = nextMatch ? nextMatch.index! : content.length;
+        const sectionContent = content.substring(lastIndex, sectionEnd);
+
+        if (sectionContent.trim()) {
+          parts.push({ type: 'html', content: sectionContent });
+
+          // Insert CTA after first h2
+          if (index === 0 && ctaIndex < relatedArticles.length) {
+            parts.push({ type: 'cta', article: relatedArticles[ctaIndex] });
+            ctaIndex++;
+          }
+        }
+
+        lastIndex = sectionEnd;
+      });
+
+      // Add remaining
+      if (lastIndex < content.length) {
+        const remaining = content.substring(lastIndex);
+        if (remaining.trim()) {
+          parts.push({ type: 'html', content: remaining });
+        }
+      }
+    } else {
+      // Fallback: insert CTA after first paragraph
+      const firstParagraphRegex = /(<p[^>]*>.*?<\/p>)/i;
+      const firstMatch = content.match(firstParagraphRegex);
+
+      if (firstMatch && firstMatch.index !== undefined) {
+        const beforeFirst = content.substring(0, firstMatch.index);
+        const firstP = firstMatch[0];
+        const afterFirst = content.substring(firstMatch.index + firstMatch[0].length);
+
+        if (beforeFirst.trim()) parts.push({ type: 'html', content: beforeFirst });
+        parts.push({ type: 'html', content: firstP });
+        parts.push({ type: 'cta', article: relatedArticles[0] });
+        if (afterFirst.trim()) parts.push({ type: 'html', content: afterFirst });
+      } else {
+        // Just return content as-is
+        parts.push({ type: 'html', content });
+      }
+    }
+  }
+
+  // Ensure we always have at least one part
+  if (parts.length === 0) {
+    parts.push({ type: 'html', content });
+  }
+
+  return parts;
+}
+
 export default function ArticleDetailClient({ article, locale, isComparison = false }: ArticleDetailClientProps) {
   const { t } = useTranslation();
 
@@ -78,6 +242,16 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
     ? (article.slugPt || article.slug)
     : (article.slugEn || article.slug);
   const articleUrl = `/${locale}/${categorySlug}/${articleSlug}`;
+
+  // Process content to insert CTAs
+  const contentParts = useMemo(() => {
+    try {
+      return splitContentWithCTAs(article.content || '', article.relatedArticles);
+    } catch (error) {
+      console.error('Error processing content:', error);
+      return [{ type: 'html' as const, content: article.content || '' }];
+    }
+  }, [article.content, article.relatedArticles]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -155,10 +329,27 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
         )}
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12">
-          <div
-            className="prose prose-lg max-w-none prose-slate prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-900 prose-code:text-brand-600 prose-code:bg-slate-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded"
-            dangerouslySetInnerHTML={{ __html: article.content }}
-          />
+          <div className="prose prose-lg max-w-none prose-slate prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-900 prose-code:text-brand-600 prose-code:bg-slate-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded">
+            {contentParts.map((part, index) => {
+              if (part.type === 'html' && part.content) {
+                return (
+                  <div
+                    key={`html-${index}`}
+                    dangerouslySetInnerHTML={{ __html: part.content }}
+                  />
+                );
+              } else if (part.type === 'cta' && part.article) {
+                return (
+                  <InlineRelatedArticleCTA
+                    key={`cta-${index}`}
+                    relatedArticle={part.article}
+                    locale={locale}
+                  />
+                );
+              }
+              return null;
+            })}
+          </div>
 
           {/* Article Credits Section */}
           <div className="mt-8 pt-8 border-t border-slate-200 text-center">
