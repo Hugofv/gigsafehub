@@ -4,9 +4,9 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -176,8 +176,8 @@ body {
   color: #475569;
 }
 
-.prose li::marker {
-  color: #3498DB;
+.prose ul {
+  list-style: none; /* Remove default bullets */
 }
 
 .prose ul > li {
@@ -193,7 +193,7 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: #3498DB;
+  background-color: #3498db;
 }
 
 .prose strong {
@@ -202,15 +202,15 @@ body {
 }
 
 .prose a {
-  color: #3498DB;
+  color: #3498db;
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: all 0.2s ease;
 }
 
 .prose a:hover {
-  color: #1D3A6F;
-  border-bottom-color: #3498DB;
+  color: #1d3a6f;
+  border-bottom-color: #3498db;
 }
 
 .prose section {
@@ -244,7 +244,7 @@ body {
 .prose .grid > div:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(29, 58, 111, 0.1);
-  border-color: #3498DB;
+  border-color: #3498db;
 }
 
 .prose footer {
@@ -256,12 +256,12 @@ body {
 }
 
 .prose footer a {
-  color: #3498DB;
+  color: #3498db;
   font-weight: 500;
 }
 
 .prose footer a:hover {
-  color: #1D3A6F;
+  color: #1d3a6f;
 }
 
 /* Responsive adjustments */
@@ -278,4 +278,3 @@ body {
     font-size: 1rem;
   }
 }
-

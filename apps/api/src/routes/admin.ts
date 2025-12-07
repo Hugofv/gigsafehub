@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma';
 import { z } from 'zod';
 import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
 import { sanitizeArticleContent, sanitizeText } from '../utils/sanitize';
+import { addInternalLinksSafe } from '../utils/articleLinks';
 
 export const adminRouter: Router = Router();
 
@@ -281,12 +282,27 @@ const articleSchema = z.object({
   canonicalUrl: z.string().optional(),
   structuredData: z.string().optional(),
   readingTime: z.number().int().optional(),
+  relatedArticleIds: z.array(z.string()).optional(), // Array of related article IDs
 });
 
 adminRouter.get('/articles', async (req: Request, res: Response) => {
   try {
     const articles = await prisma.article.findMany({
-      include: { category: true },
+      include: {
+        category: true,
+        relatedArticles: {
+          include: {
+            relatedArticle: {
+              select: {
+                id: true,
+                title: true,
+                slug: true,
+              },
+            },
+          },
+          orderBy: { order: 'asc' },
+        },
+      },
       orderBy: [
         { date: 'desc' },
         { createdAt: 'desc' },
@@ -302,7 +318,23 @@ adminRouter.get('/articles/:id', async (req: Request, res: Response) => {
   try {
     const article = await prisma.article.findUnique({
       where: { id: req.params.id },
-      include: { category: true },
+      include: {
+        category: true,
+        relatedArticles: {
+          include: {
+            relatedArticle: {
+              select: {
+                id: true,
+                title: true,
+                slug: true,
+                slugEn: true,
+                slugPt: true,
+              },
+            },
+          },
+          orderBy: { order: 'asc' },
+        } as any,
+      },
     });
     if (!article) {
       return res.status(404).json({ error: 'Article not found' });
@@ -328,6 +360,9 @@ adminRouter.post('/articles', async (req: Request, res: Response) => {
       metaDescription: data.metaDescription ? sanitizeText(data.metaDescription) : undefined,
     };
 
+    // Extract relatedArticleIds before creating article
+    const relatedArticleIds = data.relatedArticleIds || [];
+
     // Normalize categoryId: convert empty string to null
     let categoryId = sanitizedData.categoryId;
     if (categoryId === '' || categoryId === null || categoryId === undefined) {
@@ -345,14 +380,93 @@ adminRouter.post('/articles', async (req: Request, res: Response) => {
       }
     }
 
+    // Remove relatedArticleIds from data before creating (it's not a field in Article model)
+    const { relatedArticleIds: _, ...articleData } = sanitizedData;
+
     const article = await prisma.article.create({
       data: {
-        ...sanitizedData,
+        ...articleData,
         categoryId: categoryId,
         date: typeof sanitizedData.date === 'string' ? new Date(sanitizedData.date) : sanitizedData.date,
       },
     });
-    res.status(201).json(article);
+
+    // Process related articles if provided
+    if (relatedArticleIds.length > 0) {
+      // Validate that all related article IDs exist
+      const existingArticles = await prisma.article.findMany({
+        where: { id: { in: relatedArticleIds } },
+        select: { id: true, title: true, slug: true, slugEn: true, slugPt: true },
+      });
+
+      if (existingArticles.length !== relatedArticleIds.length) {
+        return res.status(400).json({
+          error: 'Invalid related articles',
+          message: 'Some related article IDs do not exist'
+        });
+      }
+
+      // Get related articles for link processing
+      const relatedArticles = existingArticles.map(a => ({
+        id: a.id,
+        title: a.title,
+        slug: a.slug,
+        slugEn: a.slugEn || undefined,
+        slugPt: a.slugPt || undefined,
+      }));
+
+      // Process content to add internal links
+      const locale = sanitizedData.locale === 'pt_BR' ? 'pt-BR' : sanitizedData.locale === 'en_US' ? 'en-US' : 'pt-BR';
+      const processedContent = addInternalLinksSafe(
+        article.content,
+        relatedArticles,
+        locale,
+        1 // Max 1 link per article in content
+      );
+
+      // Update article with processed content
+      if (processedContent !== article.content) {
+        await prisma.article.update({
+          where: { id: article.id },
+          data: { content: processedContent },
+        });
+        article.content = processedContent;
+      }
+
+      // Create ArticleArticle relationships
+      await (prisma as any).articleArticle.createMany({
+        data: relatedArticleIds.map((relatedId, index) => ({
+          articleId: article.id,
+          relatedArticleId: relatedId,
+          order: index,
+        })),
+        skipDuplicates: true,
+      });
+    }
+
+    // Fetch article with relations for response
+    const articleWithRelations = await prisma.article.findUnique({
+      where: { id: article.id },
+      include: {
+        category: true,
+        relatedArticles: {
+          include: {
+            relatedArticle: {
+              select: {
+                id: true,
+                title: true,
+                slug: true,
+                slugEn: true,
+                slugPt: true,
+              },
+            },
+          },
+          orderBy: { order: 'asc' },
+        } as any,
+      },
+    });
+
+    res.status(201).json(articleWithRelations);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Validation error', details: error.errors });
@@ -415,11 +529,102 @@ adminRouter.put('/articles/:id', async (req: Request, res: Response) => {
     if (data.date) {
       updateData.date = typeof data.date === 'string' ? new Date(data.date) : data.date;
     }
+
+    // Extract relatedArticleIds if provided
+    const relatedArticleIds = data.relatedArticleIds;
+    const { relatedArticleIds: _, ...articleUpdateData } = updateData;
+
     const article = await prisma.article.update({
       where: { id: req.params.id },
-      data: updateData,
+      data: articleUpdateData,
     });
-    res.json(article);
+
+    // Handle related articles if provided
+    if (relatedArticleIds !== undefined) {
+      // Delete existing relationships
+      await prisma.articleArticle.deleteMany({
+        where: { articleId: article.id },
+      });
+
+      // Create new relationships if provided
+      if (relatedArticleIds.length > 0) {
+        // Validate that all related article IDs exist
+        const existingArticles = await prisma.article.findMany({
+          where: { id: { in: relatedArticleIds } },
+          select: { id: true, title: true, slug: true, slugEn: true, slugPt: true },
+        });
+
+        if (existingArticles.length !== relatedArticleIds.length) {
+          return res.status(400).json({
+            error: 'Invalid related articles',
+            message: 'Some related article IDs do not exist'
+          });
+        }
+
+        // Get related articles for link processing
+        const relatedArticles = existingArticles.map(a => ({
+          id: a.id,
+          title: a.title,
+          slug: a.slug,
+          slugEn: a.slugEn || undefined,
+          slugPt: a.slugPt || undefined,
+        }));
+
+        // Process content to add internal links (if content was updated)
+        if (updateData.content) {
+          const locale = article.locale === 'pt_BR' ? 'pt-BR' : article.locale === 'en_US' ? 'en-US' : 'pt-BR';
+          const processedContent = addInternalLinksSafe(
+            article.content,
+            relatedArticles,
+            locale,
+            1 // Max 1 link per article in content
+          );
+
+          // Update article with processed content if changed
+          if (processedContent !== article.content) {
+            await prisma.article.update({
+              where: { id: article.id },
+              data: { content: processedContent },
+            });
+            article.content = processedContent;
+          }
+        }
+
+        // Create ArticleArticle relationships
+        await prisma.articleArticle.createMany({
+          data: relatedArticleIds.map((relatedId, index) => ({
+            articleId: article.id,
+            relatedArticleId: relatedId,
+            order: index,
+          })),
+          skipDuplicates: true,
+        });
+      }
+    }
+
+    // Fetch article with relations for response
+    const articleWithRelations = await prisma.article.findUnique({
+      where: { id: article.id },
+      include: {
+        category: true,
+        relatedArticles: {
+          include: {
+            relatedArticle: {
+              select: {
+                id: true,
+                title: true,
+                slug: true,
+                slugEn: true,
+                slugPt: true,
+              },
+            },
+          },
+          orderBy: { order: 'asc' },
+        } as any,
+      },
+    });
+
+    res.json(articleWithRelations);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Validation error', details: error.errors });

@@ -26,6 +26,7 @@ const articleSchema = yup.object({
   metaTitle: yup.string().optional(),
   metaDescription: yup.string().optional(),
   showInMenu: yup.boolean().optional().default(false),
+  relatedArticleIds: yup.array().of(yup.string()).optional().default([]),
 });
 
 type ArticleFormData = yup.InferType<typeof articleSchema>;
@@ -41,6 +42,8 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
   const toast = useToast();
   const isEditing = !!article;
   const [uploadingImage, setUploadingImage] = React.useState(false);
+  const [allArticles, setAllArticles] = React.useState<Article[]>([]);
+  const [loadingArticles, setLoadingArticles] = React.useState(false);
 
   const {
     register,
@@ -68,6 +71,7 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
           metaTitle: article.metaTitle || '',
           metaDescription: article.metaDescription || '',
           showInMenu: article.showInMenu || false,
+          relatedArticleIds: (article as any).relatedArticles?.map((ra: any) => ra.relatedArticle?.id || ra.relatedArticleId) || [],
         }
       : {
           locale: 'Both',
@@ -99,8 +103,35 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
     }
   };
 
+  // Load all articles for related articles selection
+  React.useEffect(() => {
+    const loadArticles = async () => {
+      setLoadingArticles(true);
+      try {
+        const articles = await adminArticles.getAll();
+        // Filter out current article if editing
+        const filteredArticles = isEditing && article
+          ? articles.filter(a => a.id !== article.id)
+          : articles;
+        setAllArticles(filteredArticles);
+      } catch (error) {
+        console.error('Error loading articles:', error);
+        toast.error('Failed to load articles');
+      } finally {
+        setLoadingArticles(false);
+      }
+    };
+    loadArticles();
+  }, [isEditing, article, toast]);
+
   // Get category name for preview
   const selectedCategory = categories.find((cat) => cat.id === watchedValues.categoryId);
+
+  // Get selected related articles
+  const selectedRelatedArticles = React.useMemo(() => {
+    const selectedIds = watchedValues.relatedArticleIds || [];
+    return allArticles.filter(a => selectedIds.includes(a.id));
+  }, [allArticles, watchedValues.relatedArticleIds]);
 
   return (
     <div className="mb-8">
@@ -454,6 +485,56 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
                 rows={2}
               />
             </div>
+          </div>
+        </div>
+
+        <div className="border-t pt-4">
+          <h3 className="font-semibold mb-3">Related Articles</h3>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Select related articles for internal linking
+            </label>
+            {loadingArticles ? (
+              <div className="text-sm text-slate-500">Loading articles...</div>
+            ) : (
+              <div className="space-y-2 max-h-60 overflow-y-auto border border-slate-300 rounded-lg p-3">
+                {allArticles.length === 0 ? (
+                  <p className="text-sm text-slate-500">No articles available</p>
+                ) : (
+                  allArticles.map((art) => {
+                    const isSelected = (watchedValues.relatedArticleIds || []).includes(art.id);
+                    return (
+                      <label
+                        key={art.id}
+                        className="flex items-start gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => {
+                            const currentIds = watchedValues.relatedArticleIds || [];
+                            if (e.target.checked) {
+                              setValue('relatedArticleIds', [...currentIds, art.id]);
+                            } else {
+                              setValue('relatedArticleIds', currentIds.filter(id => id !== art.id));
+                            }
+                          }}
+                          className="mt-1 w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-slate-900">{art.title}</div>
+                          <div className="text-xs text-slate-500 truncate">{art.excerpt}</div>
+                        </div>
+                      </label>
+                    );
+                  })
+                )}
+              </div>
+            )}
+            <p className="text-xs text-slate-500 mt-2">
+              Selected articles will be automatically linked in the content when their titles are mentioned.
+              Also shown in "Related Articles" section at the bottom.
+            </p>
           </div>
         </div>
 

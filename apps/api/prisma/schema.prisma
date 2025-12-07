@@ -221,6 +221,8 @@ model Article {
   meta            Json?         // Metadata for social media posts (stores post IDs per platform)
 
   relatedProducts ArticleProduct[]
+  relatedArticles ArticleArticle[] @relation("ArticleRelations")
+  relatedToArticles ArticleArticle[] @relation("RelatedArticles")
   comments        Comment[]
 
   @@index([slug])
@@ -243,6 +245,21 @@ model ArticleProduct {
 
   @@unique([articleId, productId])
   @@map("article_products")
+}
+
+model ArticleArticle {
+  id              String   @id @default(uuid())
+  articleId       String
+  relatedArticleId String
+  order           Int      @default(0) // For ordering related articles
+  article         Article  @relation("ArticleRelations", fields: [articleId], references: [id], onDelete: Cascade)
+  relatedArticle  Article  @relation("RelatedArticles", fields: [relatedArticleId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+
+  @@unique([articleId, relatedArticleId])
+  @@index([articleId])
+  @@index([relatedArticleId])
+  @@map("article_articles")
 }
 
 model InsuranceQuote {
