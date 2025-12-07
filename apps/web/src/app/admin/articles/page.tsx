@@ -1,19 +1,30 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { adminArticles, type Article, type SocialMediaPlatform } from '@/services/admin';
+import { adminArticles, adminCategories, type Article, type Category, type SocialMediaPlatform } from '@/services/admin';
+
+type SortOrder = 'asc' | 'desc';
+type SortField = 'createdAt' | 'updatedAt' | 'title' | 'date';
 
 export default function ArticlesPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const toast = useToast();
   const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState<{ [key: string]: SocialMediaPlatform[] }>({});
+
+  // Filters and sorting
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [localeFilter, setLocaleFilter] = useState<string>('all');
+  const [sortField, setSortField] = useState<SortField>('createdAt');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
   useEffect(() => {
     if (user) {
@@ -23,13 +34,85 @@ export default function ArticlesPage() {
 
   const fetchData = async () => {
     try {
-      const articlesData = await adminArticles.getAll();
+      const [articlesData, categoriesData] = await Promise.all([
+        adminArticles.getAll(),
+        adminCategories.getAll(),
+      ]);
       setArticles(articlesData);
+      setCategories(categoriesData);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to fetch data');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Filter and sort articles
+  const filteredAndSortedArticles = useMemo(() => {
+    let filtered = [...articles];
+
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (article) =>
+          article.title.toLowerCase().includes(query) ||
+          article.slug.toLowerCase().includes(query) ||
+          article.excerpt.toLowerCase().includes(query)
+      );
+    }
+
+    // Category filter
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter((article) => article.categoryId === categoryFilter);
+    }
+
+    // Locale filter
+    if (localeFilter !== 'all') {
+      filtered = filtered.filter((article) => article.locale === localeFilter);
+    }
+
+    // Sort
+    filtered.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortField) {
+        case 'createdAt':
+          aValue = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          bValue = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          break;
+        case 'updatedAt':
+          aValue = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+          bValue = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+          break;
+        case 'title':
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case 'date':
+          aValue = a.date ? (typeof a.date === 'string' ? new Date(a.date).getTime() : new Date(a.date).getTime()) : 0;
+          bValue = b.date ? (typeof b.date === 'string' ? new Date(b.date).getTime() : new Date(b.date).getTime()) : 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return filtered;
+  }, [articles, searchQuery, categoryFilter, localeFilter, sortField, sortOrder]);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('desc');
     }
   };
 
@@ -99,7 +182,7 @@ export default function ArticlesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Articles</h1>
           <p className="text-slate-600 mt-2">Manage blog articles and content</p>
@@ -110,6 +193,128 @@ export default function ArticlesPage() {
         >
           + New Article
         </Link>
+      </div>
+
+      {/* Filters and Search */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Search */}
+          <div className="md:col-span-2">
+            <label htmlFor="search" className="block text-sm font-medium text-slate-700 mb-2">
+              Search
+            </label>
+            <input
+              type="text"
+              id="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by title, slug, or excerpt..."
+              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+            />
+          </div>
+
+          {/* Category Filter */}
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-slate-700 mb-2">
+              Category
+            </label>
+            <select
+              id="category"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+            >
+              <option value="all">All Categories</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Locale Filter */}
+          <div>
+            <label htmlFor="locale" className="block text-sm font-medium text-slate-700 mb-2">
+              Locale
+            </label>
+            <select
+              id="locale"
+              value={localeFilter}
+              onChange={(e) => setLocaleFilter(e.target.value)}
+              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+            >
+              <option value="all">All Locales</option>
+              <option value="en_US">English</option>
+              <option value="pt_BR">Portuguese</option>
+              <option value="Both">Both</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Sort Controls */}
+        <div className="mt-4 flex items-center gap-4">
+          <span className="text-sm font-medium text-slate-700">Sort by:</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleSort('createdAt')}
+              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                sortField === 'createdAt'
+                  ? 'bg-brand-600 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              Created
+              {sortField === 'createdAt' && (
+                <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+              )}
+            </button>
+            <button
+              onClick={() => handleSort('updatedAt')}
+              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                sortField === 'updatedAt'
+                  ? 'bg-brand-600 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              Updated
+              {sortField === 'updatedAt' && (
+                <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+              )}
+            </button>
+            <button
+              onClick={() => handleSort('title')}
+              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                sortField === 'title'
+                  ? 'bg-brand-600 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              Title
+              {sortField === 'title' && (
+                <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+              )}
+            </button>
+            <button
+              onClick={() => handleSort('date')}
+              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                sortField === 'date'
+                  ? 'bg-brand-600 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              Publish Date
+              {sortField === 'date' && (
+                <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Results count */}
+        <div className="mt-4 text-sm text-slate-600">
+          Showing {filteredAndSortedArticles.length} of {articles.length} articles
+        </div>
       </div>
 
       {loading ? (
@@ -124,13 +329,21 @@ export default function ArticlesPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Title</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Category</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Locale</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Publish Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Created</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Social Media</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {articles.map((article) => (
+              {filteredAndSortedArticles.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
+                    No articles found
+                  </td>
+                </tr>
+              ) : (
+                filteredAndSortedArticles.map((article) => (
                 <tr key={article.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4">
                     <div className="font-medium text-slate-900">{article.title}</div>
@@ -142,6 +355,17 @@ export default function ArticlesPage() {
                   <td className="px-6 py-4 text-sm text-slate-600">{article.locale}</td>
                   <td className="px-6 py-4 text-sm text-slate-600">
                     {typeof article.date === 'string' ? article.date : new Date(article.date).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600">
+                    {article.createdAt
+                      ? new Date(article.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : '-'}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
@@ -270,7 +494,8 @@ export default function ArticlesPage() {
                     </button>
                   </td>
                 </tr>
-              ))}
+              ))
+              )}
             </tbody>
           </table>
         </div>

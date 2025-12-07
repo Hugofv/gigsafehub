@@ -133,6 +133,19 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
     return allArticles.filter(a => selectedIds.includes(a.id));
   }, [allArticles, watchedValues.relatedArticleIds]);
 
+  // Filter articles by locale for related articles selection
+  const filteredArticlesByLocale = React.useMemo(() => {
+    const currentLocale = watchedValues.locale;
+    // Show all articles if locale is not set or is 'Both'
+    if (!currentLocale || currentLocale === 'Both') {
+      return allArticles;
+    }
+    // Filter articles that match the current locale, are 'Both', or don't have locale set
+    return allArticles.filter(art =>
+      !art.locale || art.locale === currentLocale || art.locale === 'Both'
+    );
+  }, [allArticles, watchedValues.locale]);
+
   return (
     <div className="mb-8">
       <h2 className="text-xl font-bold mb-4">{isEditing ? 'Edit' : 'Create'} Article</h2>
@@ -498,10 +511,14 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
               <div className="text-sm text-slate-500">Loading articles...</div>
             ) : (
               <div className="space-y-2 max-h-60 overflow-y-auto border border-slate-300 rounded-lg p-3">
-                {allArticles.length === 0 ? (
-                  <p className="text-sm text-slate-500">No articles available</p>
+                {filteredArticlesByLocale.length === 0 ? (
+                  <p className="text-sm text-slate-500">
+                    {watchedValues.locale && watchedValues.locale !== 'Both'
+                      ? `No articles available for locale: ${watchedValues.locale}`
+                      : 'No articles available'}
+                  </p>
                 ) : (
-                  allArticles.map((art) => {
+                  filteredArticlesByLocale.map((art) => {
                     const isSelected = (watchedValues.relatedArticleIds || []).includes(art.id);
                     return (
                       <label
