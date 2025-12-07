@@ -196,17 +196,28 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
 
         {/* Related Articles Section */}
         {article.relatedArticles && article.relatedArticles.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-slate-200">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">
-              {locale === 'pt-BR' ? 'Artigos Relacionados' : 'Related Articles'}
-            </h2>
-            <p className="text-slate-600 mb-6">
-              {locale === 'pt-BR'
-                ? 'Continue explorando conteúdo relacionado que pode ser útil para você:'
-                : 'Continue exploring related content that may be useful for you:'}
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {article.relatedArticles.map((relatedArticle) => {
+          <div className="mt-16 pt-12 border-t-2 border-slate-200">
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-1 w-12 bg-gradient-to-r from-brand-600 to-brand-400 rounded-full"></div>
+                <h2 className="text-3xl font-bold text-slate-900">
+                  {locale === 'pt-BR' ? 'Continue Explorando' : 'Continue Exploring'}
+                </h2>
+              </div>
+              <p className="text-lg text-slate-600 max-w-2xl">
+                {locale === 'pt-BR'
+                  ? 'Artigos relacionados que podem ajudar você a se proteger melhor:'
+                  : 'Related articles that can help you protect yourself better:'}
+              </p>
+            </div>
+            <div className={`grid gap-6 ${
+              article.relatedArticles.length === 1
+                ? 'grid-cols-1 max-w-2xl'
+                : article.relatedArticles.length === 2
+                ? 'grid-cols-1 md:grid-cols-2'
+                : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+            }`}>
+              {article.relatedArticles.map((relatedArticle, index) => {
                 const relatedSlug = locale === 'pt-BR' && relatedArticle.slugPt
                   ? relatedArticle.slugPt
                   : locale === 'en-US' && relatedArticle.slugEn
@@ -220,36 +231,72 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
                   <Link
                     key={relatedArticle.id}
                     href={relatedPath}
-                    className="group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-lg hover:border-brand-300 transition-all"
+                    className="group relative bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-md border border-slate-200 overflow-hidden hover:shadow-xl hover:border-brand-400 transition-all duration-300 hover:-translate-y-1"
                   >
-                    {relatedArticle.imageUrl && (
-                      <div className="relative h-48 overflow-hidden">
+                    {/* Decorative gradient overlay */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-brand-500/5 to-transparent rounded-bl-full pointer-events-none"></div>
+
+                    {/* Image */}
+                    <div className="relative h-56 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                      {relatedArticle.imageUrl ? (
                         <Image
                           src={normalizeImageUrl(relatedArticle.imageUrl)}
                           alt={relatedArticle.imageAlt || relatedArticle.title}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-100 to-brand-200">
+                          <svg className="w-16 h-16 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                      )}
+                      {/* Gradient overlay on image */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6 relative">
+                      {/* Badge */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-50 text-brand-700 text-xs font-semibold rounded-full">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                          {locale === 'pt-BR' ? 'Relacionado' : 'Related'}
+                        </span>
+                        {relatedArticle.readingTime && (
+                          <span className="text-xs text-slate-500 flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {relatedArticle.readingTime} {t('common.minRead')}
+                          </span>
+                        )}
                       </div>
-                    )}
-                    <div className="p-4">
-                      <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-brand-600 transition-colors line-clamp-2">
+
+                      <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-brand-600 transition-colors line-clamp-2 leading-tight">
                         {relatedArticle.title}
                       </h3>
+
                       {relatedArticle.excerpt && (
-                        <p className="text-sm text-slate-600 line-clamp-2 mb-3">
+                        <p className="text-sm text-slate-600 line-clamp-3 mb-4 leading-relaxed">
                           {relatedArticle.excerpt}
                         </p>
                       )}
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        {relatedArticle.readingTime && (
-                          <>
-                            <span>{relatedArticle.readingTime} {t('common.minRead')}</span>
-                            {relatedArticle.date && <span>•</span>}
-                          </>
-                        )}
+
+                      {/* CTA */}
+                      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                        <span className="text-sm font-semibold text-brand-600 group-hover:text-brand-700 flex items-center gap-2 transition-colors">
+                          {locale === 'pt-BR' ? 'Ler artigo' : 'Read article'}
+                          <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </span>
                         {relatedArticle.date && (
-                          <time dateTime={relatedArticle.date}>
+                          <time dateTime={relatedArticle.date} className="text-xs text-slate-400">
                             {formatDate(relatedArticle.date)}
                           </time>
                         )}
