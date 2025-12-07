@@ -269,6 +269,25 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
             },
           },
         },
+        relatedArticles: {
+          include: {
+            relatedArticle: {
+              select: {
+                id: true,
+                title: true,
+                slug: true,
+                slugEn: true,
+                slugPt: true,
+                excerpt: true,
+                imageUrl: true,
+                imageAlt: true,
+                date: true,
+                readingTime: true,
+              },
+            },
+          },
+          orderBy: { order: 'asc' },
+        },
       },
     });
 
@@ -358,6 +377,26 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
           }
         : null,
       relatedProductIds: article.relatedProducts.map((rp: any) => rp.product.id),
+      relatedArticles: article.relatedArticles?.map((ra: any) => {
+        const relatedSlug = locale === 'pt-BR' && ra.relatedArticle.slugPt
+          ? ra.relatedArticle.slugPt
+          : locale === 'en-US' && ra.relatedArticle.slugEn
+            ? ra.relatedArticle.slugEn
+            : ra.relatedArticle.slug;
+
+        return {
+          id: ra.relatedArticle.id,
+          title: ra.relatedArticle.title,
+          slug: relatedSlug,
+          slugEn: ra.relatedArticle.slugEn || ra.relatedArticle.slug,
+          slugPt: ra.relatedArticle.slugPt || ra.relatedArticle.slug,
+          excerpt: ra.relatedArticle.excerpt,
+          imageUrl: ra.relatedArticle.imageUrl,
+          imageAlt: ra.relatedArticle.imageAlt,
+          date: ra.relatedArticle.date.toISOString(),
+          readingTime: ra.relatedArticle.readingTime,
+        };
+      }) || [],
       // SEO fields
       metaTitle: article.metaTitle,
       metaDescription: article.metaDescription,
