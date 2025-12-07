@@ -332,6 +332,25 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
               },
             },
           },
+          relatedArticles: {
+            include: {
+              relatedArticle: {
+                select: {
+                  id: true,
+                  title: true,
+                  slug: true,
+                  slugEn: true,
+                  slugPt: true,
+                  excerpt: true,
+                  imageUrl: true,
+                  imageAlt: true,
+                  date: true,
+                  readingTime: true,
+                },
+              },
+            },
+            orderBy: { order: 'asc' },
+          },
         },
       });
     }
