@@ -283,6 +283,16 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
                 imageAlt: true,
                 date: true,
                 readingTime: true,
+                category: {
+                  select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    slugEn: true,
+                    slugPt: true,
+                    parentId: true,
+                  },
+                },
               },
             },
           },
@@ -346,6 +356,16 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
                   imageAlt: true,
                   date: true,
                   readingTime: true,
+                  category: {
+                    select: {
+                      id: true,
+                      name: true,
+                      slug: true,
+                      slugEn: true,
+                      slugPt: true,
+                      parentId: true,
+                    },
+                  },
                 },
               },
             },
@@ -414,6 +434,16 @@ articlesRouter.get('/:identifier', async (req: Request, res: Response) => {
           imageAlt: ra.relatedArticle.imageAlt,
           date: ra.relatedArticle.date.toISOString(),
           readingTime: ra.relatedArticle.readingTime,
+          category: ra.relatedArticle.category
+            ? {
+                id: ra.relatedArticle.category.id,
+                name: ra.relatedArticle.category.name,
+                slug: ra.relatedArticle.category.slug,
+                slugEn: ra.relatedArticle.category.slugEn,
+                slugPt: ra.relatedArticle.category.slugPt,
+                parentId: ra.relatedArticle.category.parentId,
+              }
+            : null,
         };
       }) || [],
       // SEO fields

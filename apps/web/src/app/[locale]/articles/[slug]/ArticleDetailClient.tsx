@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '@/contexts/I18nContext';
+import { useCategories } from '@/contexts/CategoriesContext';
 import { normalizeImageUrl } from '@/lib/imageUtils';
 import { formatArticleDateLong } from '@/lib/dateUtils';
 import CommentsSection from '@/components/Comments';
@@ -20,6 +21,14 @@ interface RelatedArticle {
   imageAlt?: string;
   date?: string;
   readingTime?: number;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+    slugEn?: string;
+    slugPt?: string;
+    parentId?: string | null;
+  } | null;
 }
 
 interface Article {
@@ -54,20 +63,57 @@ interface ArticleDetailClientProps {
   isComparison?: boolean;
 }
 
+// Helper function to build article path
+function buildArticlePath(
+  article: RelatedArticle,
+  locale: string,
+  categories: any[],
+  buildPath: (category: any, locale?: string) => string
+): string {
+  const articleSlug = locale === 'pt-BR' && article.slugPt
+    ? article.slugPt
+    : locale === 'en-US' && article.slugEn
+      ? article.slugEn
+      : article.slug;
+
+  // If article has a category, build the full category path
+  if (article.category) {
+    // Find the full category object from categories
+    const fullCategory = categories.find((c) => c.id === article.category?.id);
+
+    if (fullCategory) {
+      try {
+        const categoryPath = buildPath(fullCategory, locale);
+        return `/${locale}/${categoryPath}/${articleSlug}`;
+      } catch (error) {
+        // Fallback to simple category slug if buildPath fails
+      }
+    }
+
+    // Fallback to simple category slug
+    const categorySlug = locale === 'pt-BR'
+      ? (article.category.slugPt || article.category.slug)
+      : (article.category.slugEn || article.category.slug);
+    return `/${locale}/${categorySlug}/${articleSlug}`;
+  }
+
+  // Fallback to articles route if no category
+  return `/${locale}/articles/${articleSlug}`;
+}
+
 // Component for inline CTA
 function InlineRelatedArticleCTA({
   relatedArticle,
-  locale
+  locale,
+  categories,
+  buildPath
 }: {
   relatedArticle: RelatedArticle;
   locale: string;
+  categories: any[];
+  buildPath: (category: any, locale?: string) => string;
 }) {
-  const relatedSlug = locale === 'pt-BR' && relatedArticle.slugPt
-    ? relatedArticle.slugPt
-    : locale === 'en-US' && relatedArticle.slugEn
-      ? relatedArticle.slugEn
-      : relatedArticle.slug;
-  const relatedPath = `/${locale}/articles/${relatedSlug}`;
+  const relatedPath = buildArticlePath(relatedArticle, locale, categories, buildPath);
 
   return (
     <div className="my-8 py-6 px-4 border-l-4 border-brand-300 bg-slate-50 rounded-r">
@@ -220,6 +266,7 @@ function splitContentWithCTAs(
 
 export default function ArticleDetailClient({ article, locale, isComparison = false }: ArticleDetailClientProps) {
   const { t } = useTranslation();
+  const { categories, buildPath } = useCategories();
 
   // Determine if this is a comparison article based on category or prop
   const isComparisonArticle = isComparison || (article.category?.name?.toLowerCase().includes('compar') ?? false);
@@ -344,6 +391,8 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
                     key={`cta-${index}`}
                     relatedArticle={part.article}
                     locale={locale}
+                    categories={categories}
+                    buildPath={buildPath}
                   />
                 );
               }
@@ -409,14 +458,7 @@ export default function ArticleDetailClient({ article, locale, isComparison = fa
                 : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
             }`}>
               {article.relatedArticles.map((relatedArticle, index) => {
-                const relatedSlug = locale === 'pt-BR' && relatedArticle.slugPt
-                  ? relatedArticle.slugPt
-                  : locale === 'en-US' && relatedArticle.slugEn
-                    ? relatedArticle.slugEn
-                    : relatedArticle.slug;
-                const relatedPath = article.category
-                  ? `/${locale}/${categorySlug}/${relatedSlug}`
-                  : `/${locale}/articles/${relatedSlug}`;
+                const relatedPath = buildArticlePath(relatedArticle, locale, categories, buildPath);
 
                 return (
                   <Link
