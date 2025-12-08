@@ -8,6 +8,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { adminArticles, type Article, type Category } from '@/services/admin';
 import ArticleDetailClient from '@/app/[locale]/articles/[slug]/ArticleDetailClient';
 import { I18nProvider } from '@/contexts/I18nContext';
+import { CategoriesProvider } from '@/contexts/CategoriesContext';
 import Editor from '@monaco-editor/react';
 
 const articleSchema = yup.object({
@@ -603,31 +604,33 @@ export default function ArticleForm({ article, categories, onSuccess, onCancel }
             <div className="overflow-y-auto bg-slate-50 max-h-[60vh]">
               {watchedValues.title ? (
                 <I18nProvider>
-                  <div className="transform scale-[0.65] origin-top-left w-[153.85%]">
-                    <ArticleDetailClient
-                      article={{
-                        id: article?.id || 'preview',
-                        title: watchedValues.title || '',
-                        slug: watchedValues.slug || '',
-                        excerpt: watchedValues.excerpt || '',
-                        content: watchedValues.content || '',
-                        imageUrl: watchedValues.imageUrl || undefined,
-                        imageAlt: watchedValues.title || undefined,
-                        date: watchedValues.date || new Date().toISOString(),
-                        partnerTag: watchedValues.partnerTag || undefined,
-                        locale: watchedValues.locale === 'pt_BR' ? 'pt-BR' : watchedValues.locale === 'en_US' ? 'en-US' : 'pt-BR',
-                        category: selectedCategory ? {
-                          id: selectedCategory.id,
-                          name: selectedCategory.name,
-                          slug: selectedCategory.slug,
-                          slugEn: selectedCategory.slugEn,
-                          slugPt: selectedCategory.slugPt,
-                        } : undefined,
-                      }}
-                      locale={watchedValues.locale === 'pt_BR' ? 'pt-BR' : watchedValues.locale === 'en_US' ? 'en-US' : 'pt-BR'}
-                      isComparison={selectedCategory?.name?.toLowerCase().includes('compar') ?? false}
-                    />
-                  </div>
+                  <CategoriesProvider locale={watchedValues.locale === 'pt_BR' ? 'pt-BR' : watchedValues.locale === 'en_US' ? 'en-US' : 'pt-BR'}>
+                    <div className="transform scale-[0.65] origin-top-left w-[153.85%]">
+                      <ArticleDetailClient
+                        article={{
+                          id: article?.id || 'preview',
+                          title: watchedValues.title || '',
+                          slug: watchedValues.slug || '',
+                          excerpt: watchedValues.excerpt || '',
+                          content: watchedValues.content || '',
+                          imageUrl: watchedValues.imageUrl || undefined,
+                          imageAlt: watchedValues.title || undefined,
+                          date: watchedValues.date || new Date().toISOString(),
+                          partnerTag: watchedValues.partnerTag || undefined,
+                          locale: watchedValues.locale === 'pt_BR' ? 'pt-BR' : watchedValues.locale === 'en_US' ? 'en-US' : 'pt-BR',
+                          category: selectedCategory ? {
+                            id: selectedCategory.id,
+                            name: selectedCategory.name,
+                            slug: selectedCategory.slug,
+                            slugEn: selectedCategory.slugEn,
+                            slugPt: selectedCategory.slugPt,
+                          } : undefined,
+                        }}
+                        locale={watchedValues.locale === 'pt_BR' ? 'pt-BR' : watchedValues.locale === 'en_US' ? 'en-US' : 'pt-BR'}
+                        isComparison={selectedCategory?.name?.toLowerCase().includes('compar') ?? false}
+                      />
+                    </div>
+                  </CategoriesProvider>
                 </I18nProvider>
               ) : (
                 <div className="p-8 text-center text-slate-400">
