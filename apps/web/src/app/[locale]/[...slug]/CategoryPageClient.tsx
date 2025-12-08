@@ -127,7 +127,9 @@ export default function CategoryPageClient({
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h2 className="text-2xl font-bold text-slate-900 mb-6">
-              {category.level === 0 ? t('common.browseCategories') : t('common.browseSubcategories')}
+              {category.level === 0
+                ? t('common.browseCategories')
+                : t('common.browseSubcategories')}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {subcategories.map((subcat) => {
@@ -140,10 +142,7 @@ export default function CategoryPageClient({
                     key={subcat.id}
                     className="group p-5 bg-slate-50 rounded-lg border border-slate-200 hover:border-brand-500 hover:bg-brand-50 transition-all"
                   >
-                    <Link
-                      href={getLink(`/${subcatPath}`)}
-                      className="block"
-                    >
+                    <Link href={getLink(`/${subcatPath}`)} className="block">
                       <div className="flex items-start justify-between mb-2">
                         <h3 className="font-semibold text-slate-900 group-hover:text-brand-600 text-lg flex-1">
                           {subcat.name}
@@ -162,10 +161,14 @@ export default function CategoryPageClient({
                       {/* Stats */}
                       <div className="flex items-center gap-4 text-xs text-slate-500 mb-3">
                         {subcatCounts.products > 0 && (
-                          <span>{subcatCounts.products} {t('common.products')}</span>
+                          <span>
+                            {subcatCounts.products} {t('common.products')}
+                          </span>
                         )}
                         {subcatCounts.articles > 0 && (
-                          <span>{subcatCounts.articles} {t('articles.articles')}</span>
+                          <span>
+                            {subcatCounts.articles} {t('articles.articles')}
+                          </span>
                         )}
                       </div>
                     </Link>
@@ -225,12 +228,7 @@ export default function CategoryPageClient({
               className="inline-flex items-center px-6 py-3 bg-brand-600 text-white rounded-lg shadow-lg hover:bg-brand-700 transition-colors font-semibold"
             >
               {t('common.compareSelected')} ({compareList.length})
-              <svg
-                className="w-5 h-5 ml-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+              <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -275,7 +273,10 @@ export default function CategoryPageClient({
                       {article.partnerTag && (
                         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                           {article.partnerTag.split(',').map((tag, index) => (
-                            <span key={index} className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-slate-900 uppercase tracking-wide">
+                            <span
+                              key={index}
+                              className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-slate-900 uppercase tracking-wide"
+                            >
                               {tag.trim()}
                             </span>
                           ))}
@@ -350,9 +351,7 @@ export default function CategoryPageClient({
                 />
               </svg>
               <h3 className="text-2xl font-bold text-slate-900 mb-2">{t('common.noContentYet')}</h3>
-              <p className="text-slate-600 mb-6">
-                {t('common.noContentMessage')}
-              </p>
+              <p className="text-slate-600 mb-6">{t('common.noContentMessage')}</p>
               <Link
                 href={`/${locale}`}
                 className="inline-flex items-center px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
@@ -366,4 +365,3 @@ export default function CategoryPageClient({
     </div>
   );
 }
-

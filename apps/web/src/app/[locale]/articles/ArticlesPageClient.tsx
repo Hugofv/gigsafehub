@@ -125,12 +125,8 @@ export default function ArticlesPageClient({
       {/* Header */}
       <div className="bg-gradient-to-br from-brand-600 to-brand-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-            {t('articles.allArticles')}
-          </h1>
-          <p className="text-xl text-brand-100">
-            {t('articles.allArticlesSubtitle')}
-          </p>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">{t('articles.allArticles')}</h1>
+          <p className="text-xl text-brand-100">{t('articles.allArticlesSubtitle')}</p>
         </div>
       </div>
 
@@ -195,9 +191,7 @@ export default function ArticlesPageClient({
               <h3 className="text-2xl font-bold text-slate-900 mb-2">
                 {t('articles.noArticlesFound')}
               </h3>
-              <p className="text-slate-600">
-                {t('articles.noArticlesMessage')}
-              </p>
+              <p className="text-slate-600">{t('articles.noArticlesMessage')}</p>
             </div>
           </div>
         ) : (
@@ -211,10 +205,8 @@ export default function ArticlesPageClient({
                     {t('articles.in')}{' '}
                     <span className="font-semibold text-slate-900">
                       {getCategoryName(
-                        rootCategories.find(
-                          (cat) =>
-                            getCategorySlug(cat) === selectedCategory
-                        ) || rootCategories[0]
+                        rootCategories.find((cat) => getCategorySlug(cat) === selectedCategory) ||
+                          rootCategories[0]
                       )}
                     </span>
                   </span>
@@ -258,7 +250,9 @@ export default function ArticlesPageClient({
                       {article.readingTime && (
                         <>
                           <span>•</span>
-                          <span>{article.readingTime} {t('common.minRead')}</span>
+                          <span>
+                            {article.readingTime} {t('common.minRead')}
+                          </span>
                         </>
                       )}
                     </div>
@@ -294,4 +288,3 @@ export default function ArticlesPageClient({
     </div>
   );
 }
-
