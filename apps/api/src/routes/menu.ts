@@ -258,6 +258,11 @@ menuRouter.get('/', async (req: Request, res: Response) => {
     const blogRoot = rootCategories.find((cat) =>
       cat.slug === 'blog' || cat.slug === 'blog'
     );
+    const toolsRoot = rootCategories.find((cat) =>
+      (locale === 'pt-BR' && cat.slug === 'ferramentas') ||
+      (locale === 'en-US' && cat.slug === 'tools') ||
+      cat.slug === 'tools' || cat.slug === 'ferramentas'
+    );
 
     // Legacy structure for backward compatibility
     const menuStructure: any = {
@@ -290,6 +295,10 @@ menuRouter.get('/', async (req: Request, res: Response) => {
       blog: {
         root: blogRoot,
         items: blogRoot ? buildMenuItems(blogRoot.id, 1) : [],
+      },
+      tools: {
+        root: toolsRoot,
+        items: toolsRoot ? buildMenuItems(toolsRoot.id, 1) : [],
       },
     };
 

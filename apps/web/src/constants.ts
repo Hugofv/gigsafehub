@@ -241,6 +241,55 @@ export const TRANSLATIONS = {
       indemnification: 'Indemnification',
       governingLaw: 'Governing Law',
       changesToTerms: 'Changes to Terms'
+    },
+    tools: {
+      title: 'Free Tools',
+      subtitle: 'Calculators and tools to help you make smarter financial decisions',
+      lossIncomeSimulator: {
+        title: 'Loss Income Simulator',
+        subtitle: 'Calculate how much you could lose without proper insurance coverage',
+        description: 'Find out the real cost of being uninsured. Input your earnings and see how an accident or illness could impact your finances.',
+        monthlyIncome: 'Monthly Income',
+        monthlyIncomeHelp: 'Your average monthly earnings from gig work',
+        workingDays: 'Working Days/Month',
+        workingDaysHelp: 'Average days you work per month',
+        profession: 'Profession',
+        professionHelp: 'Select your main gig work type',
+        recoveryTime: 'Recovery Time (Days)',
+        recoveryTimeHelp: 'Estimated days unable to work',
+        calculate: 'Calculate My Risk',
+        calculating: 'Calculating...',
+        results: 'Your Risk Analysis',
+        potentialLoss: 'Potential Income Loss',
+        dailyRate: 'Daily Rate',
+        riskLevel: 'Risk Level',
+        riskLow: 'Low Risk',
+        riskMedium: 'Medium Risk',
+        riskHigh: 'High Risk',
+        riskCritical: 'Critical Risk',
+        recommendation: 'Our Recommendation',
+        recommendationText: 'Based on your profile, we recommend getting insurance coverage to protect your income. A small monthly investment can save you from devastating financial losses.',
+        startOver: 'Calculate Again',
+        compareInsurance: 'Compare Insurance Options',
+        professions: {
+          rideshare: 'Rideshare Driver (Uber, Lyft)',
+          delivery: 'Delivery Worker (DoorDash, Instacart)',
+          freelancer: 'Freelancer/Consultant',
+          handyman: 'Handyman/Contractor',
+          photographer: 'Photographer/Videographer',
+          other: 'Other Gig Worker'
+        },
+        scenarios: {
+          title: 'Common Scenarios',
+          accident: 'Car Accident',
+          accidentDays: '30-90 days recovery',
+          illness: 'Serious Illness',
+          illnessDays: '14-60 days recovery',
+          injury: 'Work Injury',
+          injuryDays: '7-30 days recovery'
+        },
+        disclaimer: 'This calculator provides estimates only. Actual losses may vary based on your specific situation. Consult with an insurance professional for personalized advice.'
+      }
     }
   },
   'pt-BR': {
@@ -261,8 +310,8 @@ export const TRANSLATIONS = {
     },
     home: {
       title: 'Encontre sua',
-      titleHighlight: 'Proteção Gig',
-      subtitle: 'Análises imparciais, pontuações de segurança e comparações de ferramentas bancárias e seguros para freelancers.',
+      titleHighlight: 'Proteção Ideal',
+      subtitle: 'Análises imparciais, pontuações de segurança e comparações de ferramentas bancárias e seguros para autônomos e freelancers.',
       cta: 'Iniciar Cotação Grátis',
       readGuides: 'Ler Guias',
       topRated: 'Ferramentas Mais Bem Avaliadas',
@@ -272,11 +321,11 @@ export const TRANSLATIONS = {
     },
     articles: {
       title: 'Guias Financeiros e Insights',
-      subtitle: 'Conselhos de especialistas sobre gestão de riscos, impostos e renda na economia gig.',
+      subtitle: 'Conselhos de especialistas sobre gestão de riscos, impostos e renda para autônomos.',
       loading: 'Carregando artigos...',
       noArticles: 'Nenhum artigo encontrado para esta região.',
       allArticles: 'Todos os Artigos',
-      allArticlesSubtitle: 'Explore insights e guias sobre seguros para trabalhadores da economia gig',
+      allArticlesSubtitle: 'Explore insights e guias sobre seguros para autônomos e trabalhadores de aplicativo',
       filterBy: 'Filtrar por:',
       all: 'Todos',
       noArticlesFound: 'Nenhum artigo encontrado',
@@ -331,6 +380,55 @@ export const TRANSLATIONS = {
       indemnification: 'Indenização',
       governingLaw: 'Lei Aplicável',
       changesToTerms: 'Alterações nos Termos'
+    },
+    tools: {
+      title: 'Ferramentas Gratuitas',
+      subtitle: 'Calculadoras e ferramentas para ajudar você a tomar decisões financeiras mais inteligentes',
+      lossIncomeSimulator: {
+        title: 'Simulador de Perda de Renda',
+        subtitle: 'Calcule quanto você poderia perder sem uma cobertura de seguro adequada',
+        description: 'Descubra o custo real de ficar sem seguro. Insira seus ganhos e veja como um acidente ou doença pode impactar suas finanças.',
+        monthlyIncome: 'Renda Mensal',
+        monthlyIncomeHelp: 'Sua média de ganhos mensais como autônomo',
+        workingDays: 'Dias Trabalhados/Mês',
+        workingDaysHelp: 'Média de dias que você trabalha por mês',
+        profession: 'Profissão',
+        professionHelp: 'Selecione seu principal tipo de trabalho',
+        recoveryTime: 'Tempo de Recuperação (Dias)',
+        recoveryTimeHelp: 'Dias estimados sem poder trabalhar',
+        calculate: 'Calcular Meu Risco',
+        calculating: 'Calculando...',
+        results: 'Sua Análise de Risco',
+        potentialLoss: 'Perda Potencial de Renda',
+        dailyRate: 'Diária',
+        riskLevel: 'Nível de Risco',
+        riskLow: 'Risco Baixo',
+        riskMedium: 'Risco Médio',
+        riskHigh: 'Risco Alto',
+        riskCritical: 'Risco Crítico',
+        recommendation: 'Nossa Recomendação',
+        recommendationText: 'Com base no seu perfil, recomendamos obter uma cobertura de seguro para proteger sua renda. Um pequeno investimento mensal pode te salvar de perdas financeiras devastadoras.',
+        startOver: 'Calcular Novamente',
+        compareInsurance: 'Comparar Opções de Seguro',
+        professions: {
+          rideshare: 'Motorista de Aplicativo (Uber, 99)',
+          delivery: 'Entregador (iFood, Rappi)',
+          freelancer: 'Freelancer/Consultor',
+          handyman: 'Prestador de Serviços',
+          photographer: 'Fotógrafo/Videomaker',
+          other: 'Outro Autônomo'
+        },
+        scenarios: {
+          title: 'Cenários Comuns',
+          accident: 'Acidente de Carro',
+          accidentDays: '30-90 dias de recuperação',
+          illness: 'Doença Grave',
+          illnessDays: '14-60 dias de recuperação',
+          injury: 'Lesão no Trabalho',
+          injuryDays: '7-30 dias de recuperação'
+        },
+        disclaimer: 'Esta calculadora fornece apenas estimativas. Perdas reais podem variar com base na sua situação específica. Consulte um profissional de seguros para orientação personalizada.'
+      }
     }
   }
 };

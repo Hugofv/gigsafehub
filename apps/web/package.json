@@ -21,8 +21,8 @@
     "@monaco-editor/react": "^4.7.0",
     "lucide-react": "^0.555.0",
     "next": "^15.0.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-hook-form": "^7.67.0",
     "yup": "^1.7.1"
   },

@@ -10,6 +10,7 @@ import { useTranslation } from '@/contexts/I18nContext';
 import { useCategories } from '@/contexts/CategoriesContext';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useToast } from '@/contexts/ToastContext';
+import { trackSimulatorCTAClick } from '@/lib/analytics';
 
 interface Article {
   id: string;
@@ -368,6 +369,89 @@ export default function HomeClient({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Loss Income Simulator CTA */}
+        <section className="py-12 md:py-16 bg-gradient-to-br from-slate-900 via-slate-800 to-navy-900 relative overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute -top-20 -right-20 w-60 h-60 bg-orange-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-teal-500/10 rounded-full blur-3xl"></div>
+          </div>
+
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-8 items-center">
+              <div>
+                <div className="inline-flex items-center px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 text-sm font-medium mb-4">
+                  <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  {locale === 'pt-BR' ? 'Ferramenta Gratuita' : 'Free Tool'}
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                  {locale === 'pt-BR'
+                    ? 'Quanto Você Perderia Sem Trabalhar?'
+                    : 'How Much Would You Lose Without Working?'}
+                </h2>
+                <p className="text-lg text-slate-300 mb-6">
+                  {locale === 'pt-BR'
+                    ? 'Use nosso simulador gratuito e descubra em segundos quanto de renda você pode perder se ficar impossibilitado de trabalhar. Veja o impacto real de não ter seguro.'
+                    : 'Use our free simulator and discover in seconds how much income you could lose if you\'re unable to work. See the real impact of being uninsured.'}
+                </p>
+                <ul className="space-y-3 mb-8">
+                  {[
+                    locale === 'pt-BR' ? '✓ 100% gratuito, sem cadastro' : '✓ 100% free, no signup',
+                    locale === 'pt-BR' ? '✓ Resultado em segundos' : '✓ Results in seconds',
+                    locale === 'pt-BR' ? '✓ Cenários personalizados' : '✓ Custom scenarios',
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-center text-slate-300">
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas/simulador-perda-renda' : '/tools/loss-income-simulator')}
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg shadow-orange-500/30 transform hover:-translate-y-1"
+                  onClick={() => trackSimulatorCTAClick('homepage_cta')}
+                >
+                  {locale === 'pt-BR' ? 'Simular Minha Perda' : 'Simulate My Loss'}
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+              </div>
+
+              {/* Preview Card */}
+              <div className="hidden lg:block">
+                <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl">
+                  <div className="text-center mb-6">
+                    <div className="text-sm text-slate-400 mb-2">
+                      {locale === 'pt-BR' ? 'Perda Potencial' : 'Potential Loss'}
+                    </div>
+                    <div className="text-5xl font-black text-white">
+                      {locale === 'pt-BR' ? 'R$ ???' : '$ ???'}
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full w-2/3 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
+                    </div>
+                    <div className="flex justify-between text-sm text-slate-400">
+                      <span>{locale === 'pt-BR' ? 'Risco Baixo' : 'Low Risk'}</span>
+                      <span>{locale === 'pt-BR' ? 'Risco Alto' : 'High Risk'}</span>
+                    </div>
+                  </div>
+                  <div className="mt-6 p-4 bg-orange-500/10 rounded-xl border border-orange-500/30">
+                    <p className="text-sm text-orange-300 text-center">
+                      {locale === 'pt-BR'
+                        ? '⚠️ Calcule quanto você está em risco'
+                        : '⚠️ Calculate how much you\'re at risk'}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

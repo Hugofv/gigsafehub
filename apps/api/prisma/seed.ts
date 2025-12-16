@@ -101,6 +101,31 @@ async function main() {
     },
   });
 
+  const toolsRoot = await prisma.category.upsert({
+    where: { slug: 'tools' },
+    update: {},
+    create: {
+      name: 'Tools',
+      nameEn: 'Tools',
+      namePt: 'Ferramentas',
+      slug: 'tools',
+      slugEn: 'tools',
+      slugPt: 'ferramentas',
+      description: 'Free tools and calculators for gig economy workers',
+      descriptionEn: 'Free tools and calculators for gig economy workers',
+      descriptionPt: 'Ferramentas e calculadoras gratuitas para autônomos e freelancers',
+      level: 0,
+      parentId: null,
+      order: 5,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: true,
+      icon: 'calculator',
+      metaTitle: 'Free Tools for Gig Workers | GigSafeHub',
+      metaDescription: 'Free calculators and tools to help gig workers manage their finances, estimate income loss, and make smarter decisions.',
+    },
+  });
+
   // ============================================
   // Level 1: Main Subcategories (Insurance)
   // ============================================
@@ -324,6 +349,35 @@ async function main() {
       parentId: blogRoot.id,
       order: 3,
       isActive: true,
+    },
+  });
+
+  // ============================================
+  // Level 1: Tools Subcategories
+  // ============================================
+
+  const lossIncomeSimulator = await prisma.category.upsert({
+    where: { slug: 'loss-income-simulator' },
+    update: {},
+    create: {
+      name: 'Loss Income Simulator',
+      nameEn: 'Loss Income Simulator',
+      namePt: 'Simulador de Perda de Renda',
+      slug: 'loss-income-simulator',
+      slugEn: 'loss-income-simulator',
+      slugPt: 'simulador-perda-renda',
+      description: 'Calculate how much income you could lose without proper insurance coverage',
+      descriptionEn: 'Calculate how much income you could lose without proper insurance coverage',
+      descriptionPt: 'Calcule quanto de renda você poderia perder sem uma cobertura de seguro adequada',
+      level: 1,
+      parentId: toolsRoot.id,
+      order: 1,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: true,
+      icon: 'calculator',
+      metaTitle: 'Loss Income Simulator | Calculate Your Risk | GigSafeHub',
+      metaDescription: 'Free calculator to estimate how much income you could lose if you\'re unable to work. Plan ahead and protect your earnings.',
     },
   });
 
