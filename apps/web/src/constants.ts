@@ -289,6 +289,48 @@ export const TRANSLATIONS = {
           injuryDays: '7-30 days recovery'
         },
         disclaimer: 'This calculator provides estimates only. Actual losses may vary based on your specific situation. Consult with an insurance professional for personalized advice.'
+      },
+      dailyProfitCalculator: {
+        title: 'Daily Real Profit Calculator',
+        subtitle: 'Discover your true earnings after deducting all expenses',
+        description: 'Most gig workers only see gross revenue. Find out how much you actually earn per hour after fuel, maintenance, taxes, and other costs.',
+        grossRevenue: 'Gross Daily Revenue',
+        grossRevenueHelp: 'Total amount you earned today (before expenses)',
+        hoursWorked: 'Hours Worked',
+        hoursWorkedHelp: 'Total hours you worked (including waiting time)',
+        fuelCost: 'Fuel Cost',
+        fuelCostHelp: 'Amount spent on gas/charging today',
+        maintenanceCost: 'Maintenance/Depreciation',
+        maintenanceCostHelp: 'Estimated daily vehicle wear (tires, oil, repairs)',
+        platformFee: 'Platform Fees',
+        platformFeeHelp: 'Commissions taken by apps (Uber, iFood, etc.)',
+        otherCosts: 'Other Costs',
+        otherCostsHelp: 'Food, parking, tolls, etc.',
+        calculate: 'Calculate Real Profit',
+        calculating: 'Calculating...',
+        results: 'Your Real Numbers',
+        realDailyProfit: 'Real Daily Profit',
+        realHourlyRate: 'Real Hourly Rate',
+        profitMargin: 'Profit Margin',
+        expenseBreakdown: 'Expense Breakdown',
+        comparison: 'Comparison',
+        minimumWage: 'vs Minimum Wage',
+        targetHourly: 'vs Target ($25/hr)',
+        insights: {
+          title: 'Insights',
+          good: 'Your earnings are healthy! Keep tracking to maintain consistency.',
+          average: 'Your earnings are around average. Look for ways to reduce costs or increase efficiency.',
+          low: 'Your real profit is below expectations. Consider reviewing your expenses or exploring better earning hours.',
+          critical: 'Warning: Your costs are eating into your profits significantly. Time to reassess your strategy.'
+        },
+        tips: {
+          title: 'Tips to Increase Profit',
+          tip1: 'Track peak hours and work during high-demand periods',
+          tip2: 'Reduce idle time between rides/deliveries',
+          tip3: 'Consider fuel-efficient routes',
+          tip4: 'Maintain your vehicle regularly to avoid costly repairs'
+        },
+        disclaimer: 'This calculator provides estimates based on your inputs. Actual profits may vary. Consider tracking your expenses daily for more accurate results.'
       }
     }
   },
@@ -428,6 +470,48 @@ export const TRANSLATIONS = {
           injuryDays: '7-30 dias de recuperação'
         },
         disclaimer: 'Esta calculadora fornece apenas estimativas. Perdas reais podem variar com base na sua situação específica. Consulte um profissional de seguros para orientação personalizada.'
+      },
+      dailyProfitCalculator: {
+        title: 'Calculadora de Lucro Real Diário',
+        subtitle: 'Descubra seus ganhos reais após deduzir todas as despesas',
+        description: 'A maioria dos autônomos só vê a receita bruta. Descubra quanto você realmente ganha por hora após combustível, manutenção, impostos e outros custos.',
+        grossRevenue: 'Receita Bruta Diária',
+        grossRevenueHelp: 'Valor total que você ganhou hoje (antes das despesas)',
+        hoursWorked: 'Horas Trabalhadas',
+        hoursWorkedHelp: 'Total de horas trabalhadas (incluindo tempo de espera)',
+        fuelCost: 'Custo de Combustível',
+        fuelCostHelp: 'Valor gasto com gasolina/recarga hoje',
+        maintenanceCost: 'Manutenção/Depreciação',
+        maintenanceCostHelp: 'Desgaste diário estimado do veículo (pneus, óleo, reparos)',
+        platformFee: 'Taxas das Plataformas',
+        platformFeeHelp: 'Comissões cobradas pelos apps (Uber, iFood, etc.)',
+        otherCosts: 'Outros Custos',
+        otherCostsHelp: 'Alimentação, estacionamento, pedágios, etc.',
+        calculate: 'Calcular Lucro Real',
+        calculating: 'Calculando...',
+        results: 'Seus Números Reais',
+        realDailyProfit: 'Lucro Real Diário',
+        realHourlyRate: 'Ganho Real por Hora',
+        profitMargin: 'Margem de Lucro',
+        expenseBreakdown: 'Detalhamento de Despesas',
+        comparison: 'Comparação',
+        minimumWage: 'vs Salário Mínimo',
+        targetHourly: 'vs Meta (R$30/hr)',
+        insights: {
+          title: 'Análise',
+          good: 'Seus ganhos estão saudáveis! Continue acompanhando para manter a consistência.',
+          average: 'Seus ganhos estão na média. Procure formas de reduzir custos ou aumentar a eficiência.',
+          low: 'Seu lucro real está abaixo do esperado. Considere revisar suas despesas ou explorar horários de maior ganho.',
+          critical: 'Atenção: Seus custos estão consumindo seus lucros significativamente. Hora de reavaliar sua estratégia.'
+        },
+        tips: {
+          title: 'Dicas para Aumentar o Lucro',
+          tip1: 'Acompanhe os horários de pico e trabalhe durante períodos de alta demanda',
+          tip2: 'Reduza o tempo ocioso entre corridas/entregas',
+          tip3: 'Considere rotas mais econômicas',
+          tip4: 'Faça manutenção regular do veículo para evitar reparos caros'
+        },
+        disclaimer: 'Esta calculadora fornece estimativas baseadas nas suas entradas. Os lucros reais podem variar. Considere acompanhar suas despesas diariamente para resultados mais precisos.'
       }
     }
   }

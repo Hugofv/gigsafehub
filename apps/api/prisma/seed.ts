@@ -381,6 +381,31 @@ async function main() {
     },
   });
 
+  const dailyProfitCalculator = await prisma.category.upsert({
+    where: { slug: 'daily-profit-calculator' },
+    update: {},
+    create: {
+      name: 'Daily Profit Calculator',
+      nameEn: 'Daily Real Profit Calculator',
+      namePt: 'Calculadora de Lucro Real Diário',
+      slug: 'daily-profit-calculator',
+      slugEn: 'daily-profit-calculator',
+      slugPt: 'calculadora-lucro-diario',
+      description: 'Discover your real earnings after deducting all expenses',
+      descriptionEn: 'Discover your real hourly earnings after deducting fuel, maintenance, fees, and other costs',
+      descriptionPt: 'Descubra seus ganhos reais por hora após descontar combustível, manutenção, taxas e outros custos',
+      level: 1,
+      parentId: toolsRoot.id,
+      order: 2,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: true,
+      icon: 'currency',
+      metaTitle: 'Daily Real Profit Calculator | GigSafeHub',
+      metaDescription: 'Free calculator for gig workers to discover real hourly profit after all expenses. Track your true earnings as a rideshare driver or delivery worker.',
+    },
+  });
+
   console.log('✅ Categories seeded successfully!');
   console.log(`   - Created ${await prisma.category.count()} categories`);
 

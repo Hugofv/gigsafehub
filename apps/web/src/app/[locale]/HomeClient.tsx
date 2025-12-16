@@ -373,85 +373,146 @@ export default function HomeClient({
           </div>
         </section>
 
-        {/* Loss Income Simulator CTA */}
+        {/* Free Tools Section */}
         <section className="py-12 md:py-16 bg-gradient-to-br from-slate-900 via-slate-800 to-navy-900 relative overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute -top-20 -right-20 w-60 h-60 bg-orange-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-teal-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-teal-500/5 rounded-full blur-3xl"></div>
           </div>
 
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-8 items-center">
-              <div>
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 text-sm font-medium mb-4">
-                  <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  {locale === 'pt-BR' ? 'Ferramenta Gratuita' : 'Free Tool'}
-                </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  {locale === 'pt-BR'
-                    ? 'Quanto Você Perderia Sem Trabalhar?'
-                    : 'How Much Would You Lose Without Working?'}
-                </h2>
-                <p className="text-lg text-slate-300 mb-6">
-                  {locale === 'pt-BR'
-                    ? 'Use nosso simulador gratuito e descubra em segundos quanto de renda você pode perder se ficar impossibilitado de trabalhar. Veja o impacto real de não ter seguro.'
-                    : 'Use our free simulator and discover in seconds how much income you could lose if you\'re unable to work. See the real impact of being uninsured.'}
-                </p>
-                <ul className="space-y-3 mb-8">
-                  {[
-                    locale === 'pt-BR' ? '✓ 100% gratuito, sem cadastro' : '✓ 100% free, no signup',
-                    locale === 'pt-BR' ? '✓ Resultado em segundos' : '✓ Results in seconds',
-                    locale === 'pt-BR' ? '✓ Cenários personalizados' : '✓ Custom scenarios',
-                  ].map((item, idx) => (
-                    <li key={idx} className="flex items-center text-slate-300">
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href={getLink(locale === 'pt-BR' ? '/ferramentas/simulador-perda-renda' : '/tools/loss-income-simulator')}
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg shadow-orange-500/30 transform hover:-translate-y-1"
-                  onClick={() => trackSimulatorCTAClick('homepage_cta')}
-                >
-                  {locale === 'pt-BR' ? 'Simular Minha Perda' : 'Simulate My Loss'}
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </Link>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            {/* Section Header */}
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-teal-500/20 text-teal-400 text-sm font-medium mb-4">
+                <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                {locale === 'pt-BR' ? 'Ferramentas Gratuitas' : 'Free Tools'}
               </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                {locale === 'pt-BR'
+                  ? 'Tome Decisões Mais Inteligentes'
+                  : 'Make Smarter Decisions'}
+              </h2>
+              <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+                {locale === 'pt-BR'
+                  ? 'Calculadoras gratuitas para você entender seus ganhos reais e proteger sua renda.'
+                  : 'Free calculators to help you understand your real earnings and protect your income.'}
+              </p>
+            </div>
 
-              {/* Preview Card */}
-              <div className="hidden lg:block">
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl">
-                  <div className="text-center mb-6">
-                    <div className="text-sm text-slate-400 mb-2">
-                      {locale === 'pt-BR' ? 'Perda Potencial' : 'Potential Loss'}
-                    </div>
-                    <div className="text-5xl font-black text-white">
-                      {locale === 'pt-BR' ? 'R$ ???' : '$ ???'}
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full w-2/3 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
-                    </div>
-                    <div className="flex justify-between text-sm text-slate-400">
-                      <span>{locale === 'pt-BR' ? 'Risco Baixo' : 'Low Risk'}</span>
-                      <span>{locale === 'pt-BR' ? 'Risco Alto' : 'High Risk'}</span>
+            {/* Tools Grid */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Loss Income Simulator Card */}
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/ferramentas/simulador-perda-renda' : '/tools/loss-income-simulator')}
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:border-orange-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-orange-500/10"
+                onClick={() => trackSimulatorCTAClick('homepage_tools_card')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative flex gap-5">
+                  <div className="flex-shrink-0">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
+                      <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
                     </div>
                   </div>
-                  <div className="mt-6 p-4 bg-orange-500/10 rounded-xl border border-orange-500/30">
-                    <p className="text-sm text-orange-300 text-center">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">
+                      {locale === 'pt-BR' ? 'Simulador de Perda de Renda' : 'Loss Income Simulator'}
+                    </h3>
+                    <p className="text-slate-400 text-sm mb-4">
                       {locale === 'pt-BR'
-                        ? '⚠️ Calcule quanto você está em risco'
-                        : '⚠️ Calculate how much you\'re at risk'}
+                        ? 'Calcule quanto você perderia se ficasse sem trabalhar por acidente ou doença.'
+                        : 'Calculate how much you would lose if you couldn\'t work due to accident or illness.'}
                     </p>
+                    <div className="flex items-center text-orange-400 text-sm font-semibold">
+                      {locale === 'pt-BR' ? 'Simular Agora' : 'Simulate Now'}
+                      <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
-              </div>
+                {/* Mini Preview */}
+                <div className="mt-5 p-4 bg-white/5 rounded-xl border border-white/10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-500">
+                      {locale === 'pt-BR' ? 'Perda Estimada' : 'Estimated Loss'}
+                    </span>
+                    <span className="text-lg font-bold text-white">
+                      {locale === 'pt-BR' ? 'R$ ???' : '$ ???'}
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full w-2/3 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Daily Profit Calculator Card */}
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-lucro-diario' : '/tools/daily-profit-calculator')}
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:border-emerald-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-emerald-500/10"
+                onClick={() => trackSimulatorCTAClick('homepage_profit_card')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative flex gap-5">
+                  <div className="flex-shrink-0">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                      <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                      {locale === 'pt-BR' ? 'Calculadora de Lucro Real' : 'Daily Profit Calculator'}
+                    </h3>
+                    <p className="text-slate-400 text-sm mb-4">
+                      {locale === 'pt-BR'
+                        ? 'Descubra quanto você realmente ganha por hora após todas as despesas.'
+                        : 'Discover how much you really earn per hour after all expenses.'}
+                    </p>
+                    <div className="flex items-center text-emerald-400 text-sm font-semibold">
+                      {locale === 'pt-BR' ? 'Calcular Agora' : 'Calculate Now'}
+                      <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                {/* Mini Preview */}
+                <div className="mt-5 p-4 bg-white/5 rounded-xl border border-white/10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-500">
+                      {locale === 'pt-BR' ? 'Ganho Real/Hora' : 'Real Hourly Rate'}
+                    </span>
+                    <span className="text-lg font-bold text-white">
+                      {locale === 'pt-BR' ? 'R$ ???' : '$ ???'}
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full w-3/4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"></div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            {/* See All Tools Link */}
+            <div className="text-center mt-8">
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/ferramentas' : '/tools')}
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-medium"
+              >
+                {locale === 'pt-BR' ? 'Ver Todas as Ferramentas' : 'See All Tools'}
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
             </div>
           </div>
         </section>
