@@ -406,6 +406,56 @@ async function main() {
     },
   });
 
+  const monthlyGoalSimulator = await prisma.category.upsert({
+    where: { slug: 'monthly-goal-simulator' },
+    update: {},
+    create: {
+      name: 'Monthly Goal Simulator',
+      nameEn: 'Monthly Goal Simulator',
+      namePt: 'Simulador de Meta Mensal',
+      slug: 'monthly-goal-simulator',
+      slugEn: 'monthly-goal-simulator',
+      slugPt: 'simulador-meta-mensal',
+      description: 'Plan how to reach your monthly income goals',
+      descriptionEn: 'Set your monthly income target and discover exactly how many hours, days, and trips you need to reach it',
+      descriptionPt: 'Defina sua meta de renda mensal e descubra exatamente quantas horas, dias e corridas você precisa para alcançá-la',
+      level: 1,
+      parentId: toolsRoot.id,
+      order: 3,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: true,
+      icon: 'chart',
+      metaTitle: 'Monthly Goal Simulator | Plan Your Earnings | GigSafeHub',
+      metaDescription: 'Free calculator to plan your monthly income goal. Discover how many hours and trips you need to reach your financial objectives.',
+    },
+  });
+
+  const hiddenCostsCalculator = await prisma.category.upsert({
+    where: { slug: 'hidden-costs-calculator' },
+    update: {},
+    create: {
+      name: 'Hidden Costs Calculator',
+      nameEn: 'Hidden Costs Calculator',
+      namePt: 'Calculadora de Custos Invisíveis',
+      slug: 'hidden-costs-calculator',
+      slugEn: 'hidden-costs-calculator',
+      slugPt: 'calculadora-custos-ocultos',
+      description: 'Discover costs you might be overlooking',
+      descriptionEn: 'Most gig workers forget about depreciation, insurance, phone bills, and other hidden costs. Find out your true operating expenses.',
+      descriptionPt: 'A maioria dos autônomos esquece da depreciação, seguro, conta de celular e outros custos ocultos. Descubra suas verdadeiras despesas operacionais.',
+      level: 1,
+      parentId: toolsRoot.id,
+      order: 4,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: true,
+      icon: 'search',
+      metaTitle: 'Hidden Costs Calculator | Discover Overlooked Expenses | GigSafeHub',
+      metaDescription: 'Free calculator to discover hidden costs like depreciation, maintenance, and vehicle wear. Understand your true expenses as a gig worker.',
+    },
+  });
+
   console.log('✅ Categories seeded successfully!');
   console.log(`   - Created ${await prisma.category.count()} categories`);
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { useTranslation } from '@/contexts/I18nContext';
 import { trackToolStart, trackEvent } from '@/lib/analytics';
 
@@ -165,6 +166,10 @@ export default function DailyProfitCalculator({ locale }: DailyProfitCalculatorP
 
   const tt = (key: string) => t(`tools.dailyProfitCalculator.${key}`);
 
+  const toolsPath = locale === 'pt-BR' ? '/ferramentas' : '/tools';
+  const toolsLabel = locale === 'pt-BR' ? 'Ferramentas' : 'Tools';
+  const homeLabel = locale === 'pt-BR' ? 'Início' : 'Home';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900">
       {/* Decorative background elements */}
@@ -173,6 +178,35 @@ export default function DailyProfitCalculator({ locale }: DailyProfitCalculatorP
         <div className="absolute top-1/2 -left-40 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 right-1/4 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl"></div>
       </div>
+
+      {/* Breadcrumbs */}
+      <nav aria-label="Breadcrumb" className="relative bg-slate-800/50 border-b border-slate-700/50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <ol className="flex items-center flex-wrap gap-1 text-sm">
+            <li className="flex items-center">
+              <Link href={`/${locale}`} className="text-slate-400 hover:text-white transition-colors">
+                {homeLabel}
+              </Link>
+            </li>
+            <li className="flex items-center">
+              <svg className="w-4 h-4 text-slate-500 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <Link href={`/${locale}${toolsPath}`} className="text-slate-400 hover:text-white transition-colors">
+                {toolsLabel}
+              </Link>
+            </li>
+            <li className="flex items-center">
+              <svg className="w-4 h-4 text-slate-500 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <span className="text-slate-300 font-medium" aria-current="page">
+                {tt('title')}
+              </span>
+            </li>
+          </ol>
+        </div>
+      </nav>
 
       <div className="relative max-w-4xl mx-auto px-4 py-12 sm:py-16">
         {/* Header */}

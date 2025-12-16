@@ -181,3 +181,59 @@ export function generateFAQStructuredData(faqs: Array<{ question: string; answer
   };
 }
 
+export function generateToolStructuredData(tool: {
+  name: string;
+  description: string;
+  url: string;
+  locale: string;
+  applicationCategory?: string;
+  offers?: {
+    price: string;
+    priceCurrency: string;
+  };
+}) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: tool.name,
+    description: tool.description,
+    url: tool.url,
+    applicationCategory: tool.applicationCategory || 'FinanceApplication',
+    operatingSystem: 'Web Browser',
+    offers: tool.offers || {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: tool.locale === 'pt-BR' ? 'BRL' : 'USD',
+    },
+    provider: {
+      '@type': 'Organization',
+      name: 'GigSafeHub',
+      url: baseUrl,
+    },
+    inLanguage: tool.locale === 'pt-BR' ? 'pt-BR' : 'en-US',
+  };
+}
+
+export function generateHowToStructuredData(howTo: {
+  name: string;
+  description: string;
+  steps: Array<{ name: string; text: string }>;
+  totalTime?: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: howTo.name,
+    description: howTo.description,
+    totalTime: howTo.totalTime || 'PT5M',
+    step: howTo.steps.map((step, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+    })),
+  };
+}
+

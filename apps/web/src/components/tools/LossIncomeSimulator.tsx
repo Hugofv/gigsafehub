@@ -184,6 +184,10 @@ export default function LossIncomeSimulator({ locale }: LossIncomeSimulatorProps
     },
   ];
 
+  const toolsPath = locale === 'pt-BR' ? '/ferramentas' : '/tools';
+  const toolsLabel = locale === 'pt-BR' ? 'Ferramentas' : 'Tools';
+  const homeLabel = locale === 'pt-BR' ? 'Início' : 'Home';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-navy-900">
       {/* Decorative elements */}
@@ -193,25 +197,38 @@ export default function LossIncomeSimulator({ locale }: LossIncomeSimulatorProps
         <div className="absolute -bottom-40 right-1/3 w-80 h-80 bg-gold-500/10 rounded-full blur-3xl"></div>
       </div>
 
+      {/* Breadcrumbs */}
+      <nav aria-label="Breadcrumb" className="relative bg-slate-800/50 border-b border-slate-700/50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <ol className="flex items-center flex-wrap gap-1 text-sm">
+            <li className="flex items-center">
+              <Link href={`/${locale}`} className="text-slate-400 hover:text-white transition-colors">
+                {homeLabel}
+              </Link>
+            </li>
+            <li className="flex items-center">
+              <svg className="w-4 h-4 text-slate-500 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <Link href={`/${locale}${toolsPath}`} className="text-slate-400 hover:text-white transition-colors">
+                {toolsLabel}
+              </Link>
+            </li>
+            <li className="flex items-center">
+              <svg className="w-4 h-4 text-slate-500 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <span className="text-slate-300 font-medium" aria-current="page">
+                {t('tools.lossIncomeSimulator.title')}
+              </span>
+            </li>
+          </ol>
+        </div>
+      </nav>
+
       {/* Header */}
       <div className="relative">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
-          {/* Breadcrumbs */}
-          <nav className="flex items-center space-x-2 text-sm mb-8">
-            <Link href={`/${locale}`} className="text-slate-400 hover:text-white transition-colors">
-              {t('common.home')}
-            </Link>
-            <span className="text-slate-600">/</span>
-            <Link
-              href={locale === 'pt-BR' ? `/${locale}/ferramentas` : `/${locale}/tools`}
-              className="text-slate-400 hover:text-white transition-colors"
-            >
-              {t('tools.title')}
-            </Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-white font-medium">{t('tools.lossIncomeSimulator.title')}</span>
-          </nav>
-
           {/* Title Section */}
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-orange-500/20 text-orange-400 text-sm font-medium mb-6">

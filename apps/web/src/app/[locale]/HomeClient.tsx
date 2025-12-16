@@ -403,52 +403,34 @@ export default function HomeClient({
               </p>
             </div>
 
-            {/* Tools Grid */}
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Tools Grid - 4 Tools */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Loss Income Simulator Card */}
               <Link
                 href={getLink(locale === 'pt-BR' ? '/ferramentas/simulador-perda-renda' : '/tools/loss-income-simulator')}
-                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:border-orange-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-orange-500/10"
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:border-orange-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-orange-500/10"
                 onClick={() => trackSimulatorCTAClick('homepage_tools_card')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative flex gap-5">
-                  <div className="flex-shrink-0">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
-                      <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                    </div>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30 mb-4">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">
-                      {locale === 'pt-BR' ? 'Simulador de Perda de Renda' : 'Loss Income Simulator'}
-                    </h3>
-                    <p className="text-slate-400 text-sm mb-4">
-                      {locale === 'pt-BR'
-                        ? 'Calcule quanto você perderia se ficasse sem trabalhar por acidente ou doença.'
-                        : 'Calculate how much you would lose if you couldn\'t work due to accident or illness.'}
-                    </p>
-                    <div className="flex items-center text-orange-400 text-sm font-semibold">
-                      {locale === 'pt-BR' ? 'Simular Agora' : 'Simulate Now'}
-                      <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                {/* Mini Preview */}
-                <div className="mt-5 p-4 bg-white/5 rounded-xl border border-white/10">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-500">
-                      {locale === 'pt-BR' ? 'Perda Estimada' : 'Estimated Loss'}
-                    </span>
-                    <span className="text-lg font-bold text-white">
-                      {locale === 'pt-BR' ? 'R$ ???' : '$ ???'}
-                    </span>
-                  </div>
-                  <div className="mt-2 h-2 bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full w-2/3 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
+                  <h3 className="text-base font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">
+                    {locale === 'pt-BR' ? 'Perda de Renda' : 'Loss Income'}
+                  </h3>
+                  <p className="text-slate-400 text-xs mb-3 line-clamp-2">
+                    {locale === 'pt-BR'
+                      ? 'Quanto você perderia sem trabalhar?'
+                      : 'How much would you lose?'}
+                  </p>
+                  <div className="flex items-center text-orange-400 text-xs font-semibold">
+                    {locale === 'pt-BR' ? 'Simular' : 'Simulate'}
+                    <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
                 </div>
               </Link>
@@ -456,62 +438,91 @@ export default function HomeClient({
               {/* Daily Profit Calculator Card */}
               <Link
                 href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-lucro-diario' : '/tools/daily-profit-calculator')}
-                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:border-emerald-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-emerald-500/10"
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:border-emerald-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-emerald-500/10"
                 onClick={() => trackSimulatorCTAClick('homepage_profit_card')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative flex gap-5">
-                  <div className="flex-shrink-0">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                      <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30 mb-4">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
-                      {locale === 'pt-BR' ? 'Calculadora de Lucro Real' : 'Daily Profit Calculator'}
-                    </h3>
-                    <p className="text-slate-400 text-sm mb-4">
-                      {locale === 'pt-BR'
-                        ? 'Descubra quanto você realmente ganha por hora após todas as despesas.'
-                        : 'Discover how much you really earn per hour after all expenses.'}
-                    </p>
-                    <div className="flex items-center text-emerald-400 text-sm font-semibold">
-                      {locale === 'pt-BR' ? 'Calcular Agora' : 'Calculate Now'}
-                      <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                {/* Mini Preview */}
-                <div className="mt-5 p-4 bg-white/5 rounded-xl border border-white/10">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-500">
-                      {locale === 'pt-BR' ? 'Ganho Real/Hora' : 'Real Hourly Rate'}
-                    </span>
-                    <span className="text-lg font-bold text-white">
-                      {locale === 'pt-BR' ? 'R$ ???' : '$ ???'}
-                    </span>
-                  </div>
-                  <div className="mt-2 h-2 bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full w-3/4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"></div>
+                  <h3 className="text-base font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                    {locale === 'pt-BR' ? 'Lucro Real' : 'Real Profit'}
+                  </h3>
+                  <p className="text-slate-400 text-xs mb-3 line-clamp-2">
+                    {locale === 'pt-BR'
+                      ? 'Quanto você ganha por hora de verdade?'
+                      : 'What\'s your real hourly rate?'}
+                  </p>
+                  <div className="flex items-center text-emerald-400 text-xs font-semibold">
+                    {locale === 'pt-BR' ? 'Calcular' : 'Calculate'}
+                    <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
                 </div>
               </Link>
-            </div>
 
-            {/* See All Tools Link */}
-            <div className="text-center mt-8">
+              {/* Monthly Goal Simulator Card */}
               <Link
-                href={getLink(locale === 'pt-BR' ? '/ferramentas' : '/tools')}
-                className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-medium"
+                href={getLink(locale === 'pt-BR' ? '/ferramentas/simulador-meta-mensal' : '/tools/monthly-goal-simulator')}
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:border-purple-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/10"
+                onClick={() => trackSimulatorCTAClick('homepage_goal_card')}
               >
-                {locale === 'pt-BR' ? 'Ver Todas as Ferramentas' : 'See All Tools'}
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-violet-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center shadow-lg shadow-purple-500/30 mb-4">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">
+                    {locale === 'pt-BR' ? 'Meta Mensal' : 'Monthly Goal'}
+                  </h3>
+                  <p className="text-slate-400 text-xs mb-3 line-clamp-2">
+                    {locale === 'pt-BR'
+                      ? 'Planeje como alcançar sua meta'
+                      : 'Plan to reach your goal'}
+                  </p>
+                  <div className="flex items-center text-purple-400 text-xs font-semibold">
+                    {locale === 'pt-BR' ? 'Planejar' : 'Plan'}
+                    <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Hidden Costs Calculator Card */}
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-custos-ocultos' : '/tools/hidden-costs-calculator')}
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:border-rose-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-rose-500/10"
+                onClick={() => trackSimulatorCTAClick('homepage_costs_card')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-pink-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center shadow-lg shadow-rose-500/30 mb-4">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2 group-hover:text-rose-400 transition-colors">
+                    {locale === 'pt-BR' ? 'Custos Ocultos' : 'Hidden Costs'}
+                  </h3>
+                  <p className="text-slate-400 text-xs mb-3 line-clamp-2">
+                    {locale === 'pt-BR'
+                      ? 'Descubra gastos que você ignora'
+                      : 'Find costs you overlook'}
+                  </p>
+                  <div className="flex items-center text-rose-400 text-xs font-semibold">
+                    {locale === 'pt-BR' ? 'Descobrir' : 'Discover'}
+                    <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
               </Link>
             </div>
           </div>

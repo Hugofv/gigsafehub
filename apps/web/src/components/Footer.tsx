@@ -154,6 +154,53 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
             </ul>
+
+            {/* Tools */}
+            <h3 className="text-white font-semibold mb-4 mt-6">
+              {locale === 'pt-BR' ? 'Ferramentas' : 'Tools'}
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas/simulador-perda-renda' : '/tools/loss-income-simulator')}
+                  className="hover:text-white transition-colors"
+                >
+                  {locale === 'pt-BR' ? 'Simulador de Perda de Renda' : 'Loss Income Simulator'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-lucro-diario' : '/tools/daily-profit-calculator')}
+                  className="hover:text-white transition-colors"
+                >
+                  {locale === 'pt-BR' ? 'Calculadora de Lucro Real' : 'Daily Profit Calculator'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas/simulador-meta-mensal' : '/tools/monthly-goal-simulator')}
+                  className="hover:text-white transition-colors"
+                >
+                  {locale === 'pt-BR' ? 'Simulador de Meta Mensal' : 'Monthly Goal Simulator'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-custos-ocultos' : '/tools/hidden-costs-calculator')}
+                  className="hover:text-white transition-colors"
+                >
+                  {locale === 'pt-BR' ? 'Calculadora de Custos Ocultos' : 'Hidden Costs Calculator'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas' : '/tools')}
+                  className="hover:text-white transition-colors"
+                >
+                  {locale === 'pt-BR' ? 'Ver Todas' : 'View All'}
+                </Link>
+              </li>
+            </ul>
           </div>
 
           {/* International */}
@@ -190,8 +237,8 @@ const Footer: React.FC = () => {
               />
               <p className="mt-2 text-xs text-slate-500 max-w-xs">
                 {locale === 'pt-BR'
-                  ? 'Empoderando a economia gig com dados financeiros transparentes e ferramentas de segurança.'
-                  : 'Empowering the gig economy with transparent financial data and safety tools.'}
+                  ? 'Empoderando autônomos e trabalhadores de aplicativo com dados financeiros transparentes e ferramentas de segurança.'
+                  : 'Empowering independent workers with transparent financial data and safety tools.'}
               </p>
 
               {/* Social Media Links */}

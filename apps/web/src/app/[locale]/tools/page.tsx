@@ -99,8 +99,10 @@ export default async function ToolsPage({ params }: PageProps) {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-3xl mb-6 shadow-lg shadow-orange-500/30">
-                📊
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-6 shadow-lg shadow-orange-500/30">
+                <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
               </div>
               <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-orange-400 transition-colors">
                 Loss Income Simulator
@@ -124,8 +126,10 @@ export default async function ToolsPage({ params }: PageProps) {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-3xl mb-6 shadow-lg shadow-emerald-500/30">
-                💰
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/30">
+                <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
               <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">
                 Daily Real Profit Calculator
@@ -142,21 +146,59 @@ export default async function ToolsPage({ params }: PageProps) {
             </div>
           </Link>
 
-          {/* Coming Soon Card */}
-          <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 opacity-60">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-3xl mb-6">
-              🛡️
+          {/* Monthly Goal Simulator Card */}
+          <Link
+            href={`/${locale}/tools/monthly-goal-simulator`}
+            className="group relative bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 hover:border-purple-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/10"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-violet-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center mb-6 shadow-lg shadow-purple-500/30">
+                <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors">
+                Monthly Goal Simulator
+              </h2>
+              <p className="text-slate-400 mb-6">
+                Set your income goal and discover how many hours, days, and trips you need to reach it.
+              </p>
+              <div className="flex items-center text-purple-400 font-semibold">
+                Try Now
+                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-3">
-              Insurance Cost Calculator
-            </h2>
-            <p className="text-slate-400 mb-6">
-              Estimate your insurance costs based on your profession, location, and coverage needs.
-            </p>
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-slate-700 text-slate-400 text-sm">
-              Coming Soon
+          </Link>
+
+          {/* Hidden Costs Calculator Card */}
+          <Link
+            href={`/${locale}/tools/hidden-costs-calculator`}
+            className="group relative bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 hover:border-rose-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-rose-500/10"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-pink-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mb-6 shadow-lg shadow-rose-500/30">
+                <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-rose-400 transition-colors">
+                Hidden Costs Calculator
+              </h2>
+              <p className="text-slate-400 mb-6">
+                Discover hidden costs like depreciation, maintenance, and wear that you might be overlooking.
+              </p>
+              <div className="flex items-center text-rose-400 font-semibold">
+                Try Now
+                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
             </div>
-          </div>
+          </Link>
         </div>
 
       </div>
