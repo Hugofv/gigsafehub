@@ -139,8 +139,10 @@ export default function CostPerTripCalculator({ locale }: CostPerTripCalculatorP
   const toolsLabel = locale === 'pt-BR' ? 'Ferramentas' : 'Tools';
   const homeLabel = locale === 'pt-BR' ? 'Início' : 'Home';
 
-  const tt = (key: string) => {
-    const translations: Record<string, Record<string, string>> = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tt = (key: string): any => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const translations: Record<string, Record<string, any>> = {
       'pt-BR': {
         title: 'Calculadora de Custo por Corrida',
         subtitle: 'Descubra quanto custa cada corrida e se vale a pena aceitar',
@@ -221,13 +223,13 @@ export default function CostPerTripCalculator({ locale }: CostPerTripCalculatorP
     return translations[locale]?.[key] || translations['en-US'][key] || key;
   };
 
-  const getStatusText = (status: string) => {
-    const statusTexts = tt('status') as unknown as Record<string, string>;
+  const getStatusText = (status: string): string => {
+    const statusTexts = tt('status') as Record<string, string>;
     return statusTexts[status] || '';
   };
 
-  const getInsightText = (status: string) => {
-    const insights = tt('insights') as unknown as Record<string, string>;
+  const getInsightText = (status: string): string => {
+    const insights = tt('insights') as Record<string, string>;
     return insights[status] || '';
   };
 
