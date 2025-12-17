@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/contexts/I18nContext';
 import { trackToolStart, trackEvent } from '@/lib/analytics';
+import SEOSections, { dailyProfitSEO } from './SEOSections';
 
 interface CalculatorResult {
   realDailyProfit: number;
@@ -606,6 +607,14 @@ export default function DailyProfitCalculator({ locale }: DailyProfitCalculatorP
               </svg>
             </Link>
           </div>
+        </div>
+
+        {/* SEO Content Sections */}
+        <div className="mt-20">
+          <SEOSections
+            locale={locale}
+            {...dailyProfitSEO[locale as keyof typeof dailyProfitSEO] || dailyProfitSEO['en-US']}
+          />
         </div>
       </div>
     </div>

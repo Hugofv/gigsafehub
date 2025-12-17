@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/contexts/I18nContext';
 import { trackToolStart, trackEvent } from '@/lib/analytics';
+import SEOSections, { fuelCalculatorSEO } from './SEOSections';
 
 interface CalculatorResult {
   monthlyFuelCost: number;
@@ -554,6 +555,14 @@ export default function FuelCalculator({ locale }: FuelCalculatorProps) {
               </svg>
             </Link>
           </div>
+        </div>
+
+        {/* SEO Content Sections */}
+        <div className="mt-20">
+          <SEOSections
+            locale={locale}
+            {...fuelCalculatorSEO[locale as keyof typeof fuelCalculatorSEO] || fuelCalculatorSEO['en-US']}
+          />
         </div>
       </div>
     </div>

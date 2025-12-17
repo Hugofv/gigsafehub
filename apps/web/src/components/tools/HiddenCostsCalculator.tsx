@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/contexts/I18nContext';
 import { trackToolStart, trackEvent } from '@/lib/analytics';
+import SEOSections, { hiddenCostsSEO } from './SEOSections';
 
 interface CalculatorResult {
   totalMonthlyCosts: number;
@@ -689,6 +690,14 @@ export default function HiddenCostsCalculator({ locale }: HiddenCostsCalculatorP
               </svg>
             </Link>
           </div>
+        </div>
+
+        {/* SEO Content Sections */}
+        <div className="mt-20">
+          <SEOSections
+            locale={locale}
+            {...hiddenCostsSEO[locale as keyof typeof hiddenCostsSEO] || hiddenCostsSEO['en-US']}
+          />
         </div>
       </div>
     </div>

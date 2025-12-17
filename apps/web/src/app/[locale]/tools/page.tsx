@@ -19,12 +19,38 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const canonicalUrl = `${baseUrl}/${locale}/tools`;
 
   return {
-    title: 'Free Tools for Gig Workers',
-    description: 'Free calculators and tools to help gig workers manage their finances, estimate income loss, and make smarter decisions about insurance and protection.',
-    keywords: ['gig worker tools', 'freelancer calculator', 'income calculator', 'insurance tools', 'financial planning tools'],
+    title: 'Free Tools for Rideshare & Delivery Drivers | GigSafeHub',
+    description: 'Free calculators and tools for Uber, Lyft, DoorDash, and Instacart drivers. Calculate real profit, hidden costs, monthly goals, and more. Understand your true earnings today.',
+    keywords: [
+      'rideshare driver tools',
+      'uber driver calculator',
+      'lyft driver calculator',
+      'doordash driver calculator',
+      'instacart shopper calculator',
+      'real profit calculator',
+      'driver hidden costs',
+      'how much do uber drivers make',
+      'freelancer calculator',
+      'gig worker tools',
+      'free driver tools',
+      'driver financial planning',
+      'income simulator',
+      'break even calculator driver',
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
     openGraph: {
-      title: 'Free Tools for Gig Workers | GigSafeHub',
-      description: 'Free calculators and tools designed for gig economy workers and freelancers.',
+      title: 'Free Tools for Rideshare & Delivery Drivers | GigSafeHub',
+      description: 'Free calculators for Uber, Lyft, DoorDash drivers. Discover your real earnings!',
       type: 'website',
       url: canonicalUrl,
       siteName: 'GigSafeHub',
@@ -40,12 +66,55 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+// Tool data for structured data and relationships
 const tools = [
   {
     id: 'loss-income-simulator',
-    icon: '📊',
-    gradient: 'from-orange-500 to-red-500',
-    bgGlow: 'bg-orange-500/20',
+    name: 'Loss Income Simulator',
+    description: 'Calculate how much income you could lose without proper insurance.',
+    related: ['daily-profit-calculator', 'break-even-calculator'],
+  },
+  {
+    id: 'daily-profit-calculator',
+    name: 'Daily Real Profit Calculator',
+    description: 'Discover how much you really earn per hour after all costs.',
+    related: ['hidden-costs-calculator', 'cost-per-trip-calculator'],
+  },
+  {
+    id: 'monthly-goal-simulator',
+    name: 'Monthly Goal Simulator',
+    description: 'Set your goal and find out how many hours and trips you need.',
+    related: ['daily-profit-calculator', 'driver-budget-simulator'],
+  },
+  {
+    id: 'hidden-costs-calculator',
+    name: 'Hidden Costs Calculator',
+    description: 'Discover invisible costs like depreciation and wear.',
+    related: ['cost-per-trip-calculator', 'fuel-calculator'],
+  },
+  {
+    id: 'cost-per-trip-calculator',
+    name: 'Cost per Trip Calculator',
+    description: 'How much does each trip cost? Find out if it\'s worth accepting.',
+    related: ['fuel-calculator', 'daily-profit-calculator'],
+  },
+  {
+    id: 'fuel-calculator',
+    name: 'Fuel Calculator',
+    description: 'Compare gas prices and save on fuel.',
+    related: ['cost-per-trip-calculator', 'hidden-costs-calculator'],
+  },
+  {
+    id: 'break-even-calculator',
+    name: 'Break-Even Calculator',
+    description: 'Find out how much you need to earn to cover all costs.',
+    related: ['driver-budget-simulator', 'daily-profit-calculator'],
+  },
+  {
+    id: 'driver-budget-simulator',
+    name: 'Complete Budget Simulator',
+    description: 'Build your complete budget with all costs included.',
+    related: ['break-even-calculator', 'monthly-goal-simulator'],
   },
 ];
 
@@ -56,8 +125,108 @@ export default async function ToolsPage({ params }: PageProps) {
     redirect('/pt-BR/ferramentas');
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
+
+  // ItemList structured data for the tool collection
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Free Tools for Rideshare & Delivery Drivers',
+    description: 'Collection of free calculators and tools for Uber, Lyft, DoorDash, and other gig workers.',
+    numberOfItems: tools.length,
+    itemListElement: tools.map((tool, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: tool.name,
+      description: tool.description,
+      url: `${baseUrl}/${locale}/tools/${tool.id}`,
+    })),
+  };
+
+  // BreadcrumbList structured data
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: `${baseUrl}/${locale}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Tools',
+        item: `${baseUrl}/${locale}/tools`,
+      },
+    ],
+  };
+
+  // FAQ structured data
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Are these tools really free?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes, all our calculators and tools are 100% free. No signup required, no personal data collected, and you can use them as many times as you want.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Who are these tools for?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'These tools were created for rideshare drivers (Uber, Lyft), delivery drivers (DoorDash, Instacart, Grubhub), freelancers, and any independent worker who wants to better understand their earnings and costs.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How do I calculate my real profit as an Uber driver?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Use our Daily Real Profit Calculator. Enter your gross earnings, fuel costs, maintenance, and fees. The tool automatically calculates your real hourly profit.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What costs do rideshare drivers often forget?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'The most forgotten costs are: vehicle depreciation (your car loses value with every mile), tire wear, oil changes, brake pads, car insurance, and health insurance. Use our Hidden Costs Calculator to discover all of them.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How do I know if a trip is worth accepting?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Use our Cost per Trip Calculator. Enter the distance, your fuel consumption, and the trip fare. The tool shows if the trip is profitable or if you\'ll lose money.',
+        },
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-navy-900">
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl"></div>
@@ -66,29 +235,52 @@ export default async function ToolsPage({ params }: PageProps) {
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-2 text-sm mb-8">
+        <nav className="flex items-center space-x-2 text-sm mb-8" aria-label="Breadcrumb">
           <Link href={`/${locale}`} className="text-slate-400 hover:text-white transition-colors">
             Home
           </Link>
-          <span className="text-slate-600">/</span>
-          <span className="text-white font-medium">Tools</span>
+          <span className="text-slate-600" aria-hidden="true">/</span>
+          <span className="text-white font-medium" aria-current="page">Tools</span>
         </nav>
 
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <header className="text-center max-w-4xl mx-auto mb-16">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-teal-500/20 text-teal-400 text-sm font-medium mb-6">
             <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
-            Free Tools
+            100% Free
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
-            Tools for <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-orange-400">Gig Workers</span>
+            Free Tools for{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-orange-400">
+              Rideshare Drivers
+            </span>
           </h1>
-          <p className="text-xl text-slate-300 leading-relaxed">
-            Free calculators and tools to help you make smarter financial decisions and protect your income.
+          <p className="text-xl text-slate-300 leading-relaxed mb-8">
+            We created practical tools to help Uber, Lyft, DoorDash, and Instacart drivers understand their real earnings, discover hidden costs, and make smarter financial decisions.
           </p>
-        </div>
+          <div className="flex flex-wrap justify-center gap-3 text-sm">
+            <span className="px-3 py-1.5 bg-white/10 rounded-full text-slate-300">
+              <svg className="w-4 h-4 inline mr-1.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              No signup required
+            </span>
+            <span className="px-3 py-1.5 bg-white/10 rounded-full text-slate-300">
+              <svg className="w-4 h-4 inline mr-1.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              100% free
+            </span>
+            <span className="px-3 py-1.5 bg-white/10 rounded-full text-slate-300">
+              <svg className="w-4 h-4 inline mr-1.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Instant results
+            </span>
+          </div>
+        </header>
 
         {/* Tools Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -308,6 +500,224 @@ export default async function ToolsPage({ params }: PageProps) {
             </div>
           </Link>
         </div>
+
+        {/* Tool Relationships Section */}
+        <section className="mt-20">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Tools That Work Together
+            </h2>
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              Use our tools together to get a complete picture of your financial situation as a rideshare or delivery driver.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Relationship 1 */}
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">If you used the Daily Profit Calculator...</h3>
+                  <p className="text-slate-400 text-sm mb-3">
+                    You'll also love the Hidden Costs Calculator to discover expenses you might be forgetting.
+                  </p>
+                  <Link
+                    href={`/${locale}/tools/hidden-costs-calculator`}
+                    className="inline-flex items-center text-emerald-400 text-sm font-medium hover:text-emerald-300 transition-colors"
+                  >
+                    Try it now
+                    <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Relationship 2 */}
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">If you used the Monthly Goal Simulator...</h3>
+                  <p className="text-slate-400 text-sm mb-3">
+                    Complete your analysis with the Budget Simulator to know exactly how much you need to earn.
+                  </p>
+                  <Link
+                    href={`/${locale}/tools/driver-budget-simulator`}
+                    className="inline-flex items-center text-purple-400 text-sm font-medium hover:text-purple-300 transition-colors"
+                  >
+                    Try it now
+                    <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Relationship 3 */}
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">If you used the Cost per Trip Calculator...</h3>
+                  <p className="text-slate-400 text-sm mb-3">
+                    The Fuel Calculator will help you save even more on each trip.
+                  </p>
+                  <Link
+                    href={`/${locale}/tools/fuel-calculator`}
+                    className="inline-flex items-center text-cyan-400 text-sm font-medium hover:text-cyan-300 transition-colors"
+                  >
+                    Try it now
+                    <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Relationship 4 */}
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">If you used the Break-Even Calculator...</h3>
+                  <p className="text-slate-400 text-sm mb-3">
+                    The Loss Income Simulator shows how much you could lose if you stop working.
+                  </p>
+                  <Link
+                    href={`/${locale}/tools/loss-income-simulator`}
+                    className="inline-flex items-center text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors"
+                  >
+                    Try it now
+                    <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="mt-20">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              Get answers to common questions about our tools and how they can help you.
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto space-y-4">
+            <details className="group bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                <h3 className="text-white font-semibold pr-4">Are these tools really free?</h3>
+                <svg className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="px-6 pb-6 text-slate-300">
+                Yes, all our calculators and tools are 100% free. No signup required, no personal data collected, and you can use them as many times as you want. Our mission is to help rideshare and delivery drivers have better clarity about their finances.
+              </div>
+            </details>
+
+            <details className="group bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                <h3 className="text-white font-semibold pr-4">Who are these tools for?</h3>
+                <svg className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="px-6 pb-6 text-slate-300">
+                These tools were created for rideshare drivers (Uber, Lyft), delivery drivers (DoorDash, Instacart, Grubhub), freelancers, and any independent worker who wants to better understand their earnings and costs. If you work for yourself, these calculators are for you.
+              </div>
+            </details>
+
+            <details className="group bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                <h3 className="text-white font-semibold pr-4">How do I calculate my real profit as an Uber driver?</h3>
+                <svg className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="px-6 pb-6 text-slate-300">
+                Use our <Link href={`/${locale}/tools/daily-profit-calculator`} className="text-emerald-400 hover:underline">Daily Real Profit Calculator</Link>. Enter your gross earnings, fuel costs, maintenance, and fees. The tool automatically calculates your real hourly profit, letting you know exactly how much you're making.
+              </div>
+            </details>
+
+            <details className="group bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                <h3 className="text-white font-semibold pr-4">What costs do rideshare drivers often forget?</h3>
+                <svg className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="px-6 pb-6 text-slate-300">
+                The most forgotten costs are: vehicle depreciation (your car loses value with every mile), tire wear, oil changes, brake pads, car insurance, and health insurance. Use our <Link href={`/${locale}/tools/hidden-costs-calculator`} className="text-rose-400 hover:underline">Hidden Costs Calculator</Link> to discover all these invisible expenses.
+              </div>
+            </details>
+
+            <details className="group bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                <h3 className="text-white font-semibold pr-4">How do I know if a trip is worth accepting?</h3>
+                <svg className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="px-6 pb-6 text-slate-300">
+                Use our <Link href={`/${locale}/tools/cost-per-trip-calculator`} className="text-cyan-400 hover:underline">Cost per Trip Calculator</Link>. Enter the distance, your fuel consumption, and the trip fare. The tool shows if the trip is profitable or if you'll lose money, helping you make smarter decisions.
+              </div>
+            </details>
+          </div>
+        </section>
+
+        {/* Bottom CTA */}
+        <section className="mt-20 text-center">
+          <div className="bg-gradient-to-r from-teal-500/20 to-orange-500/20 backdrop-blur-sm rounded-3xl border border-white/10 p-8 md:p-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Start Using Now
+            </h2>
+            <p className="text-slate-300 mb-8 max-w-2xl mx-auto">
+              Choose a tool and discover valuable insights about your earnings in less than 2 minutes. No signup, no hassle.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                href={`/${locale}/tools/daily-profit-calculator`}
+                className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity"
+              >
+                Calculate my real profit
+              </Link>
+              <Link
+                href={`/${locale}/tools/hidden-costs-calculator`}
+                className="px-6 py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors"
+              >
+                Discover hidden costs
+              </Link>
+            </div>
+          </div>
+        </section>
 
       </div>
     </div>

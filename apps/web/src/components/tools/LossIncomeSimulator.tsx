@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/contexts/I18nContext';
 import { trackToolStart, trackSimulatorCalculation, trackSimulatorView } from '@/lib/analytics';
+import SEOSections, { lossIncomeSEO } from './SEOSections';
 
 interface SimulatorResult {
   potentialLoss: number;
@@ -563,6 +564,14 @@ export default function LossIncomeSimulator({ locale }: LossIncomeSimulatorProps
               </svg>
             </Link>
           </div>
+        </div>
+
+        {/* SEO Content Sections */}
+        <div className="mt-20">
+          <SEOSections
+            locale={locale}
+            {...lossIncomeSEO[locale as keyof typeof lossIncomeSEO] || lossIncomeSEO['en-US']}
+          />
         </div>
       </div>
     </div>

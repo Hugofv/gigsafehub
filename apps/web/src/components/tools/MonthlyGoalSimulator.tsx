@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/contexts/I18nContext';
 import { trackToolStart, trackEvent } from '@/lib/analytics';
+import SEOSections, { monthlyGoalSEO } from './SEOSections';
 
 interface SimulatorResult {
   tripsNeeded: number;
@@ -552,6 +553,14 @@ export default function MonthlyGoalSimulator({ locale }: MonthlyGoalSimulatorPro
               </svg>
             </Link>
           </div>
+        </div>
+
+        {/* SEO Content Sections */}
+        <div className="mt-20">
+          <SEOSections
+            locale={locale}
+            {...monthlyGoalSEO[locale as keyof typeof monthlyGoalSEO] || monthlyGoalSEO['en-US']}
+          />
         </div>
       </div>
     </div>

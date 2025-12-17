@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/contexts/I18nContext';
 import { trackToolStart, trackEvent } from '@/lib/analytics';
+import SEOSections, { driverBudgetSEO } from './SEOSections';
 
 interface BudgetResult {
   fixedCosts: {
@@ -837,6 +838,14 @@ export default function DriverBudgetSimulator({ locale }: DriverBudgetSimulatorP
               </svg>
             </Link>
           </div>
+        </div>
+
+        {/* SEO Content Sections */}
+        <div className="mt-20">
+          <SEOSections
+            locale={locale}
+            {...driverBudgetSEO[locale as keyof typeof driverBudgetSEO] || driverBudgetSEO['en-US']}
+          />
         </div>
       </div>
     </div>
