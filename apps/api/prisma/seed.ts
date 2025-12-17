@@ -456,6 +456,106 @@ async function main() {
     },
   });
 
+  const costPerTripCalculator = await prisma.category.upsert({
+    where: { slug: 'cost-per-trip-calculator' },
+    update: {},
+    create: {
+      name: 'Cost per Trip Calculator',
+      nameEn: 'Cost per Trip Calculator',
+      namePt: 'Calculadora de Custo por Corrida',
+      slug: 'cost-per-trip-calculator',
+      slugEn: 'cost-per-trip-calculator',
+      slugPt: 'calculadora-custo-corrida',
+      description: 'Calculate how much each trip costs and if it is worth accepting',
+      descriptionEn: 'Find out how much each trip costs and if it\'s worth accepting. Calculate fuel, wear, platform fees and discover your real profit per trip.',
+      descriptionPt: 'Descubra quanto custa cada corrida e se vale a pena aceitar. Calcule combustível, desgaste, taxa da plataforma e descubra seu lucro real por viagem.',
+      level: 1,
+      parentId: toolsRoot.id,
+      order: 5,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: true,
+      icon: 'calculator',
+      metaTitle: 'Cost per Trip Calculator | Worth Accepting? | GigSafeHub',
+      metaDescription: 'Free calculator to find out how much each trip costs. Calculate if trips are worth accepting based on fuel, wear and platform fees.',
+    },
+  });
+
+  const fuelCalculator = await prisma.category.upsert({
+    where: { slug: 'fuel-calculator' },
+    update: {},
+    create: {
+      name: 'Fuel Calculator',
+      nameEn: 'Fuel Calculator',
+      namePt: 'Calculadora de Combustível',
+      slug: 'fuel-calculator',
+      slugEn: 'fuel-calculator',
+      slugPt: 'calculadora-combustivel',
+      description: 'Calculate fuel expenses and compare gas vs ethanol',
+      descriptionEn: 'Calculate your monthly fuel expenses and find out if gasoline or ethanol is better for you. Compare prices and save money.',
+      descriptionPt: 'Calcule seus gastos mensais com combustível e descubra se vale mais a pena usar gasolina ou etanol. Compare preços e economize.',
+      level: 1,
+      parentId: toolsRoot.id,
+      order: 6,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: true,
+      icon: 'flame',
+      metaTitle: 'Fuel Calculator | Gas vs Ethanol | GigSafeHub',
+      metaDescription: 'Free fuel calculator. Compare gasoline vs ethanol, calculate monthly fuel costs and discover which is more economical for you.',
+    },
+  });
+
+  const breakEvenCalculator = await prisma.category.upsert({
+    where: { slug: 'break-even-calculator' },
+    update: {},
+    create: {
+      name: 'Break-Even Calculator',
+      nameEn: 'Break-Even Calculator',
+      namePt: 'Calculadora de Ponto de Equilíbrio',
+      slug: 'break-even-calculator',
+      slugEn: 'break-even-calculator',
+      slugPt: 'calculadora-ponto-equilibrio',
+      description: 'Find out how much revenue you need to cover all costs',
+      descriptionEn: 'Find out how much revenue you need to cover all your costs. Calculate your break-even point and know when you start making real profit.',
+      descriptionPt: 'Descubra quanto você precisa faturar para cobrir todos os seus custos. Calcule seu ponto de equilíbrio e saiba quando começa a lucrar.',
+      level: 1,
+      parentId: toolsRoot.id,
+      order: 7,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: true,
+      icon: 'chart',
+      metaTitle: 'Break-Even Calculator | When Do You Start Profiting? | GigSafeHub',
+      metaDescription: 'Free break-even calculator for gig workers. Discover how much revenue you need to cover all costs and start making real profit.',
+    },
+  });
+
+  const driverBudgetSimulator = await prisma.category.upsert({
+    where: { slug: 'driver-budget-simulator' },
+    update: {},
+    create: {
+      name: 'Driver Budget Simulator',
+      nameEn: 'Driver Budget Simulator',
+      namePt: 'Simulador de Orçamento do Motorista',
+      slug: 'driver-budget-simulator',
+      slugEn: 'driver-budget-simulator',
+      slugPt: 'simulador-orcamento',
+      description: 'Build your complete budget and find out how much you need to earn',
+      descriptionEn: 'Build your complete budget as a rideshare driver. Include all fixed, variable and personal costs and find out how much you need to earn to survive.',
+      descriptionPt: 'Monte seu orçamento completo como motorista de app. Inclua todos os custos fixos, variáveis e pessoais e descubra quanto precisa faturar para sobreviver.',
+      level: 1,
+      parentId: toolsRoot.id,
+      order: 8,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: true,
+      icon: 'calculator',
+      metaTitle: 'Driver Budget Simulator | Complete Financial Planning | GigSafeHub',
+      metaDescription: 'Free budget simulator for rideshare drivers. Plan your complete budget including vehicle, personal and work costs.',
+    },
+  });
+
   console.log('✅ Categories seeded successfully!');
   console.log(`   - Created ${await prisma.category.count()} categories`);
 

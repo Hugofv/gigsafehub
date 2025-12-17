@@ -303,7 +303,7 @@ export const TRANSLATIONS = {
         maintenanceCost: 'Maintenance/Depreciation',
         maintenanceCostHelp: 'Estimated daily vehicle wear (tires, oil, repairs)',
         platformFee: 'Platform Fees',
-        platformFeeHelp: 'Commissions taken by apps (Uber, iFood, etc.)',
+        platformFeeHelp: 'Commissions taken by apps (Uber, Lyft, DoorDash, etc.)',
         otherCosts: 'Other Costs',
         otherCostsHelp: 'Food, parking, tolls, etc.',
         calculate: 'Calculate Real Profit',

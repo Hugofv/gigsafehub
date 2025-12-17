@@ -524,6 +524,111 @@ export default function HomeClient({
                   </div>
                 </div>
               </Link>
+
+              {/* Cost per Trip Calculator Card */}
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-custo-corrida' : '/tools/cost-per-trip-calculator')}
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:border-cyan-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-cyan-500/10"
+                onClick={() => trackSimulatorCTAClick('homepage_trip_cost_card')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-teal-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center shadow-lg shadow-cyan-500/30 mb-4">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">
+                    {locale === 'pt-BR' ? 'Custo por Corrida' : 'Cost per Trip'}
+                  </h3>
+                  <p className="text-slate-400 text-xs mb-3 line-clamp-2">
+                    {locale === 'pt-BR'
+                      ? 'Vale a pena aceitar essa corrida?'
+                      : 'Is this trip worth it?'}
+                  </p>
+                  <div className="flex items-center text-cyan-400 text-xs font-semibold">
+                    {locale === 'pt-BR' ? 'Calcular' : 'Calculate'}
+                    <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Fuel Calculator Card */}
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-combustivel' : '/tools/fuel-calculator')}
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:border-amber-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-amber-500/10"
+                onClick={() => trackSimulatorCTAClick('homepage_fuel_card')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30 mb-4">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">
+                    {locale === 'pt-BR' ? 'Combustível' : 'Fuel'}
+                  </h3>
+                  <p className="text-slate-400 text-xs mb-3 line-clamp-2">
+                    {locale === 'pt-BR'
+                      ? 'Gasolina ou etanol? Compare!'
+                      : 'Gas or ethanol? Compare!'}
+                  </p>
+                  <div className="flex items-center text-amber-400 text-xs font-semibold">
+                    {locale === 'pt-BR' ? 'Comparar' : 'Compare'}
+                    <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Break-Even Calculator Card */}
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-ponto-equilibrio' : '/tools/break-even-calculator')}
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5 hover:border-blue-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/10"
+                onClick={() => trackSimulatorCTAClick('homepage_break_even_card')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/30 mb-4">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                    {locale === 'pt-BR' ? 'Ponto de Equilíbrio' : 'Break-Even'}
+                  </h3>
+                  <p className="text-slate-400 text-xs mb-3 line-clamp-2">
+                    {locale === 'pt-BR'
+                      ? 'Quanto precisa faturar?'
+                      : 'How much to earn?'}
+                  </p>
+                  <div className="flex items-center text-blue-400 text-xs font-semibold">
+                    {locale === 'pt-BR' ? 'Calcular' : 'Calculate'}
+                    <svg className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            {/* View All Tools Link */}
+            <div className="text-center mt-8">
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/ferramentas' : '/tools')}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-full text-white font-semibold hover:bg-white/20 transition-all group"
+                onClick={() => trackToolsCTAClick('homepage_view_all')}
+              >
+                {locale === 'pt-BR' ? 'Ver Todas as Ferramentas' : 'View All Tools'}
+                <span className="text-teal-400 text-sm">(8)</span>
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
             </div>
           </div>
         </section>

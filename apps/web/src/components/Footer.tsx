@@ -194,6 +194,38 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-custo-corrida' : '/tools/cost-per-trip-calculator')}
+                  className="hover:text-white transition-colors"
+                >
+                  {locale === 'pt-BR' ? 'Custo por Corrida' : 'Cost per Trip'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-combustivel' : '/tools/fuel-calculator')}
+                  className="hover:text-white transition-colors"
+                >
+                  {locale === 'pt-BR' ? 'Calculadora de Combustível' : 'Fuel Calculator'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas/calculadora-ponto-equilibrio' : '/tools/break-even-calculator')}
+                  className="hover:text-white transition-colors"
+                >
+                  {locale === 'pt-BR' ? 'Ponto de Equilíbrio' : 'Break-Even'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={getLink(locale === 'pt-BR' ? '/ferramentas/simulador-orcamento' : '/tools/driver-budget-simulator')}
+                  className="hover:text-white transition-colors"
+                >
+                  {locale === 'pt-BR' ? 'Simulador de Orçamento' : 'Budget Simulator'}
+                </Link>
+              </li>
+              <li>
+                <Link
                   href={getLink(locale === 'pt-BR' ? '/ferramentas' : '/tools')}
                   className="hover:text-white transition-colors"
                 >

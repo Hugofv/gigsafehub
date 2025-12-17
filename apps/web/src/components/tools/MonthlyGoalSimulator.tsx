@@ -472,6 +472,87 @@ export default function MonthlyGoalSimulator({ locale }: MonthlyGoalSimulatorPro
         <p className="text-center text-slate-400 text-sm mt-8 px-4">
           {tt('disclaimer')}
         </p>
+
+        {/* Related Tools Section */}
+        <div className="mt-16 pt-12 border-t border-slate-700/50">
+          <h2 className="text-2xl font-bold text-white text-center mb-8">
+            {locale === 'pt-BR' ? 'Outras Ferramentas' : 'Other Tools'}
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {/* Loss Income Simulator */}
+            <Link
+              href={`/${locale}${locale === 'pt-BR' ? '/ferramentas/simulador-perda-renda' : '/tools/loss-income-simulator'}`}
+              className="group bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-700 p-5 hover:border-orange-500/50 transition-all hover:shadow-lg hover:shadow-orange-500/10"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-white font-semibold mb-1 group-hover:text-orange-400 transition-colors">
+                {locale === 'pt-BR' ? 'Simulador de Perda de Renda' : 'Loss Income Simulator'}
+              </h3>
+              <p className="text-slate-400 text-sm">
+                {locale === 'pt-BR'
+                  ? 'Quanto você perderia sem trabalhar?'
+                  : 'How much would you lose without working?'}
+              </p>
+            </Link>
+
+            {/* Daily Profit Calculator */}
+            <Link
+              href={`/${locale}${locale === 'pt-BR' ? '/ferramentas/calculadora-lucro-diario' : '/tools/daily-profit-calculator'}`}
+              className="group bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-700 p-5 hover:border-emerald-500/50 transition-all hover:shadow-lg hover:shadow-emerald-500/10"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-white font-semibold mb-1 group-hover:text-emerald-400 transition-colors">
+                {locale === 'pt-BR' ? 'Calculadora de Lucro Real' : 'Daily Profit Calculator'}
+              </h3>
+              <p className="text-slate-400 text-sm">
+                {locale === 'pt-BR'
+                  ? 'Descubra quanto você realmente ganha por hora'
+                  : 'Discover your real hourly earnings'}
+              </p>
+            </Link>
+
+            {/* Hidden Costs Calculator */}
+            <Link
+              href={`/${locale}${locale === 'pt-BR' ? '/ferramentas/calculadora-custos-ocultos' : '/tools/hidden-costs-calculator'}`}
+              className="group bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-700 p-5 hover:border-rose-500/50 transition-all hover:shadow-lg hover:shadow-rose-500/10"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 className="text-white font-semibold mb-1 group-hover:text-rose-400 transition-colors">
+                {locale === 'pt-BR' ? 'Calculadora de Custos Ocultos' : 'Hidden Costs Calculator'}
+              </h3>
+              <p className="text-slate-400 text-sm">
+                {locale === 'pt-BR'
+                  ? 'Descubra gastos que você pode estar ignorando'
+                  : 'Find costs you might be overlooking'}
+              </p>
+            </Link>
+          </div>
+
+          {/* All Tools Link */}
+          <div className="text-center mt-8">
+            <Link
+              href={`/${locale}${locale === 'pt-BR' ? '/ferramentas' : '/tools'}`}
+              className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+            >
+              {locale === 'pt-BR' ? 'Ver todas as ferramentas' : 'View all tools'}
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
