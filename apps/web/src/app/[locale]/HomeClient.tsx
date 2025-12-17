@@ -10,7 +10,7 @@ import { useTranslation } from '@/contexts/I18nContext';
 import { useCategories } from '@/contexts/CategoriesContext';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useToast } from '@/contexts/ToastContext';
-import { trackSimulatorCTAClick } from '@/lib/analytics';
+import { trackSimulatorCTAClick, trackToolsCTAClick } from '@/lib/analytics';
 
 interface Article {
   id: string;
