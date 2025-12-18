@@ -21,7 +21,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
-  const canonicalUrl = `${baseUrl}/${locale}/ferramentas/simulador-meta-mensal`;
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
+  const canonicalUrl = `${productionBaseUrl}/${locale}/ferramentas/simulador-meta-mensal`;
 
   return {
     title: 'Simulador de Meta Mensal | Planeje Seus Ganhos como Motorista',
@@ -56,7 +58,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: 'pt_BR',
       images: [
         {
-          url: `${baseUrl}/og-simulador-meta.png`,
+          url: `${productionBaseUrl}/og-simulador-meta.png`,
           width: 1200,
           height: 630,
           alt: 'Simulador de Meta Mensal - GigSafeHub',
@@ -67,13 +69,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title: 'Simulador de Meta Mensal | GigSafeHub',
       description: 'Planeje como alcançar sua meta de renda mensal como motorista de aplicativo.',
-      images: [`${baseUrl}/og-simulador-meta.png`],
+      images: [`${productionBaseUrl}/og-simulador-meta.png`],
     },
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en-US': `${baseUrl}/en-US/tools/monthly-goal-simulator`,
-        'pt-BR': `${baseUrl}/pt-BR/ferramentas/simulador-meta-mensal`,
+        'en-US': `${productionBaseUrl}/en-US/tools/monthly-goal-simulator`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/simulador-meta-mensal`,
       },
     },
   };

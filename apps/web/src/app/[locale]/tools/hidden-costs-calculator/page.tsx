@@ -21,7 +21,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
-  const canonicalUrl = `${baseUrl}/${locale}/tools/hidden-costs-calculator`;
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
+  const canonicalUrl = `${productionBaseUrl}/${locale}/tools/hidden-costs-calculator`;
 
   return {
     title: 'Hidden Costs Calculator | Discover Expenses You\'re Overlooking',
@@ -56,7 +58,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: 'en_US',
       images: [
         {
-          url: `${baseUrl}/og-hidden-costs-calculator.png`,
+          url: `${productionBaseUrl}/og-hidden-costs-calculator.png`,
           width: 1200,
           height: 630,
           alt: 'Hidden Costs Calculator - GigSafeHub',
@@ -67,13 +69,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title: 'Hidden Costs Calculator | GigSafeHub',
       description: 'Discover costs you might be overlooking as a rideshare driver.',
-      images: [`${baseUrl}/og-hidden-costs-calculator.png`],
+      images: [`${productionBaseUrl}/og-hidden-costs-calculator.png`],
     },
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en-US': `${baseUrl}/en-US/tools/hidden-costs-calculator`,
-        'pt-BR': `${baseUrl}/pt-BR/ferramentas/calculadora-custos-ocultos`,
+        'en-US': `${productionBaseUrl}/en-US/tools/hidden-costs-calculator`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/calculadora-custos-ocultos`,
       },
     },
   };

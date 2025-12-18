@@ -22,7 +22,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
-  const canonicalUrl = `${baseUrl}/${locale}/tools/daily-profit-calculator`;
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
+  const canonicalUrl = `${productionBaseUrl}/${locale}/tools/daily-profit-calculator`;
 
   return {
     title: 'Daily Real Profit Calculator | Discover Your True Hourly Earnings',
@@ -57,7 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: 'en_US',
       images: [
         {
-          url: `${baseUrl}/og-daily-profit-calculator.png`,
+          url: `${productionBaseUrl}/og-daily-profit-calculator.png`,
           width: 1200,
           height: 630,
           alt: 'Daily Real Profit Calculator - GigSafeHub',
@@ -68,13 +70,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title: 'Daily Real Profit Calculator | GigSafeHub',
       description: 'Discover how much you really earn per hour after all expenses.',
-      images: [`${baseUrl}/og-daily-profit-calculator.png`],
+      images: [`${productionBaseUrl}/og-daily-profit-calculator.png`],
     },
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en-US': `${baseUrl}/en-US/tools/daily-profit-calculator`,
-        'pt-BR': `${baseUrl}/pt-BR/ferramentas/calculadora-lucro-diario`,
+        'en-US': `${productionBaseUrl}/en-US/tools/daily-profit-calculator`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/calculadora-lucro-diario`,
       },
     },
   };

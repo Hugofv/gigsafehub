@@ -16,7 +16,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
-  const canonicalUrl = `${baseUrl}/${locale}/tools`;
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
+  const canonicalUrl = `${productionBaseUrl}/${locale}/tools`;
 
   return {
     title: 'Free Tools for Rideshare & Delivery Drivers | GigSafeHub',
@@ -59,8 +61,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en-US': `${baseUrl}/en-US/tools`,
-        'pt-BR': `${baseUrl}/pt-BR/ferramentas`,
+        'en-US': `${productionBaseUrl}/en-US/tools`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas`,
       },
     },
   };

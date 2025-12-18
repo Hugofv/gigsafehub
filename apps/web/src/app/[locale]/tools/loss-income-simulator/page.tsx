@@ -22,7 +22,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
-  const canonicalUrl = `${baseUrl}/${locale}/tools/loss-income-simulator`;
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
+  const canonicalUrl = `${productionBaseUrl}/${locale}/tools/loss-income-simulator`;
 
   return {
     title: 'Loss Income Simulator | Calculate How Much You\'d Lose Without Working',
@@ -57,7 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: 'en_US',
       images: [
         {
-          url: `${baseUrl}/og-loss-income-simulator.png`,
+          url: `${productionBaseUrl}/og-loss-income-simulator.png`,
           width: 1200,
           height: 630,
           alt: 'Loss Income Simulator - GigSafeHub',
@@ -68,13 +70,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title: 'Loss Income Simulator | GigSafeHub',
       description: 'Calculate how much income you\'d lose without proper protection. Free tool.',
-      images: [`${baseUrl}/og-loss-income-simulator.png`],
+      images: [`${productionBaseUrl}/og-loss-income-simulator.png`],
     },
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en-US': `${baseUrl}/en-US/tools/loss-income-simulator`,
-        'pt-BR': `${baseUrl}/pt-BR/ferramentas/simulador-perda-renda`,
+        'en-US': `${productionBaseUrl}/en-US/tools/loss-income-simulator`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/simulador-perda-renda`,
       },
     },
   };

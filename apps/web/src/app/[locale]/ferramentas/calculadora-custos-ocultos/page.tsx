@@ -21,7 +21,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
-  const canonicalUrl = `${baseUrl}/${locale}/ferramentas/calculadora-custos-ocultos`;
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
+  const canonicalUrl = `${productionBaseUrl}/${locale}/ferramentas/calculadora-custos-ocultos`;
 
   return {
     title: 'Calculadora de Custos Ocultos | Descubra Gastos que Você Ignora',
@@ -56,7 +58,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: 'pt_BR',
       images: [
         {
-          url: `${baseUrl}/og-custos-ocultos.png`,
+          url: `${productionBaseUrl}/og-custos-ocultos.png`,
           width: 1200,
           height: 630,
           alt: 'Calculadora de Custos Ocultos - GigSafeHub',
@@ -67,13 +69,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title: 'Calculadora de Custos Ocultos | GigSafeHub',
       description: 'Descubra custos que você pode estar ignorando como motorista de aplicativo.',
-      images: [`${baseUrl}/og-custos-ocultos.png`],
+      images: [`${productionBaseUrl}/og-custos-ocultos.png`],
     },
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en-US': `${baseUrl}/en-US/tools/hidden-costs-calculator`,
-        'pt-BR': `${baseUrl}/pt-BR/ferramentas/calculadora-custos-ocultos`,
+        'en-US': `${productionBaseUrl}/en-US/tools/hidden-costs-calculator`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/calculadora-custos-ocultos`,
       },
     },
   };

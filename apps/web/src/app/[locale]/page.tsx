@@ -10,6 +10,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   noStore(); // Prevent metadata streaming - ensures metadata is in <head> on reload
   const { locale } = await params;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
   // Don't add suffix, template from root layout will add it
   const title = locale === 'pt-BR'
     ? 'GigSafeHub - Guias Especializados de Seguros para Trabalhadores da Gig Economy'
@@ -61,12 +63,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title,
       description,
       type: 'website',
-      url: `${baseUrl}/${locale}`,
+      url: `${productionBaseUrl}/${locale}`,
       siteName: 'GigSafeHub',
       locale: locale === 'pt-BR' ? 'pt_BR' : 'en_US',
       images: [
         {
-          url: `${baseUrl}/logo.png`,
+          url: `${productionBaseUrl}/logo.png`,
           alt: 'GigSafeHub - Insurance and Protection for Gig Economy Workers',
           width: 1200,
           height: 630,
@@ -77,14 +79,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       card: 'summary_large_image',
       title,
       description,
-      images: [`${baseUrl}/logo.png`],
+      images: [`${productionBaseUrl}/logo.png`],
       creator: '@gigsafehub',
     },
     alternates: {
-      canonical: `${baseUrl}/${locale}`,
+      canonical: `${productionBaseUrl}/${locale}`,
       languages: {
-        'pt-BR': `${baseUrl}/pt-BR`,
-        'en-US': `${baseUrl}/en-US`,
+        'pt-BR': `${productionBaseUrl}/pt-BR`,
+        'en-US': `${productionBaseUrl}/en-US`,
       },
     },
     robots: {

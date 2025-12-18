@@ -11,6 +11,8 @@ export async function generateMetadata({ params, searchParams }: {
   noStore(); // Prevent metadata streaming - ensures metadata is in <head> on reload
   const { locale } = await params;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
   const title = locale === 'pt-BR'
     ? 'Comparador de Seguros - GigSafeHub'
     : 'Insurance Comparator - GigSafeHub';
@@ -25,7 +27,7 @@ export async function generateMetadata({ params, searchParams }: {
       title,
       description,
       type: 'website',
-      url: `${baseUrl}/${locale}/compare`,
+      url: `${productionBaseUrl}/${locale}/compare`,
       siteName: 'GigSafeHub',
       locale: locale === 'pt-BR' ? 'pt_BR' : 'en_US',
     },
@@ -35,7 +37,7 @@ export async function generateMetadata({ params, searchParams }: {
       description,
     },
     alternates: {
-      canonical: `${baseUrl}/${locale}/compare`,
+      canonical: `${productionBaseUrl}/${locale}/compare`,
     },
     robots: {
       index: true,

@@ -22,7 +22,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
-  const canonicalUrl = `${baseUrl}/${locale}/ferramentas/calculadora-lucro-diario`;
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
+  const canonicalUrl = `${productionBaseUrl}/${locale}/ferramentas/calculadora-lucro-diario`;
 
   return {
     title: 'Calculadora de Lucro Real Diário | Descubra Seu Ganho Real por Hora',
@@ -57,7 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: 'pt_BR',
       images: [
         {
-          url: `${baseUrl}/og-calculadora-lucro.png`,
+          url: `${productionBaseUrl}/og-calculadora-lucro.png`,
           width: 1200,
           height: 630,
           alt: 'Calculadora de Lucro Real Diário - GigSafeHub',
@@ -68,13 +70,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title: 'Calculadora de Lucro Real Diário | GigSafeHub',
       description: 'Descubra quanto você realmente ganha por hora após todas as despesas.',
-      images: [`${baseUrl}/og-calculadora-lucro.png`],
+      images: [`${productionBaseUrl}/og-calculadora-lucro.png`],
     },
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en-US': `${baseUrl}/en-US/tools/daily-profit-calculator`,
-        'pt-BR': `${baseUrl}/pt-BR/ferramentas/calculadora-lucro-diario`,
+        'en-US': `${productionBaseUrl}/en-US/tools/daily-profit-calculator`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/calculadora-lucro-diario`,
       },
     },
   };

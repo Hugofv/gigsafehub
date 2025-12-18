@@ -21,7 +21,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
-  const canonicalUrl = `${baseUrl}/${locale}/tools/monthly-goal-simulator`;
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
+  const canonicalUrl = `${productionBaseUrl}/${locale}/tools/monthly-goal-simulator`;
 
   return {
     title: 'Monthly Goal Simulator | Plan Your Earnings as a Driver',
@@ -56,7 +58,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: 'en_US',
       images: [
         {
-          url: `${baseUrl}/og-monthly-goal-simulator.png`,
+          url: `${productionBaseUrl}/og-monthly-goal-simulator.png`,
           width: 1200,
           height: 630,
           alt: 'Monthly Goal Simulator - GigSafeHub',
@@ -67,13 +69,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title: 'Monthly Goal Simulator | GigSafeHub',
       description: 'Plan how to reach your monthly income goal as a rideshare driver.',
-      images: [`${baseUrl}/og-monthly-goal-simulator.png`],
+      images: [`${productionBaseUrl}/og-monthly-goal-simulator.png`],
     },
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en-US': `${baseUrl}/en-US/tools/monthly-goal-simulator`,
-        'pt-BR': `${baseUrl}/pt-BR/ferramentas/simulador-meta-mensal`,
+        'en-US': `${productionBaseUrl}/en-US/tools/monthly-goal-simulator`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/simulador-meta-mensal`,
       },
     },
   };

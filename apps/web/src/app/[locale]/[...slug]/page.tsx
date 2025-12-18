@@ -35,7 +35,12 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
           // Remove suffix if already present (to avoid duplication with template)
           articleTitle = articleTitle.replace(/\s*[-–—]\s*GigSafeHub\s*$/i, '').trim();
           const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-          const canonicalUrl = `${baseUrl}/${locale}/${slugPath}`;
+          // Use stored canonicalUrl if available, otherwise generate it
+          // Always use production base URL for canonical to ensure consistency
+          const productionBaseUrl = 'https://gigsafehub.com';
+          const canonicalUrl = article.canonicalUrl
+            ? article.canonicalUrl
+            : `${productionBaseUrl}/${locale}/${slugPath}`;
           const articleDescription = article.metaDescription || article.excerpt || `Read ${article.title} on GigSafeHub. Expert guides and information for gig economy workers.`;
 
           return {
@@ -82,8 +87,12 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       }
 
       return {
-        title: 'Category Not Found - GigSafeHub',
-        description: 'The requested category or page could not be found. Explore our insurance products and guides for gig economy workers.',
+        title: 'Page Not Found - GigSafeHub',
+        description: 'The requested page could not be found.',
+        robots: {
+          index: false,
+          follow: false,
+        },
       };
     }
 
@@ -91,7 +100,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     const metaDescription = category.metaDescription || category.description || `Explore ${category.name} and find the best insurance products and guides for gig economy workers.`;
     // Don't add suffix, template from root layout will add it
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const canonicalUrl = `${baseUrl}/${locale}/${slugPath}`;
+    // Always use production base URL for canonical to ensure consistency
+    const productionBaseUrl = 'https://gigsafehub.com';
+    const canonicalUrl = `${productionBaseUrl}/${locale}/${slugPath}`;
 
     return {
       title: metaTitle, // Template from root layout will add suffix
@@ -120,8 +131,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       alternates: {
         canonical: canonicalUrl,
         languages: {
-          'pt-BR': `${baseUrl}/pt-BR/${slugPath}`,
-          'en-US': `${baseUrl}/en-US/${slugPath}`,
+          'pt-BR': `${productionBaseUrl}/pt-BR/${slugPath}`,
+          'en-US': `${productionBaseUrl}/en-US/${slugPath}`,
         },
       },
       robots: {

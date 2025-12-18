@@ -22,7 +22,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gigsafehub.com';
-  const canonicalUrl = `${baseUrl}/${locale}/ferramentas/simulador-perda-renda`;
+  // Always use production base URL for canonical to ensure consistency
+  const productionBaseUrl = 'https://gigsafehub.com';
+  const canonicalUrl = `${productionBaseUrl}/${locale}/ferramentas/simulador-perda-renda`;
 
   return {
     title: 'Simulador de Perda de Renda | Calcule Quanto Você Perderia Sem Trabalhar',
@@ -57,7 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: 'pt_BR',
       images: [
         {
-          url: `${baseUrl}/og-simulador-perda-renda.png`,
+          url: `${productionBaseUrl}/og-simulador-perda-renda.png`,
           width: 1200,
           height: 630,
           alt: 'Simulador de Perda de Renda - GigSafeHub',
@@ -68,13 +70,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title: 'Simulador de Perda de Renda | GigSafeHub',
       description: 'Calcule quanto de renda você perderia sem seguro adequado. Ferramenta gratuita.',
-      images: [`${baseUrl}/og-simulador-perda-renda.png`],
+      images: [`${productionBaseUrl}/og-simulador-perda-renda.png`],
     },
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en-US': `${baseUrl}/en-US/tools/loss-income-simulator`,
-        'pt-BR': `${baseUrl}/pt-BR/ferramentas/simulador-perda-renda`,
+        'en-US': `${productionBaseUrl}/en-US/tools/loss-income-simulator`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/simulador-perda-renda`,
       },
     },
   };

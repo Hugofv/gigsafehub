@@ -100,8 +100,6 @@ seoRouter.get('/sitemap.xml', async (req: Request, res: Response) => {
       `<url><loc>${BASE_URL}/en-US</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`,
       `<url><loc>${BASE_URL}/pt-BR</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`,
       // Reviews listing
-      `<url><loc>${BASE_URL}/en-US/reviews</loc><changefreq>daily</changefreq><priority>0.9</priority></url>`,
-      `<url><loc>${BASE_URL}/pt-BR/reviews</loc><changefreq>daily</changefreq><priority>0.9</priority></url>`,
       // Articles listing
       `<url><loc>${BASE_URL}/en-US/articles</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`,
       `<url><loc>${BASE_URL}/pt-BR/articles</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`,
