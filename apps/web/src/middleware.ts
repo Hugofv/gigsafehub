@@ -4,6 +4,11 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Block search routes - they don't exist and should return 404
+  if (pathname.startsWith('/search')) {
+    return new NextResponse(null, { status: 404 });
+  }
+
   // Force HTTPS redirect in production (if not already handled at infrastructure level)
   // Check the X-Forwarded-Proto header (set by reverse proxies) or the protocol
   const protocol = request.headers.get('x-forwarded-proto') || request.nextUrl.protocol;

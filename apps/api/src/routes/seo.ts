@@ -224,6 +224,7 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /docs/
 Disallow: /_next/
+Disallow: /search
 
 Sitemap: ${BASE_URL}/sitemap.xml`;
 
