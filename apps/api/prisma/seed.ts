@@ -332,25 +332,6 @@ async function main() {
     },
   });
 
-  const blogTrends = await prisma.category.upsert({
-    where: { slug: 'gig-economy-trends' },
-    update: {},
-    create: {
-      name: 'Gig Economy Trends',
-      nameEn: 'Gig Economy Trends',
-      namePt: 'Tendências da Economia Gig',
-      slug: 'gig-economy-trends',
-      slugEn: 'gig-economy-trends',
-      slugPt: 'tendencias-da-economia-gig',
-      description: 'Trends in the gig economy',
-      descriptionEn: 'Trends in the gig economy',
-      descriptionPt: 'Tendências na economia gig',
-      level: 1,
-      parentId: blogRoot.id,
-      order: 3,
-      isActive: true,
-    },
-  });
 
   // ============================================
   // Level 1: Tools Subcategories
@@ -709,53 +690,6 @@ Choose the plan that best fits your delivery work volume and risk tolerance.
       metaDescription: 'A comprehensive comparison of the best insurance plans available for delivery workers in 2024.',
       metaKeywords: 'delivery insurance, insurance comparison, delivery worker insurance',
       readingTime: 7,
-    },
-  });
-
-  const article3 = await prisma.article.upsert({
-    where: { slug: 'gig-economy-trends-2024' },
-    update: {},
-    create: {
-      slug: 'gig-economy-trends-2024',
-      slugEn: 'gig-economy-trends-2024',
-      slugPt: 'tendencias-da-economia-gig-2024',
-      title: 'Gig Economy Trends in 2024',
-      excerpt: 'Discover the latest trends shaping the gig economy and how they affect insurance needs for workers.',
-      content: `
-# Gig Economy Trends in 2024
-
-The gig economy continues to evolve rapidly. Here are the key trends shaping 2024:
-
-## 1. Increased Regulation
-
-Governments worldwide are implementing new regulations to protect gig workers, including mandatory insurance requirements.
-
-## 2. Technology Integration
-
-New platforms are making it easier for workers to manage their insurance and benefits.
-
-## 3. Worker Classification
-
-The debate over worker classification continues, affecting insurance and benefits eligibility.
-
-## 4. Specialized Insurance Products
-
-Insurance companies are developing products specifically designed for gig workers.
-
-## Conclusion
-
-Stay informed about these trends to ensure you have the right protection.
-      `,
-      partnerTag: 'GigSafeHub',
-      imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800',
-      imageAlt: 'Gig economy trends',
-      date: new Date('2024-03-10'),
-      locale: 'Both',
-      articleType: 'blog',
-      categoryId: blogTrends.id,
-      metaTitle: 'Gig Economy Trends in 2024 | GigSafeHub',
-      metaDescription: 'Discover the latest trends shaping the gig economy and how they affect insurance needs.',
-      readingTime: 6,
     },
   });
 
