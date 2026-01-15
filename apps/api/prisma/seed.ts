@@ -126,6 +126,31 @@ async function main() {
     },
   });
 
+  const jobsRoot = await prisma.category.upsert({
+    where: { slug: 'jobs' },
+    update: {},
+    create: {
+      name: 'Jobs',
+      nameEn: 'Jobs',
+      namePt: 'Vagas',
+      slug: 'jobs',
+      slugEn: 'jobs',
+      slugPt: 'vagas',
+      description: 'Job opportunities and resources for gig economy workers',
+      descriptionEn: 'Job opportunities and resources for gig economy workers',
+      descriptionPt: 'Vagas e oportunidades para trabalhadores da gig economy',
+      level: 0,
+      parentId: null,
+      order: 6,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: false,
+      icon: 'briefcase',
+      metaTitle: 'Jobs for Gig Workers | GigSafeHub',
+      metaDescription: 'Find opportunities and resources for app drivers and delivery workers.',
+    },
+  });
+
   // ============================================
   // Level 1: Main Subcategories (Insurance)
   // ============================================
@@ -329,6 +354,54 @@ async function main() {
       parentId: blogRoot.id,
       order: 2,
       isActive: true,
+    },
+  });
+
+  // ============================================
+  // Level 1: Jobs Subcategories
+  // ============================================
+
+  const jobsAppDriver = await prisma.category.upsert({
+    where: { slug: 'app-driver' },
+    update: {},
+    create: {
+      name: 'App Driver',
+      nameEn: 'App Driver',
+      namePt: 'Motorista de Aplicativo',
+      slug: 'app-driver',
+      slugEn: 'app-driver',
+      slugPt: 'motorista-de-aplicativo',
+      description: 'Opportunities and resources for app drivers',
+      descriptionEn: 'Opportunities and resources for app drivers',
+      descriptionPt: 'Vagas e recursos para motoristas de aplicativo',
+      level: 1,
+      parentId: jobsRoot.id,
+      order: 1,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: false,
+    },
+  });
+
+  const jobsDeliveryDriver = await prisma.category.upsert({
+    where: { slug: 'delivery-driver' },
+    update: {},
+    create: {
+      name: 'Delivery Driver',
+      nameEn: 'Delivery Driver',
+      namePt: 'Entregador de Aplicativo',
+      slug: 'delivery-driver',
+      slugEn: 'delivery-driver',
+      slugPt: 'entregador-de-aplicativo',
+      description: 'Opportunities and resources for delivery workers',
+      descriptionEn: 'Opportunities and resources for delivery workers',
+      descriptionPt: 'Vagas e recursos para entregadores de aplicativo',
+      level: 1,
+      parentId: jobsRoot.id,
+      order: 2,
+      isActive: true,
+      showInNavbar: true,
+      showInFooter: false,
     },
   });
 
@@ -569,129 +642,6 @@ async function main() {
   // ============================================
   // CREATE ARTICLES (Blog Posts)
   // ============================================
-
-  const article1 = await prisma.article.upsert({
-    where: { slug: 'essential-insurance-tips-for-uber-drivers' },
-    update: {},
-    create: {
-      slug: 'essential-insurance-tips-for-uber-drivers',
-      slugEn: 'essential-insurance-tips-for-uber-drivers',
-      slugPt: 'dicas-essenciais-de-seguro-para-motoristas-uber',
-      title: 'Essential Insurance Tips for Uber Drivers',
-      excerpt: 'Learn the most important insurance tips every Uber driver should know to protect themselves and their vehicle.',
-      content: `
-# Essential Insurance Tips for Uber Drivers
-
-As an Uber driver, having the right insurance coverage is crucial for protecting yourself, your passengers, and your vehicle. Here are the essential tips you need to know:
-
-## 1. Understand Uber's Insurance Coverage
-
-Uber provides insurance coverage in three periods:
-- **Period 1**: App is off - Your personal insurance applies
-- **Period 2**: App is on, no ride accepted - Uber provides liability coverage
-- **Period 3**: Ride accepted or in progress - Uber provides comprehensive coverage
-
-## 2. Get Commercial Insurance
-
-Personal auto insurance typically doesn't cover commercial activities. Consider getting:
-- Commercial auto insurance
-- Rideshare insurance endorsement
-- Gap insurance for your vehicle
-
-## 3. Review Your Coverage Regularly
-
-Your insurance needs may change as you drive more or less. Review your policy:
-- Quarterly
-- After major life changes
-- When your driving patterns change
-
-## 4. Document Everything
-
-Keep records of:
-- All insurance policies
-- Claims and incidents
-- Maintenance records
-- Mileage logs
-
-## Conclusion
-
-Protecting yourself with proper insurance is not optional for rideshare drivers. Take the time to understand your coverage and ensure you're adequately protected.
-      `,
-      partnerTag: 'GigSafeHub',
-      imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800',
-      imageAlt: 'Uber driver with insurance documents',
-      date: new Date('2024-01-15'),
-      locale: 'Both',
-      articleType: 'blog',
-      categoryId: blogTips.id,
-      metaTitle: 'Essential Insurance Tips for Uber Drivers | GigSafeHub',
-      metaDescription: 'Learn the most important insurance tips every Uber driver should know to protect themselves and their vehicle.',
-      metaKeywords: 'uber insurance, rideshare insurance, driver insurance tips',
-      ogTitle: 'Essential Insurance Tips for Uber Drivers',
-      ogDescription: 'Learn the most important insurance tips every Uber driver should know.',
-      ogImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200',
-      readingTime: 5,
-    },
-  });
-
-  const article2 = await prisma.article.upsert({
-    where: { slug: 'comparing-top-5-delivery-insurance-plans' },
-    update: {},
-    create: {
-      slug: 'comparing-top-5-delivery-insurance-plans',
-      slugEn: 'comparing-top-5-delivery-insurance-plans',
-      slugPt: 'comparando-os-5-melhores-planos-de-seguro-para-entregadores',
-      title: 'Comparing Top 5 Delivery Insurance Plans',
-      excerpt: 'A comprehensive comparison of the best insurance plans available for delivery workers in 2024.',
-      content: `
-# Comparing Top 5 Delivery Insurance Plans
-
-Finding the right insurance for delivery work can be challenging. We've compared the top 5 plans to help you make an informed decision.
-
-## Plan Comparison
-
-### 1. Plan A - Comprehensive Coverage
-- **Coverage**: Full protection including equipment
-- **Price**: $89/month
-- **Best for**: Full-time delivery workers
-
-### 2. Plan B - Basic Protection
-- **Coverage**: Essential liability coverage
-- **Price**: $49/month
-- **Best for**: Part-time workers
-
-### 3. Plan C - Premium Package
-- **Coverage**: Full coverage + income protection
-- **Price**: $129/month
-- **Best for**: High-volume workers
-
-### 4. Plan D - Equipment Focus
-- **Coverage**: Equipment and vehicle protection
-- **Price**: $69/month
-- **Best for**: Bike/motorcycle delivery
-
-### 5. Plan E - Budget Option
-- **Coverage**: Basic liability
-- **Price**: $29/month
-- **Best for**: Occasional workers
-
-## Conclusion
-
-Choose the plan that best fits your delivery work volume and risk tolerance.
-      `,
-      partnerTag: 'GigSafeHub',
-      imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800',
-      imageAlt: 'Delivery insurance comparison',
-      date: new Date('2024-02-01'),
-      locale: 'Both',
-      articleType: 'blog',
-      categoryId: blogComparisons.id,
-      metaTitle: 'Comparing Top 5 Delivery Insurance Plans | GigSafeHub',
-      metaDescription: 'A comprehensive comparison of the best insurance plans available for delivery workers in 2024.',
-      metaKeywords: 'delivery insurance, insurance comparison, delivery worker insurance',
-      readingTime: 7,
-    },
-  });
 
   console.log('✅ Articles seeded successfully!');
   console.log(`   - Created ${await prisma.article.count()} articles`);
