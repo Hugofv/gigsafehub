@@ -1,0 +1,17 @@
+# Nixpacks configuration for Railway
+# This ensures Playwright dependencies are installed
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "chromium"]
+
+[phases.install]
+cmds = [
+  "npm install",
+  "npx playwright install chromium --with-deps"
+]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "node dist/index.js"

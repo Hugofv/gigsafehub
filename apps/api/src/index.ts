@@ -26,9 +26,12 @@ import { categoriesRouter } from './routes/categories';
 import { menuRouter } from './routes/menu';
 import { seoRouter } from './routes/seo';
 import { adminRouter } from './routes/admin';
+import { createJobsRouter } from './routes/jobs';
+import { jobOpportunitiesRouter } from './routes/jobOpportunities';
 import { seoHeaders, structuredDataHeaders } from './middleware/seo';
 import { errorHandler } from './middleware/errorHandler';
 import { config } from './config';
+import { initializeWorkers } from './workers';
 
 const app: Express = express();
 const logger = pino({
@@ -138,6 +141,7 @@ app.use('/api/categories', categoriesRouter); // No rate limiting
 app.use('/api/menu', menuRouter); // No rate limiting
 app.use('/', seoRouter); // SEO routes (sitemap.xml, robots.txt, /api/seo/meta)
 app.use('/api/admin', adminRouter);
+app.use('/api/job-opportunities', jobOpportunitiesRouter);
 
 // Root route
 app.get('/', (req: Request, res: Response) => {
@@ -162,28 +166,50 @@ const server = app.listen(config.port, '0.0.0.0', () => {
   logger.info(`API Documentation: http://localhost:${config.port}/docs`);
 });
 
-// Graceful shutdown
-process.on('SIGTERM', async () => {
-  logger.info('SIGTERM signal received: closing HTTP server');
-  server.close(async () => {
-    logger.info('HTTP server closed');
-    // Disconnect Prisma
-    const { prisma } = await import('./lib/prisma');
-    await prisma.$disconnect();
-    process.exit(0);
-  });
-});
+// Initialize workers/jobs (runs in parallel, doesn't block API)
+let jobManager: ReturnType<typeof initializeWorkers> | null = null;
+try {
+  jobManager = initializeWorkers(logger);
+  logger.info('Workers initialized successfully');
+} catch (error) {
+  logger.error({ error }, 'Failed to initialize workers, continuing without them');
+}
 
-process.on('SIGINT', async () => {
-  logger.info('SIGINT signal received: closing HTTP server');
+// Jobs monitoring routes (optional, only if jobManager is available)
+if (jobManager) {
+  app.use('/api/jobs', createJobsRouter(jobManager));
+}
+
+// Graceful shutdown
+const gracefulShutdown = async (signal: string) => {
+  logger.info(`${signal} signal received: starting graceful shutdown`);
+
+  // Stop accepting new connections
   server.close(async () => {
     logger.info('HTTP server closed');
+
+    // Shutdown workers
+    if (jobManager) {
+      await jobManager.shutdown();
+    }
+
     // Disconnect Prisma
     const { prisma } = await import('./lib/prisma');
     await prisma.$disconnect();
+
+    logger.info('Graceful shutdown complete');
     process.exit(0);
   });
-});
+
+  // Force shutdown after 30 seconds
+  setTimeout(() => {
+    logger.error('Forced shutdown after timeout');
+    process.exit(1);
+  }, 30000);
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 export default app;
 

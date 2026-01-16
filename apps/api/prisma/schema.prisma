@@ -26,35 +26,35 @@ enum Country {
 }
 
 model Category {
-  id          String    @id @default(uuid())
-  name        String
-  nameEn      String?   // English name
-  namePt      String?   // Portuguese name
-  slug        String    @unique // Default/English slug
-  slugEn      String?   @unique // English slug
-  slugPt      String?   @unique // Portuguese slug
-  description String?   @db.Text
-  descriptionEn String? @db.Text
-  descriptionPt String? @db.Text
-  level       Int       @default(0) // 0 = root, 1 = first level, etc.
-  parentId    String?   // Reference to parent category
-  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
-  children    Category[] @relation("CategoryHierarchy")
-  country     Country?  // If null, applies to all countries
-  order       Int       @default(0) // For sorting
-  isActive    Boolean   @default(true)
-  showInNavbar Boolean  @default(false) // Show in navigation menu
-  showInFooter Boolean  @default(false) // Show in footer
-  icon        String?   // Icon name or URL
-  metaTitle   String?   @db.Text
-  metaDescription String? @db.Text
-  metaKeywords String? @db.Text
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String     @id @default(uuid())
+  name            String
+  nameEn          String? // English name
+  namePt          String? // Portuguese name
+  slug            String     @unique // Default/English slug
+  slugEn          String?    @unique // English slug
+  slugPt          String?    @unique // Portuguese slug
+  description     String?    @db.Text
+  descriptionEn   String?    @db.Text
+  descriptionPt   String?    @db.Text
+  level           Int        @default(0) // 0 = root, 1 = first level, etc.
+  parentId        String? // Reference to parent category
+  parent          Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children        Category[] @relation("CategoryHierarchy")
+  country         Country? // If null, applies to all countries
+  order           Int        @default(0) // For sorting
+  isActive        Boolean    @default(true)
+  showInNavbar    Boolean    @default(false) // Show in navigation menu
+  showInFooter    Boolean    @default(false) // Show in footer
+  icon            String? // Icon name or URL
+  metaTitle       String?    @db.Text
+  metaDescription String?    @db.Text
+  metaKeywords    String?    @db.Text
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
   // Relations
-  products    FinancialProduct[]
-  articles    Article[]
+  products FinancialProduct[]
+  articles Article[]
 
   @@index([slug])
   @@index([slugEn])
@@ -94,7 +94,7 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   name      String
-  password  String   // Hashed password
+  password  String // Hashed password
   role      UserRole @default(user)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -106,45 +106,45 @@ model User {
 }
 
 model FinancialProduct {
-  id           String          @id @default(uuid())
-  name         String
-  slug         String          @unique // Default/English slug (for backward compatibility)
-  slugEn       String?         @unique // English slug
-  slugPt       String?         @unique // Portuguese slug
-  categoryId   String          // Reference to Category
-  category     Category        @relation(fields: [categoryId], references: [id])
-  country      Country?        // Country where the product/company operates
-  rating       Float           @default(0)
-  reviewsCount Int             @default(0)
-  description  String          @db.Text
-  fees         String
+  id            String   @id @default(uuid())
+  name          String
+  slug          String   @unique // Default/English slug (for backward compatibility)
+  slugEn        String?  @unique // English slug
+  slugPt        String?  @unique // Portuguese slug
+  categoryId    String // Reference to Category
+  category      Category @relation(fields: [categoryId], references: [id])
+  country       Country? // Country where the product/company operates
+  rating        Float    @default(0)
+  reviewsCount  Int      @default(0)
+  description   String   @db.Text
+  fees          String
   affiliateLink String
-  safetyScore  Int             @default(0)
-  logoUrl      String
-  logoAlt      String?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  safetyScore   Int      @default(0)
+  logoUrl       String
+  logoAlt       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // SEO Fields
-  metaTitle       String?       @db.Text
-  metaDescription String?       @db.Text
-  metaKeywords    String?       @db.Text
-  ogTitle         String?       @db.Text
-  ogDescription   String?       @db.Text
-  ogImage         String?
-  canonicalUrl    String?
-  structuredData  String?        @db.Text // JSON-LD
-  lastModified    DateTime?     @updatedAt
-  sitemapPriority Float?        @default(0.8)
-  sitemapChangefreq String?     @default("weekly")
-  robotsIndex     Boolean       @default(true)
-  robotsFollow    Boolean       @default(true)
+  metaTitle         String?   @db.Text
+  metaDescription   String?   @db.Text
+  metaKeywords      String?   @db.Text
+  ogTitle           String?   @db.Text
+  ogDescription     String?   @db.Text
+  ogImage           String?
+  canonicalUrl      String?
+  structuredData    String?   @db.Text // JSON-LD
+  lastModified      DateTime? @updatedAt
+  sitemapPriority   Float?    @default(0.8)
+  sitemapChangefreq String?   @default("weekly")
+  robotsIndex       Boolean   @default(true)
+  robotsFollow      Boolean   @default(true)
 
-  pros      ProductPro[]
-  cons      ProductCon[]
-  features  ProductFeature[]
-  quotes    InsuranceQuote[]
-  articles  ArticleProduct[]
+  pros     ProductPro[]
+  cons     ProductCon[]
+  features ProductFeature[]
+  quotes   InsuranceQuote[]
+  articles ArticleProduct[]
 
   @@index([slug])
   @@index([slugEn])
@@ -156,74 +156,74 @@ model FinancialProduct {
 }
 
 model ProductPro {
-  id         String          @id @default(uuid())
-  productId  String
-  product    FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
-  text       String
+  id        String           @id @default(uuid())
+  productId String
+  product   FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  text      String
 
   @@map("product_pros")
 }
 
 model ProductCon {
-  id         String          @id @default(uuid())
-  productId  String
-  product    FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
-  text       String
+  id        String           @id @default(uuid())
+  productId String
+  product   FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  text      String
 
   @@map("product_cons")
 }
 
 model ProductFeature {
-  id         String          @id @default(uuid())
-  productId  String
-  product    FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
-  text       String
+  id        String           @id @default(uuid())
+  productId String
+  product   FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  text      String
 
   @@map("product_features")
 }
 
 model Article {
-  id              String        @id @default(uuid())
-  slug            String        @unique // Default/English slug (for backward compatibility)
-  slugEn           String?       // English slug (not unique to allow redirects between languages)
-  slugPt           String?       // Portuguese slug (not unique to allow redirects between languages)
-  title           String
-  titleMenu       String?       // Title to display in navigation menu (different from article title)
-  excerpt         String        @db.Text
-  content         String        @db.Text
-  partnerTag       String
-  imageUrl        String
-  imageAlt        String?
-  date            DateTime
-  locale          ContentLocale
-  articleType     String        @default("blog") // "blog" or "guide"
-  categoryId      String?       // Reference to Category
-  category        Category?     @relation(fields: [categoryId], references: [id])
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id          String        @id @default(uuid())
+  slug        String        @unique // Default/English slug (for backward compatibility)
+  slugEn      String? // English slug (not unique to allow redirects between languages)
+  slugPt      String? // Portuguese slug (not unique to allow redirects between languages)
+  title       String
+  titleMenu   String? // Title to display in navigation menu (different from article title)
+  excerpt     String        @db.Text
+  content     String        @db.Text
+  partnerTag  String
+  imageUrl    String
+  imageAlt    String?
+  date        DateTime
+  locale      ContentLocale
+  articleType String        @default("blog") // "blog" or "guide"
+  categoryId  String? // Reference to Category
+  category    Category?     @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   // SEO Fields
-  metaTitle       String?       @db.Text
-  metaDescription String?       @db.Text
-  metaKeywords    String?       @db.Text
-  ogTitle         String?       @db.Text
-  ogDescription   String?       @db.Text
-  ogImage         String?
-  canonicalUrl    String?
-  structuredData  String?       @db.Text // JSON-LD
-  lastModified    DateTime?     @updatedAt
-  sitemapPriority Float?        @default(0.9)
-  sitemapChangefreq String?     @default("monthly")
-  robotsIndex     Boolean       @default(true)
-  robotsFollow    Boolean       @default(true)
-  readingTime     Int?          // Estimated reading time in minutes
-  showInMenu      Boolean       @default(false) // Control if article appears in navigation menu
-  meta            Json?         // Metadata for social media posts (stores post IDs per platform)
+  metaTitle         String?   @db.Text
+  metaDescription   String?   @db.Text
+  metaKeywords      String?   @db.Text
+  ogTitle           String?   @db.Text
+  ogDescription     String?   @db.Text
+  ogImage           String?
+  canonicalUrl      String?
+  structuredData    String?   @db.Text // JSON-LD
+  lastModified      DateTime? @updatedAt
+  sitemapPriority   Float?    @default(0.9)
+  sitemapChangefreq String?   @default("monthly")
+  robotsIndex       Boolean   @default(true)
+  robotsFollow      Boolean   @default(true)
+  readingTime       Int? // Estimated reading time in minutes
+  showInMenu        Boolean   @default(false) // Control if article appears in navigation menu
+  meta              Json? // Metadata for social media posts (stores post IDs per platform)
 
-  relatedProducts ArticleProduct[]
-  relatedArticles ArticleArticle[] @relation("ArticleRelations")
+  relatedProducts   ArticleProduct[]
+  relatedArticles   ArticleArticle[] @relation("ArticleRelations")
   relatedToArticles ArticleArticle[] @relation("RelatedArticles")
-  comments        Comment[]
+  comments          Comment[]
 
   @@index([slug])
   @@index([slugEn])
@@ -237,10 +237,10 @@ model Article {
 }
 
 model ArticleProduct {
-  id        String          @id @default(uuid())
+  id        String           @id @default(uuid())
   articleId String
   productId String
-  article   Article         @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article   Article          @relation(fields: [articleId], references: [id], onDelete: Cascade)
   product   FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([articleId, productId])
@@ -248,13 +248,13 @@ model ArticleProduct {
 }
 
 model ArticleArticle {
-  id              String   @id @default(uuid())
-  articleId       String
+  id               String   @id @default(uuid())
+  articleId        String
   relatedArticleId String
-  order           Int      @default(0) // For ordering related articles
-  article         Article  @relation("ArticleRelations", fields: [articleId], references: [id], onDelete: Cascade)
-  relatedArticle  Article  @relation("RelatedArticles", fields: [relatedArticleId], references: [id], onDelete: Cascade)
-  createdAt       DateTime @default(now())
+  order            Int      @default(0) // For ordering related articles
+  article          Article  @relation("ArticleRelations", fields: [articleId], references: [id], onDelete: Cascade)
+  relatedArticle   Article  @relation("RelatedArticles", fields: [relatedArticleId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now())
 
   @@unique([articleId, relatedArticleId])
   @@index([articleId])
@@ -263,59 +263,59 @@ model ArticleArticle {
 }
 
 model InsuranceQuote {
-  id            String        @id @default(uuid())
-  userId        String
-  productId     String
-  coverageType  CoverageType
+  id             String       @id @default(uuid())
+  userId         String
+  productId      String
+  coverageType   CoverageType
   coverageAmount Float
-  deductible    Float
-  premium       Float
-  expiresAt     DateTime
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  deductible     Float
+  premium        Float
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product       FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
-  features      QuoteFeature[]
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product  FinancialProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  features QuoteFeature[]
 
   @@map("insurance_quotes")
 }
 
 model QuoteFeature {
-  id        String         @id @default(uuid())
-  quoteId   String
-  quote     InsuranceQuote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
-  text      String
+  id      String         @id @default(uuid())
+  quoteId String
+  quote   InsuranceQuote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  text    String
 
   @@map("quote_features")
 }
 
 model Lead {
-  id            String     @id @default(uuid())
-  userId        String?
-  email         String
-  name          String
-  phone         String?
+  id              String     @id @default(uuid())
+  userId          String?
+  email           String
+  name            String
+  phone           String?
   productInterest String
-  status        LeadStatus @default(new)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  status          LeadStatus @default(new)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
-  user          User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("leads")
 }
 
 model FAQ {
-  id              String            @id @default(uuid())
-  question        String            @db.Text
-  answer          String            @db.Text
-  category        String?           // e.g., "insurance", "comparison", "guides"
-  locale          ContentLocale
-  order           Int               @default(0)
-  isPublished     Boolean           @default(true)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  id          String        @id @default(uuid())
+  question    String        @db.Text
+  answer      String        @db.Text
+  category    String? // e.g., "insurance", "comparison", "guides"
+  locale      ContentLocale
+  order       Int           @default(0)
+  isPublished Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   @@index([category])
   @@index([locale])
@@ -324,18 +324,70 @@ model FAQ {
 }
 
 model Comment {
-  id        String   @id @default(uuid())
-  articleId String
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  name      String
-  email     String
-  message   String   @db.Text
-  isApproved Boolean @default(true) // Comments are approved by default
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  articleId  String
+  article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  name       String
+  email      String
+  message    String   @db.Text
+  isApproved Boolean  @default(true) // Comments are approved by default
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([articleId])
   @@index([isApproved])
   @@index([createdAt])
   @@map("comments")
+}
+
+model JobOpportunity {
+  id                     String        @id @default(uuid())
+  title                  String
+  company                String
+  location               String
+  city                   String? // City extracted from location
+  state                  String? // State extracted from location
+  latitude               Float? // Latitude for mapping
+  longitude              Float? // Longitude for mapping
+  salaryInfo             String? // e.g., "$24 an hour", "$1,000 - $2,000 a week"
+  compensation           String? // Alternative compensation format
+  description            String?       @db.Text // Job snippet/description
+  rawDescriptionHtml     String?       @db.Text // Raw HTML description from source (for processing)
+  companyRating          Float? // Company rating (e.g., 2.9, 4.5)
+  employerName           String? // Name of employer (may differ from company)
+  employerCompanyPageUrl String? // URL to employer company page
+  benefits               Json? // Array of benefits as JSON
+  jobTypes               Json? // Array of job types (Full-time, Part-time, etc.)
+  qualifications         Json? // Array of qualifications/requirements
+  requirements           Json? // Array of specific requirements
+  datePublished          DateTime? // Original publication date
+  dateOnIndeed           DateTime? // Date on Indeed platform
+  sourceUrl              String? // URL to the job posting on SimplyHired
+  sourceId               String // Unique ID from source for deduplication
+  source                 String        @default("simplyhired") // Source name (simplyhired, etc.)
+  isActive               Boolean       @default(true)
+  isExpired              Boolean       @default(false) // Whether the job has expired
+  expiresAt              DateTime? // Job expiration date if available
+  lastSeenAt             DateTime      @default(now()) // Last time this job was seen in scraping
+  searchQuery            String // The search query that found this job (e.g., "driver")
+  searchLocation         String? // The location searched (e.g., "New York, NY" or empty for all)
+  country                Country       @default(US)
+  locale                 ContentLocale @default(en_US)
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  @@unique([sourceId, source]) // Prevent duplicates from same source
+  @@index([source])
+  @@index([sourceId])
+  @@index([isActive])
+  @@index([isExpired])
+  @@index([country])
+  @@index([locale])
+  @@index([searchQuery])
+  @@index([datePublished])
+  @@index([createdAt])
+  @@index([lastSeenAt])
+  @@index([city])
+  @@index([state])
+  @@map("job_opportunities")
 }
