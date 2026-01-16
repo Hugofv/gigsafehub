@@ -43,7 +43,9 @@ export async function simplyHiredScraperJob(): Promise<void> {
   const searchQueries = getSearchQueries();
   const searchLocations = getSearchLocations();
   const rateLimitDelay = parseInt(process.env.SIMPLYHIRED_RATE_LIMIT_DELAY || '2000', 10);
-  const maxPages = parseInt(process.env.SIMPLYHIRED_MAX_PAGES || '1', 10);
+  // maxPages: 0 = unlimited (only safety limit of 1000), or set a specific limit
+  // Default to 0 to scrape all available pages
+  const maxPages = parseInt(process.env.SIMPLYHIRED_MAX_PAGES || '0', 10);
 
   let totalScraped = 0;
   let totalNew = 0;

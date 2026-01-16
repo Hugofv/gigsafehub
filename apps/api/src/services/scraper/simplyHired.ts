@@ -346,18 +346,21 @@ export async function scrapeSimplyHiredJobs(
   }
 
   try {
-    // Continue pagination while we have a cursor, up to maxPages limit
+    // Continue pagination while we have a cursor
+    // maxPages is only a safety limit (default: 1000 to allow full scraping)
+    const safetyLimit = maxPages > 0 ? maxPages : 1000;
+
     while (true) {
-      // Safety limit: don't exceed maxPages
-      if (currentPage > maxPages) {
-        logger.info({
+      // Safety limit: don't exceed safetyLimit (prevents infinite loops)
+      if (currentPage > safetyLimit) {
+        logger.warn({
           query,
           location,
           page: currentPage,
-          maxPages,
+          safetyLimit,
           totalJobs: allJobs.length,
           hasNextCursor: !!nextCursor
-        }, `Reached maxPages limit (${maxPages}), stopping pagination`);
+        }, `Reached safety limit (${safetyLimit}), stopping pagination to prevent infinite loop`);
         break;
       }
 
@@ -389,8 +392,8 @@ export async function scrapeSimplyHiredJobs(
         totalJobs: allJobs.length,
         hasNextCursor: !!nextCursor,
         nextCursorPreview: nextCursor ? nextCursor.substring(0, 50) + '...' : null,
-        maxPages,
-        willContinue: !!nextCursor && currentPage < maxPages
+        safetyLimit,
+        willContinue: !!nextCursor && currentPage < safetyLimit
       }, `Page ${currentPage} processed`);
 
       // If no next cursor, we've reached the last page
