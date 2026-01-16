@@ -79,9 +79,28 @@ export interface SimplyHiredJob {
   longitude?: number;
 }
 
+export interface SimplyHiredViewJobData {
+  jobKey?: string;
+  jobTitle?: string;
+  city?: string;
+  state?: string;
+  latitude?: number;
+  longitude?: number;
+  jobDescriptionHtml?: string;
+  compensation?: string;
+  datePublished?: number;
+  dateOnIndeed?: number;
+  qualifications?: string[];
+  employerName?: string;
+  employerCompanyPageUrl?: string;
+  expired?: boolean;
+  [key: string]: any;
+}
+
 export interface SimplyHiredResponse {
   pageProps?: {
     jobs?: SimplyHiredJob[];
+    viewJobData?: SimplyHiredViewJobData; // Detailed job data when viewing a single job
     pageCursors?: {
       [pageNumber: string]: string; // Page number as key, cursor as value
     };
@@ -229,8 +248,9 @@ export function transformJob(
   const { city, state } = parseLocation(job.location || '');
 
   // Parse dates (timestamps in milliseconds)
-  const datePublished = job.datePublished ? new Date(job.datePublished) : null;
+  // Use datePublished if available, otherwise fall back to dateOnIndeed
   const dateOnIndeed = job.dateOnIndeed ? new Date(job.dateOnIndeed) : null;
+  const datePublished = job.datePublished ? new Date(job.datePublished) : (dateOnIndeed || null);
 
   // Extract job types, qualifications, and requirements separately
   const jobTypes = job.jobTypes && job.jobTypes.length > 0 ? job.jobTypes : null;
@@ -317,6 +337,8 @@ export async function scrapeSimplyHiredJobs(
         'Sec-Fetch-Site': 'none',
         'Cache-Control': 'max-age=0',
       },
+      // Suppress console logs and ignore HTTPS errors
+      ignoreHTTPSErrors: true,
     });
   } catch (error: any) {
     logger.error({ error }, 'Error creating browser/context for pagination');
@@ -324,7 +346,21 @@ export async function scrapeSimplyHiredJobs(
   }
 
   try {
-    while (currentPage <= maxPages) {
+    // Continue pagination while we have a cursor, up to maxPages limit
+    while (true) {
+      // Safety limit: don't exceed maxPages
+      if (currentPage > maxPages) {
+        logger.info({
+          query,
+          location,
+          page: currentPage,
+          maxPages,
+          totalJobs: allJobs.length,
+          hasNextCursor: !!nextCursor
+        }, `Reached maxPages limit (${maxPages}), stopping pagination`);
+        break;
+      }
+
       try {
         const result = await fetchSimplyHiredJobsWithCursor({
           query,
@@ -336,6 +372,7 @@ export async function scrapeSimplyHiredJobs(
 
       const { jobs, cursor: newCursor } = result;
 
+      // If no jobs returned, we've reached the end
       if (jobs.length === 0) {
         logger.info({ query, location, page: currentPage, cursor: nextCursor }, 'No more jobs found, stopping pagination');
         break;
@@ -351,12 +388,14 @@ export async function scrapeSimplyHiredJobs(
         jobsInThisPage: jobs.length,
         totalJobs: allJobs.length,
         hasNextCursor: !!nextCursor,
-        nextCursorPreview: nextCursor ? nextCursor.substring(0, 50) + '...' : null
+        nextCursorPreview: nextCursor ? nextCursor.substring(0, 50) + '...' : null,
+        maxPages,
+        willContinue: !!nextCursor && currentPage < maxPages
       }, `Page ${currentPage} processed`);
 
-      // If no next cursor, check if we've reached the last page
+      // If no next cursor, we've reached the last page
       if (!nextCursor) {
-        logger.info({ query, location, page: currentPage, totalJobs: allJobs.length }, 'No next cursor found, stopping pagination');
+        logger.info({ query, location, page: currentPage, totalJobs: allJobs.length }, 'No next cursor found, reached last page');
         break;
       }
 
@@ -472,6 +511,8 @@ async function fetchSimplyHiredJobsWithCursor(
           'Sec-Fetch-Site': 'none',
           'Cache-Control': 'max-age=0',
         },
+        // Ignore HTTPS errors and suppress console logs
+        ignoreHTTPSErrors: true,
       });
       shouldCloseContext = true; // Only close if we created it
     } catch (contextError) {
@@ -481,6 +522,54 @@ async function fetchSimplyHiredJobsWithCursor(
   }
 
   const page = await context.newPage();
+
+  // Suppress console logs (CORS errors, certificate warnings, etc.)
+  // These are browser console messages that don't affect functionality
+  page.on('console', (msg: any) => {
+    const type = msg.type();
+    const text = msg.text();
+
+    // Ignore info/warning messages about CORS and certificates
+    if (type === 'warning' || type === 'info') {
+      if (
+        text.includes('CORS policy') ||
+        text.includes('certificate') ||
+        text.includes('Error parsing certificate') ||
+        text.includes('policy qualifiers') ||
+        text.includes('otSDKStub') ||
+        text.includes('OtAutoBlock') ||
+        text.includes('one-trust') ||
+        text.includes('cloudfront.net')
+      ) {
+        return; // Ignore these messages - they're not critical
+      }
+    }
+
+    // Only log errors that are not related to CORS/certificates
+    if (type === 'error' && !text.includes('CORS') && !text.includes('certificate')) {
+      logger.debug({ consoleType: type, consoleText: text }, 'Browser console message');
+    }
+  });
+
+  // Suppress page errors (like failed resource loads)
+  page.on('pageerror', (error: any) => {
+    const errorMessage = error?.message || String(error);
+    // Ignore CORS and certificate errors - they're just browser warnings
+    if (!errorMessage.includes('CORS') && !errorMessage.includes('certificate')) {
+      logger.debug({ pageError: errorMessage }, 'Page error (non-critical)');
+    }
+  });
+
+  // Suppress request failed errors for blocked resources (OneTrust scripts, etc.)
+  page.on('requestfailed', (request: any) => {
+    const url = request.url();
+    // Ignore OneTrust/CloudFront requests that fail due to CORS - they're just cookie consent scripts
+    if (url.includes('cloudfront.net') || url.includes('one-trust') || url.includes('otSDKStub') || url.includes('OtAutoBlock')) {
+      return; // Ignore - these are non-critical third-party scripts
+    }
+    // Log other failed requests only at debug level
+    logger.debug({ failedUrl: url, failure: request.failure()?.errorText }, 'Request failed (non-critical)');
+  });
 
   try {
     // Add delay to respect rate limits
@@ -550,6 +639,31 @@ async function fetchSimplyHiredJobsWithCursor(
       const data: SimplyHiredResponse = await response.json();
       jobs = data.pageProps?.jobs || [];
 
+      // Merge viewJobData into jobs if available (for single job view)
+      // In search results, viewJobData may contain details for highlighted job
+      if (data.pageProps?.viewJobData && jobs.length > 0) {
+        // Try to match viewJobData with first job by jobKey
+        const viewData = data.pageProps.viewJobData;
+        const matchingJob = jobs.find(j => j.jobKey === viewData.jobKey);
+        if (matchingJob) {
+          // Merge additional fields from viewJobData
+          Object.assign(matchingJob, {
+            jobDescriptionHtml: viewData.jobDescriptionHtml || matchingJob.jobDescriptionHtml,
+            datePublished: viewData.datePublished || matchingJob.datePublished,
+            dateOnIndeed: viewData.dateOnIndeed || matchingJob.dateOnIndeed,
+            qualifications: viewData.qualifications || matchingJob.qualifications,
+            compensation: viewData.compensation || matchingJob.compensation,
+            employerName: viewData.employerName || matchingJob.employerName,
+            employerCompanyPageUrl: viewData.employerCompanyPageUrl || matchingJob.employerCompanyPageUrl,
+            expired: viewData.expired !== undefined ? viewData.expired : matchingJob.expired,
+            city: viewData.city || matchingJob.city,
+            state: viewData.state || matchingJob.state,
+            latitude: viewData.latitude || matchingJob.latitude,
+            longitude: viewData.longitude || matchingJob.longitude,
+          });
+        }
+      }
+
       // Extract next cursor from pageCursors
       // If we're on page N, the cursor for page N+1 might not be in pageCursors
       // pageCursors contains cursors for OTHER pages (not the current one)
@@ -590,7 +704,8 @@ async function fetchSimplyHiredJobsWithCursor(
         nextPageNumber,
         totalPages,
         foundNextCursor: !!nextPageCursor,
-        cursorPreview: nextPageCursor ? nextPageCursor.substring(0, 50) + '...' : null
+        cursorPreview: nextPageCursor ? nextPageCursor.substring(0, 50) + '...' : null,
+        availableCursors: Object.keys(pageCursors).map(Number).sort((a, b) => a - b)
       }, 'Cursor extraction result');
 
       if (jobs.length > 0) {
