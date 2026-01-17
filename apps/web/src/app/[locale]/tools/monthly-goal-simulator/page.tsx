@@ -76,6 +76,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       languages: {
         'en-US': `${productionBaseUrl}/en-US/tools/monthly-goal-simulator`,
         'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/simulador-meta-mensal`,
+        'x-default': `${productionBaseUrl}/en-US/tools/monthly-goal-simulator`,
       },
     },
   };

@@ -46,6 +46,8 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                     <a
                       href="mailto:contato@gigsafehub.com"
                       className="text-brand-600 hover:text-brand-700 transition-colors"
+                      data-cfemail=""
+                      rel="nofollow"
                     >
                       contato@gigsafehub.com
                     </a>

@@ -36,6 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: {
         'en-US': '/en-US/tools/driver-budget-simulator',
         'pt-BR': '/pt-BR/ferramentas/simulador-orcamento',
+        'x-default': '/en-US/tools/driver-budget-simulator',
       },
     },
   };

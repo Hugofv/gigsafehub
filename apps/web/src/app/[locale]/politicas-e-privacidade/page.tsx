@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: PrivacyPageProps): Promise<Me
       languages: {
         'pt-BR': `${baseUrl}/pt-BR/politicas-e-privacidade`,
         'en-US': `${baseUrl}/en-US/privacy-and-policies`,
+        'x-default': `${baseUrl}/en-US/privacy-and-policies`,
       },
     },
     robots: {

@@ -87,6 +87,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       languages: {
         'pt-BR': `${productionBaseUrl}/pt-BR`,
         'en-US': `${productionBaseUrl}/en-US`,
+        'x-default': `${productionBaseUrl}/en-US`, // Default language for users not matching any hreflang
       },
     },
     robots: {

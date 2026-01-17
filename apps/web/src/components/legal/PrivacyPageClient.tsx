@@ -597,6 +597,8 @@ export default function PrivacyPageClient({ locale }: PrivacyPageClientProps) {
                     <a
                       href="mailto:contato@gigsafehub.com"
                       className="text-brand-600 hover:text-brand-700 underline font-semibold"
+                      data-cfemail=""
+                      rel="nofollow"
                     >
                       contato@gigsafehub.com
                     </a>
@@ -607,6 +609,8 @@ export default function PrivacyPageClient({ locale }: PrivacyPageClientProps) {
                     <a
                       href="mailto:contato@gigsafehub.com"
                       className="text-brand-600 hover:text-brand-700 underline font-semibold"
+                      data-cfemail=""
+                      rel="nofollow"
                     >
                       contato@gigsafehub.com
                     </a>
@@ -774,6 +778,8 @@ export default function PrivacyPageClient({ locale }: PrivacyPageClientProps) {
                     <a
                       href="mailto:contato@gigsafehub.com"
                       className="text-brand-600 hover:text-brand-700 underline font-semibold"
+                      data-cfemail=""
+                      rel="nofollow"
                     >
                       contato@gigsafehub.com
                     </a>
@@ -793,6 +799,8 @@ export default function PrivacyPageClient({ locale }: PrivacyPageClientProps) {
                       <a
                         href="mailto:contato@gigsafehub.com"
                         className="text-brand-600 hover:text-brand-700 underline font-semibold"
+                        data-cfemail=""
+                        rel="nofollow"
                       >
                         contato@gigsafehub.com
                       </a>

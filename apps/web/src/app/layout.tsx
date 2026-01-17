@@ -76,55 +76,55 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Note: HTML lang is set dynamically in [locale]/layout.tsx
+  // This root layout is just a wrapper - scripts and providers only
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        {/* Google Analytics 4 (gtag.js) - Only load in production */}
-        {process.env.NODE_ENV === 'production' && (
-          <>
-            <Script
-              id="ga4-script"
-              src={`https://www.googletagmanager.com/gtag/js?id=G-MLKZZ27W2M`}
-              strategy="afterInteractive"
-            />
-            <Script
-              id="ga4-config"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', 'G-MLKZZ27W2M', {
-                    send_page_view: true
-                  });
-                `,
-              }}
-            />
-          </>
-        )}
+    <>
+      {/* Google Analytics 4 (gtag.js) - Only load in production */}
+      {process.env.NODE_ENV === 'production' && (
+        <>
+          <Script
+            id="ga4-script"
+            src={`https://www.googletagmanager.com/gtag/js?id=G-MLKZZ27W2M`}
+            strategy="afterInteractive"
+          />
+          <Script
+            id="ga4-config"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-MLKZZ27W2M', {
+                  send_page_view: true
+                });
+              `,
+            }}
+          />
+        </>
+      )}
 
-        {/* Structured Data (JSON-LD) for SEO - injected into head via beforeInteractive */}
-        <Script
-          id="structured-data-organization"
-          type="application/ld+json"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateOrganizationStructuredData()),
-          }}
-        />
-        <Script
-          id="structured-data-website"
-          type="application/ld+json"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateWebSiteStructuredData()),
-          }}
-        />
-        <AuthProvider>
-          <ToastProvider>{children}</ToastProvider>
-        </AuthProvider>
-      </body>
-    </html>
+      {/* Structured Data (JSON-LD) for SEO - injected into head via beforeInteractive */}
+      <Script
+        id="structured-data-organization"
+        type="application/ld+json"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateOrganizationStructuredData()),
+        }}
+      />
+      <Script
+        id="structured-data-website"
+        type="application/ld+json"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateWebSiteStructuredData()),
+        }}
+      />
+      <AuthProvider>
+        <ToastProvider>{children}</ToastProvider>
+      </AuthProvider>
+    </>
   );
 }

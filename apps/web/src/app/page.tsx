@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'GigSafeHub - Insurance and Protection for Gig Economy Workers',
@@ -10,6 +9,8 @@ export const metadata: Metadata = {
   },
 };
 
+// Root page redirect is now handled in middleware.ts with 301 status
+// This component should never be reached, but kept for safety
 export default function RootPage() {
-  redirect('/pt-BR');
+  return null;
 }

@@ -63,6 +63,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       languages: {
         'en-US': `${productionBaseUrl}/en-US/tools`,
         'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas`,
+        'x-default': `${productionBaseUrl}/en-US/tools`,
       },
     },
   };

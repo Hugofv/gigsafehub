@@ -36,6 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: {
         'en-US': '/en-US/tools/break-even-calculator',
         'pt-BR': '/pt-BR/ferramentas/calculadora-ponto-equilibrio',
+        'x-default': '/en-US/tools/break-even-calculator',
       },
     },
   };

@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: AboutPageProps): Promise<Meta
       languages: {
         'pt-BR': `${baseUrl}/pt-BR/sobre-nos`,
         'en-US': `${baseUrl}/en-US/about`,
+        'x-default': `${baseUrl}/en-US/about`,
       },
     },
     robots: {

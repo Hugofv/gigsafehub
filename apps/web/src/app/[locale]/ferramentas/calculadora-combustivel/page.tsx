@@ -36,6 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: {
         'en-US': '/en-US/tools/fuel-calculator',
         'pt-BR': '/pt-BR/ferramentas/calculadora-combustivel',
+        'x-default': '/en-US/tools/fuel-calculator',
       },
     },
   };

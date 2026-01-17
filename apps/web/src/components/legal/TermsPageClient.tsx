@@ -730,7 +730,12 @@ export default function TermsPageClient({ locale }: TermsPageClientProps) {
               </p>
               <div className="space-y-2">
                 <p className="text-slate-700">
-                  <a href="mailto:contato@gigsafehub.com" className="text-brand-600 hover:text-brand-700 underline">
+                  <a
+                    href="mailto:contato@gigsafehub.com"
+                    className="text-brand-600 hover:text-brand-700 underline"
+                    data-cfemail=""
+                    rel="nofollow"
+                  >
                     📩 contato@gigsafehub.com
                   </a>
                 </p>

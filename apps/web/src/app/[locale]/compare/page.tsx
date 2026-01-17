@@ -38,6 +38,11 @@ export async function generateMetadata({ params, searchParams }: {
     },
     alternates: {
       canonical: `${productionBaseUrl}/${locale}/compare`,
+      languages: {
+        'en-US': `${productionBaseUrl}/en-US/compare`,
+        'pt-BR': `${productionBaseUrl}/pt-BR/compare`,
+        'x-default': `${productionBaseUrl}/en-US/compare`,
+      },
     },
     robots: {
       index: true,

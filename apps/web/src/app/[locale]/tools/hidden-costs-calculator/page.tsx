@@ -76,6 +76,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       languages: {
         'en-US': `${productionBaseUrl}/en-US/tools/hidden-costs-calculator`,
         'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/calculadora-custos-ocultos`,
+        'x-default': `${productionBaseUrl}/en-US/tools/hidden-costs-calculator`,
       },
     },
   };

@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: TermsPageProps): Promise<Meta
       languages: {
         'pt-BR': `${baseUrl}/pt-BR/termos-de-uso`,
         'en-US': `${baseUrl}/en-US/terms-of-use`,
+        'x-default': `${baseUrl}/en-US/terms-of-use`,
       },
     },
     robots: {

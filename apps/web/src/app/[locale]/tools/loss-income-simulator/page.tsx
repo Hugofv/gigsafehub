@@ -77,6 +77,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       languages: {
         'en-US': `${productionBaseUrl}/en-US/tools/loss-income-simulator`,
         'pt-BR': `${productionBaseUrl}/pt-BR/ferramentas/simulador-perda-renda`,
+        'x-default': `${productionBaseUrl}/en-US/tools/loss-income-simulator`,
       },
     },
   };

@@ -4,7 +4,20 @@ import { config } from '../config';
 
 export const seoRouter: Router = Router();
 
-const BASE_URL = config.baseUrl;
+// Ensure BASE_URL always uses HTTPS in production
+// This prevents HTTP URLs from appearing in the sitemap
+const BASE_URL = (() => {
+  const url = config.baseUrl;
+  // If in production and URL starts with http://, convert to https://
+  if (process.env.NODE_ENV === 'production' && url.startsWith('http://')) {
+    return url.replace('http://', 'https://');
+  }
+  // If URL doesn't have a protocol, assume https:// in production
+  if (process.env.NODE_ENV === 'production' && !url.startsWith('http')) {
+    return `https://${url}`;
+  }
+  return url;
+})();
 
 /**
  * @swagger
@@ -94,24 +107,36 @@ seoRouter.get('/sitemap.xml', async (req: Request, res: Response) => {
       return path;
     };
 
-    // Static pages (localized home, listings, legal pages, about)
+    // Helper function to ensure URL uses HTTPS
+    const ensureHttps = (url: string): string => {
+      if (process.env.NODE_ENV === 'production') {
+        // In production, always use HTTPS
+        return url.replace(/^http:\/\//, 'https://');
+      }
+      return url;
+    };
+
+    // Static pages (localized home, listings, legal pages, about, contact)
     urls.push(
       // Home
-      `<url><loc>${BASE_URL}/en-US</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`,
-      `<url><loc>${BASE_URL}/pt-BR</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/en-US</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/pt-BR</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`,
       // Reviews listing
       // Articles listing
-      `<url><loc>${BASE_URL}/en-US/articles</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`,
-      `<url><loc>${BASE_URL}/pt-BR/articles</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/en-US/articles</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/pt-BR/articles</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`,
       // Legal pages - Privacy Policy
-      `<url><loc>${BASE_URL}/en-US/privacy-and-policies</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
-      `<url><loc>${BASE_URL}/pt-BR/politicas-e-privacidade</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/en-US/privacy-and-policies</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/pt-BR/politicas-e-privacidade</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
       // Legal pages - Terms of Use
-      `<url><loc>${BASE_URL}/en-US/terms-of-use</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
-      `<url><loc>${BASE_URL}/pt-BR/termos-de-uso</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/en-US/terms-of-use</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/pt-BR/termos-de-uso</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
       // About pages
-      `<url><loc>${BASE_URL}/en-US/about</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
-      `<url><loc>${BASE_URL}/pt-BR/sobre-nos</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`
+      `<url><loc>${ensureHttps(BASE_URL)}/en-US/about</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/pt-BR/sobre-nos</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
+      // Contact pages
+      `<url><loc>${ensureHttps(BASE_URL)}/en-US/contact</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>`,
+      `<url><loc>${ensureHttps(BASE_URL)}/pt-BR/contato</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>`
     );
 
     // Category pages (all active categories with localized slugs)
@@ -121,7 +146,7 @@ seoRouter.get('/sitemap.xml', async (req: Request, res: Response) => {
         if (pathSegments.length === 0) {
           return;
         }
-        const locUrl = `${BASE_URL}/${locale}/${pathSegments.join('/')}`;
+        const locUrl = `${ensureHttps(BASE_URL)}/${locale}/${pathSegments.join('/')}`;
         urls.push(
           `<url><loc>${locUrl}</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>`
         );
@@ -135,8 +160,8 @@ seoRouter.get('/sitemap.xml', async (req: Request, res: Response) => {
       const changefreq = product.sitemapChangefreq || 'weekly';
 
       urls.push(
-        `<url><loc>${BASE_URL}/en-US/reviews/${product.slug}</loc><lastmod>${lastmod.toISOString()}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`,
-        `<url><loc>${BASE_URL}/pt-BR/reviews/${product.slug}</loc><lastmod>${lastmod.toISOString()}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`
+        `<url><loc>${ensureHttps(BASE_URL)}/en-US/reviews/${product.slug}</loc><lastmod>${lastmod.toISOString()}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`,
+        `<url><loc>${ensureHttps(BASE_URL)}/pt-BR/reviews/${product.slug}</loc><lastmod>${lastmod.toISOString()}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`
       );
     });
 
@@ -161,7 +186,7 @@ seoRouter.get('/sitemap.xml', async (req: Request, res: Response) => {
             ? article.slugEn
             : article.slug;
 
-        let path = `${BASE_URL}/${locale}`;
+        let path = `${ensureHttps(BASE_URL)}/${locale}`;
 
         // Prefer category from relation (article.category) when present,
         // otherwise fall back to raw categoryId.
@@ -218,6 +243,14 @@ ${urls.join('\n')}
  *           text/plain:
  */
 seoRouter.get('/robots.txt', (req: Request, res: Response) => {
+  // Ensure sitemap URL uses HTTPS in production
+  const ensureHttps = (url: string): string => {
+    if (process.env.NODE_ENV === 'production') {
+      return url.replace(/^http:\/\//, 'https://');
+    }
+    return url;
+  };
+
   const robots = `User-agent: *
 Allow: /
 Disallow: /admin/
@@ -226,7 +259,7 @@ Disallow: /docs/
 Disallow: /_next/
 Disallow: /search
 
-Sitemap: ${BASE_URL}/sitemap.xml`;
+Sitemap: ${ensureHttps(BASE_URL)}/sitemap.xml`;
 
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours

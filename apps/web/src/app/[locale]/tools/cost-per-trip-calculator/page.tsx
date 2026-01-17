@@ -36,6 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: {
         'en-US': '/en-US/tools/cost-per-trip-calculator',
         'pt-BR': '/pt-BR/ferramentas/calculadora-custo-corrida',
+        'x-default': '/en-US/tools/cost-per-trip-calculator',
       },
     },
   };

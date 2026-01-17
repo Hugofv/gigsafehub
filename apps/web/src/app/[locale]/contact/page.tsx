@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: ContactPageProps): Promise<Me
       languages: {
         'pt-BR': `${baseUrl}/pt-BR/contato`,
         'en-US': `${baseUrl}/en-US/contact`,
+        'x-default': `${baseUrl}/en-US/contact`,
       },
     },
     robots: {

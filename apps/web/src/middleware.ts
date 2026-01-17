@@ -4,6 +4,31 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Handle root path redirect with locale detection (301 permanent redirect for SEO)
+  if (pathname === '/') {
+    // Detect user's preferred language from Accept-Language header
+    const acceptLanguage = request.headers.get('accept-language') || '';
+    let preferredLocale = 'en-US';
+
+    if (acceptLanguage) {
+      // Check if Portuguese (pt) is preferred
+      const languages = acceptLanguage.toLowerCase().split(',');
+      const ptLanguage = languages.find(lang => lang.includes('pt'));
+
+      if (ptLanguage) {
+        preferredLocale = 'pt-BR';
+      }
+    }
+
+    // Use permanent redirect (301) for SEO
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = `/${preferredLocale}`;
+    if (process.env.NODE_ENV === 'production') {
+      redirectUrl.protocol = 'https:';
+    }
+    return NextResponse.redirect(redirectUrl, 301);
+  }
+
   // Block search routes - they don't exist and should return 404
   if (pathname.startsWith('/search')) {
     return new NextResponse(null, { status: 404 });
@@ -12,9 +37,10 @@ export function middleware(request: NextRequest) {
   // Force HTTPS redirect in production (if not already handled at infrastructure level)
   // Check the X-Forwarded-Proto header (set by reverse proxies) or the protocol
   const protocol = request.headers.get('x-forwarded-proto') || request.nextUrl.protocol;
-  if (process.env.NODE_ENV === 'production' && protocol === 'http') {
+  if (process.env.NODE_ENV === 'production' && protocol === 'http:') {
     const httpsUrl = request.nextUrl.clone();
     httpsUrl.protocol = 'https:';
+    // Use 301 (permanent) for HTTP to HTTPS redirects for better SEO
     return NextResponse.redirect(httpsUrl, 301);
   }
 

@@ -43,6 +43,65 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
             : `${productionBaseUrl}/${locale}/${slugPath}`;
           const articleDescription = article.metaDescription || article.excerpt || `Read ${article.title} on GigSafeHub. Expert guides and information for gig economy workers.`;
 
+          // Build hreflang URLs for articles with both locales
+          let hreflangLanguages: Record<string, string> = {};
+          if (article.locale === 'Both' || (article.slugEn && article.slugPt)) {
+            // Get all categories for both locales to build paths
+            const [categoriesEn, categoriesPt] = await Promise.all([
+              getAllCategories('en-US'),
+              getAllCategories('pt-BR'),
+            ]);
+            
+            // Helper to build category path
+            const buildCategoryPathForLocale = (categoryId: string | null | undefined, targetLocale: 'en-US' | 'pt-BR'): string[] => {
+              if (!categoryId) return [];
+              const path: string[] = [];
+              const allCategories = targetLocale === 'pt-BR' ? categoriesPt : categoriesEn;
+              let current = allCategories.find(c => c.id === categoryId);
+              
+              while (current) {
+                const slug = targetLocale === 'pt-BR'
+                  ? (current.slugPt || current.slug)
+                  : (current.slugEn || current.slug);
+                path.unshift(slug);
+                
+                if (current.parentId) {
+                  current = allCategories.find(c => c.id === current!.parentId);
+                } else {
+                  break;
+                }
+              }
+              return path;
+            };
+
+            // Build URLs for both locales
+            const categoryPathEn = buildCategoryPathForLocale(article.categoryId, 'en-US');
+            const categoryPathPt = buildCategoryPathForLocale(article.categoryId, 'pt-BR');
+            
+            const articleSlugEn = article.slugEn || article.slug;
+            const articleSlugPt = article.slugPt || article.slug;
+            
+            const enPath = categoryPathEn.length > 0
+              ? `${productionBaseUrl}/en-US/${categoryPathEn.join('/')}/${articleSlugEn}`
+              : `${productionBaseUrl}/en-US/articles/${articleSlugEn}`;
+            
+            const ptPath = categoryPathPt.length > 0
+              ? `${productionBaseUrl}/pt-BR/${categoryPathPt.join('/')}/${articleSlugPt}`
+              : `${productionBaseUrl}/pt-BR/articles/${articleSlugPt}`;
+            
+            hreflangLanguages = {
+              'en-US': enPath,
+              'pt-BR': ptPath,
+              'x-default': enPath,
+            };
+          } else {
+            // Single locale article - still include both for consistency
+            hreflangLanguages = {
+              [locale]: canonicalUrl,
+              'x-default': canonicalUrl,
+            };
+          }
+
           return {
             title: articleTitle, // Template from root layout will add suffix
             description: articleDescription,
@@ -70,6 +129,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
             },
             alternates: {
               canonical: canonicalUrl,
+              languages: hreflangLanguages,
             },
             robots: {
               index: article.robotsIndex ?? true,
@@ -133,6 +193,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
         languages: {
           'pt-BR': `${productionBaseUrl}/pt-BR/${slugPath}`,
           'en-US': `${productionBaseUrl}/en-US/${slugPath}`,
+          'x-default': `${productionBaseUrl}/en-US/${slugPath}`, // Default to English
         },
       },
       robots: {
