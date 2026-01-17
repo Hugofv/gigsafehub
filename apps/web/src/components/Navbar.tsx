@@ -181,6 +181,12 @@ const Navbar: React.FC = () => {
               >
                 {t('nav.about')}
               </Link>
+              <Link
+                href={getLink(locale === 'pt-BR' ? '/contato' : '/contact')}
+                className={linkClass(locale === 'pt-BR' ? '/contato' : '/contact')}
+              >
+                {locale === 'pt-BR' ? 'Contato' : 'Contact'}
+              </Link>
             </div>
           </div>
 
@@ -335,6 +341,17 @@ const Navbar: React.FC = () => {
               }`}
             >
               {t('nav.about')}
+            </Link>
+            <Link
+              href={getLink(locale === 'pt-BR' ? '/contato' : '/contact')}
+              onClick={closeMobileMenu}
+              className={`block px-3 py-2 text-sm font-medium rounded-md ${
+                isActive(locale === 'pt-BR' ? '/contato' : '/contact')
+                  ? 'bg-navy-50 text-navy-700'
+                  : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
+              }`}
+            >
+              {locale === 'pt-BR' ? 'Contato' : 'Contact'}
             </Link>
 
             {/* <Link
