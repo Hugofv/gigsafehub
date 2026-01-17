@@ -44,10 +44,13 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                       {isPtBr ? 'Email' : 'Email'}
                     </h3>
                     <a
-                      href="mailto:contato@gigsafehub.com"
+                      href="#"
                       className="text-brand-600 hover:text-brand-700 transition-colors"
-                      data-cfemail=""
                       rel="nofollow"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = 'mailto:contato@gigsafehub.com';
+                      }}
                     >
                       contato@gigsafehub.com
                     </a>

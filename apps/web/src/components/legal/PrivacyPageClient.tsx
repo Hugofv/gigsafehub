@@ -595,10 +595,13 @@ export default function PrivacyPageClient({ locale }: PrivacyPageClientProps) {
                   <p>
                     Entre em contato:{' '}
                     <a
-                      href="mailto:contato@gigsafehub.com"
+                      href="#"
                       className="text-brand-600 hover:text-brand-700 underline font-semibold"
-                      data-cfemail=""
                       rel="nofollow"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = 'mailto:contato@gigsafehub.com';
+                      }}
                     >
                       contato@gigsafehub.com
                     </a>
@@ -607,10 +610,13 @@ export default function PrivacyPageClient({ locale }: PrivacyPageClientProps) {
                   <p>
                     Contact us:{' '}
                     <a
-                      href="mailto:contato@gigsafehub.com"
+                      href="#"
                       className="text-brand-600 hover:text-brand-700 underline font-semibold"
-                      data-cfemail=""
                       rel="nofollow"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = 'mailto:contato@gigsafehub.com';
+                      }}
                     >
                       contato@gigsafehub.com
                     </a>
@@ -776,10 +782,13 @@ export default function PrivacyPageClient({ locale }: PrivacyPageClientProps) {
                   <p>
                     📩{' '}
                     <a
-                      href="mailto:contato@gigsafehub.com"
+                      href="#"
                       className="text-brand-600 hover:text-brand-700 underline font-semibold"
-                      data-cfemail=""
                       rel="nofollow"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = 'mailto:contato@gigsafehub.com';
+                      }}
                     >
                       contato@gigsafehub.com
                     </a>
@@ -797,10 +806,13 @@ export default function PrivacyPageClient({ locale }: PrivacyPageClientProps) {
                     <p>
                       📩{' '}
                       <a
-                        href="mailto:contato@gigsafehub.com"
+                        href="#"
                         className="text-brand-600 hover:text-brand-700 underline font-semibold"
-                        data-cfemail=""
                         rel="nofollow"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.location.href = 'mailto:contato@gigsafehub.com';
+                        }}
                       >
                         contato@gigsafehub.com
                       </a>

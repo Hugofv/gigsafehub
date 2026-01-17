@@ -731,10 +731,13 @@ export default function TermsPageClient({ locale }: TermsPageClientProps) {
               <div className="space-y-2">
                 <p className="text-slate-700">
                   <a
-                    href="mailto:contato@gigsafehub.com"
+                    href="#"
                     className="text-brand-600 hover:text-brand-700 underline"
-                    data-cfemail=""
                     rel="nofollow"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = 'mailto:contato@gigsafehub.com';
+                    }}
                   >
                     📩 contato@gigsafehub.com
                   </a>

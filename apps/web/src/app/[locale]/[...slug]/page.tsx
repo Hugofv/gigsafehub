@@ -51,20 +51,20 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
               getAllCategories('en-US'),
               getAllCategories('pt-BR'),
             ]);
-            
+
             // Helper to build category path
             const buildCategoryPathForLocale = (categoryId: string | null | undefined, targetLocale: 'en-US' | 'pt-BR'): string[] => {
               if (!categoryId) return [];
               const path: string[] = [];
               const allCategories = targetLocale === 'pt-BR' ? categoriesPt : categoriesEn;
               let current = allCategories.find(c => c.id === categoryId);
-              
+
               while (current) {
                 const slug = targetLocale === 'pt-BR'
                   ? (current.slugPt || current.slug)
                   : (current.slugEn || current.slug);
                 path.unshift(slug);
-                
+
                 if (current.parentId) {
                   current = allCategories.find(c => c.id === current!.parentId);
                 } else {
@@ -77,18 +77,18 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
             // Build URLs for both locales
             const categoryPathEn = buildCategoryPathForLocale(article.categoryId, 'en-US');
             const categoryPathPt = buildCategoryPathForLocale(article.categoryId, 'pt-BR');
-            
+
             const articleSlugEn = article.slugEn || article.slug;
             const articleSlugPt = article.slugPt || article.slug;
-            
+
             const enPath = categoryPathEn.length > 0
               ? `${productionBaseUrl}/en-US/${categoryPathEn.join('/')}/${articleSlugEn}`
               : `${productionBaseUrl}/en-US/articles/${articleSlugEn}`;
-            
+
             const ptPath = categoryPathPt.length > 0
               ? `${productionBaseUrl}/pt-BR/${categoryPathPt.join('/')}/${articleSlugPt}`
               : `${productionBaseUrl}/pt-BR/articles/${articleSlugPt}`;
-            
+
             hreflangLanguages = {
               'en-US': enPath,
               'pt-BR': ptPath,
@@ -164,6 +164,46 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     const productionBaseUrl = 'https://gigsafehub.com';
     const canonicalUrl = `${productionBaseUrl}/${locale}/${slugPath}`;
 
+    // Build hreflang URLs for categories - need to build correct paths for each locale
+    // Get all categories for both locales to build correct paths
+    const [categoriesEn, categoriesPt] = await Promise.all([
+      getAllCategories('en-US'),
+      getAllCategories('pt-BR'),
+    ]);
+
+    // Helper to build category path for a specific locale
+    const buildCategoryPathForLocale = (categoryId: string, targetLocale: 'en-US' | 'pt-BR'): string[] => {
+      const path: string[] = [];
+      const allCategories = targetLocale === 'pt-BR' ? categoriesPt : categoriesEn;
+      let current = allCategories.find(c => c.id === categoryId);
+
+      while (current) {
+        const slug = targetLocale === 'pt-BR'
+          ? (current.slugPt || current.slug)
+          : (current.slugEn || current.slug);
+        path.unshift(slug);
+
+        if (current.parentId) {
+          current = allCategories.find(c => c.id === current!.parentId);
+        } else {
+          break;
+        }
+      }
+      return path;
+    };
+
+    // Build category paths for both locales
+    const categoryPathPt = buildCategoryPathForLocale(category.id, 'pt-BR');
+    const categoryPathEn = buildCategoryPathForLocale(category.id, 'en-US');
+
+    const ptPath = categoryPathPt.length > 0
+      ? `${productionBaseUrl}/pt-BR/${categoryPathPt.join('/')}`
+      : `${productionBaseUrl}/pt-BR/${slugPath}`;
+
+    const enPath = categoryPathEn.length > 0
+      ? `${productionBaseUrl}/en-US/${categoryPathEn.join('/')}`
+      : `${productionBaseUrl}/en-US/${slugPath}`;
+
     return {
       title: metaTitle, // Template from root layout will add suffix
       description: metaDescription,
@@ -191,9 +231,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       alternates: {
         canonical: canonicalUrl,
         languages: {
-          'pt-BR': `${productionBaseUrl}/pt-BR/${slugPath}`,
-          'en-US': `${productionBaseUrl}/en-US/${slugPath}`,
-          'x-default': `${productionBaseUrl}/en-US/${slugPath}`, // Default to English
+          'pt-BR': ptPath,
+          'en-US': enPath,
+          'x-default': enPath, // Default to English
         },
       },
       robots: {
