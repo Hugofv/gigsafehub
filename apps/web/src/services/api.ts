@@ -489,3 +489,43 @@ export const createComment = async (
   }
 };
 
+/**
+ * FAQ interface
+ */
+export interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  category?: string;
+  locale: string;
+  order?: number;
+  isPublished: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Get all FAQs
+ */
+export async function getFAQs(locale: string = 'en-US', category?: string): Promise<FAQ[]> {
+  try {
+    const params = new URLSearchParams({
+      locale,
+      ...(category && { category }),
+    });
+
+    const response = await fetch(`${API_URL}/api/faq?${params}`, {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch FAQs:', response.status, response.statusText);
+      return [];
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching FAQs:', error);
+    return [];
+  }
+}
