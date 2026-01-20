@@ -51,11 +51,11 @@ export default function AboutPageClient({ locale }: AboutPageClientProps) {
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             {locale === 'pt-BR' ? (
               <>
-                Conheça a missão, o que fazemos e os valores que guiam o GigSafeHub — o hub de informação e comparação de seguros para a Gig Economy.
+                Uma história real, uma missão clara e um compromisso diário com quem vive da Gig Economy.
               </>
             ) : (
               <>
-                Learn about the mission, what we do, and the values that guide GigSafeHub — the information and insurance comparison hub for the Gig Economy.
+                A real story, a clear mission, and a daily commitment to those who live from the Gig Economy.
               </>
             )}
           </p>
@@ -63,6 +63,46 @@ export default function AboutPageClient({ locale }: AboutPageClientProps) {
 
         <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8 md:p-12">
           <div className="prose prose-lg max-w-none prose-slate [&_ul]:list-none">
+            {/* Storytelling Section */}
+            <section id="origin-story" className="mb-12 scroll-mt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                {locale === 'pt-BR' ? 'A História de Origem' : 'Our Origin Story'}
+              </h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    O GigSafeHub nasceu de uma conversa simples. Um motorista de aplicativo contou que, apesar de trabalhar 12 horas por dia, no fim do mês o dinheiro parecia sumir. Ele sabia quanto faturava, mas não o quanto realmente lucrava — e muito menos o quanto perderia se ficasse doente ou sofresse um acidente.
+                  </>
+                ) : (
+                  <>
+                    GigSafeHub started with a simple conversation. A rideshare driver shared that, despite working 12 hours a day, the money seemed to vanish at the end of the month. He knew his revenue, but not his real profit — and even less about what he would lose if he got sick or had an accident.
+                  </>
+                )}
+              </p>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Aquilo revelou um “bug” na vida real: milhares de trabalhadores da Gig Economy estavam voando às cegas. Era preciso traduzir dados, riscos e seguros para uma linguagem simples, útil e confiável. Foi assim que começamos — linha por linha — a construir um lugar onde motoristas, entregadores, freelancers e nômades digitais pudessem comparar opções e proteger sua renda.
+                  </>
+                ) : (
+                  <>
+                    That exposed a real‑world “bug”: thousands of Gig Economy workers were flying blind. We needed to translate data, risks, and insurance into simple, useful, reliable guidance. That is how we began — line by line — building a place where drivers, couriers, freelancers, and digital nomads can compare options and protect their income.
+                  </>
+                )}
+              </p>
+              <p className="text-slate-700 leading-relaxed">
+                {locale === 'pt-BR' ? (
+                  <>
+                    Não somos uma grande seguradora. Somos um projeto independente que existe para equilibrar o jogo — com informação clara, escolhas justas e ferramentas que funcionam no mundo real.
+                  </>
+                ) : (
+                  <>
+                    We are not a large insurer. We are an independent project built to level the playing field — with clear information, fair choices, and tools that work in the real world.
+                  </>
+                )}
+              </p>
+            </section>
+
             {/* Mission Section */}
             <section id="mission" className="mb-12 scroll-mt-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">

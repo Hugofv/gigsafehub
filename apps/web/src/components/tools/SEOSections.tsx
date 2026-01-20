@@ -9,6 +9,10 @@ interface FAQItem {
 
 interface SEOSectionsProps {
   locale: string;
+  story?: {
+    title: string;
+    content: string;
+  };
   intro: {
     title: string;
     content: string;
@@ -113,6 +117,7 @@ function FAQAccordion({ items, locale }: { items: FAQItem[]; locale: string }) {
 
 export default function SEOSections({
   locale,
+  story,
   intro,
   whyMatters,
   commonMistakes,
@@ -121,6 +126,14 @@ export default function SEOSections({
 }: SEOSectionsProps) {
   return (
     <div className="space-y-16">
+      {/* Storytelling Section */}
+      {story && (
+        <section className="bg-slate-900/50 rounded-3xl border border-slate-700/50 p-8">
+          <h2 className="text-2xl font-bold text-white mb-4">{story.title}</h2>
+          <p className="text-slate-300 leading-relaxed text-lg">{story.content}</p>
+        </section>
+      )}
+
       {/* Intro Section */}
       <section className="bg-slate-800/40 rounded-3xl border border-slate-700/50 p-8">
         <h2 className="text-2xl font-bold text-white mb-4">{intro.title}</h2>
@@ -200,6 +213,10 @@ export default function SEOSections({
 // Pre-built content for each calculator
 export const dailyProfitSEO = {
   'pt-BR': {
+    story: {
+      title: 'Cenário do dia a dia',
+      content: 'Sexta-feira à noite, chuva e tarifa dinâmica. O app mostra R$ 400 de faturamento. Mas você já parou para pensar quanto disso realmente fica no seu bolso após o desgaste dos pneus e o combustível parado no trânsito? Não deixe a ilusão do faturamento bruto esconder o seu ganho real.',
+    },
     intro: {
       title: 'Você sabe quanto realmente ganha por hora?',
       content: 'A maioria dos motoristas de aplicativo olha apenas para o faturamento bruto do dia e acredita que está ganhando bem. Mas a realidade é diferente. Quando você desconta combustível, manutenção do veículo, taxas das plataformas e outros custos operacionais, o lucro real por hora trabalhada pode ser surpreendentemente baixo — às vezes menor que o salário mínimo. Esta calculadora foi criada para revelar seu ganho verdadeiro e ajudar você a tomar decisões mais inteligentes sobre quando, onde e quanto trabalhar.',
@@ -297,6 +314,10 @@ export const dailyProfitSEO = {
     },
   },
   'en-US': {
+    story: {
+      title: 'Everyday scenario',
+      content: 'Friday night, rain, and surge pricing. The app shows $200 in earnings. But have you stopped to think how much of that actually stays in your pocket after tire wear and fuel burned in traffic? Don\'t let gross revenue hide your real profit.',
+    },
     intro: {
       title: 'Do you know how much you really earn per hour?',
       content: 'Most rideshare drivers look at their gross daily earnings and think they\'re doing well. But reality tells a different story. When you subtract fuel, vehicle maintenance, platform fees, and other operating costs, your real hourly profit can be surprisingly low — sometimes below minimum wage. This calculator was designed to reveal your true earnings and help you make smarter decisions about when, where, and how much to work.',
@@ -398,6 +419,10 @@ export const dailyProfitSEO = {
 // Loss Income Simulator SEO Content
 export const lossIncomeSEO = {
   'pt-BR': {
+    story: {
+      title: 'Quando o imprevisto chega',
+      content: 'O que aconteceria se amanhã você não pudesse ligar o aplicativo? Para quem trabalha por conta própria, um dia parado não é apenas um dia sem ganhar, é um dia de custos acumulados. Descubra o tamanho do seu risco e planeje sua proteção antes que o imprevisto aconteça.',
+    },
     intro: {
       title: 'Você já pensou quanto perderia se não pudesse trabalhar?',
       content: 'Acidentes acontecem. Doenças surgem sem aviso. E quando você depende do trabalho por aplicativo, cada dia parado significa dinheiro perdido. Diferente de um empregado CLT, você não tem auxílio-doença ou licença remunerada. Este simulador mostra exatamente quanto você perderia de renda se ficasse impossibilitado de trabalhar por dias, semanas ou meses — e por que ter uma proteção adequada pode ser a diferença entre superar um imprevisto ou enfrentar uma crise financeira.',
@@ -495,6 +520,10 @@ export const lossIncomeSEO = {
     },
   },
   'en-US': {
+    story: {
+      title: 'When the unexpected hits',
+      content: 'What if tomorrow you couldn\'t turn on the app? For gig workers, a day off isn\'t just a day without earnings — it\'s a day of expenses piling up. See the size of your risk and plan your protection before the unexpected happens.',
+    },
     intro: {
       title: 'Have you thought about how much you would lose if you couldn\'t work?',
       content: 'Accidents happen. Illness strikes without warning. And when you depend on gig work, every day off means lost money. Unlike a regular employee, you don\'t have sick pay or paid leave. This simulator shows exactly how much income you would lose if you couldn\'t work for days, weeks, or months — and why having adequate protection can be the difference between overcoming an unexpected event or facing a financial crisis.',
@@ -596,6 +625,10 @@ export const lossIncomeSEO = {
 // Cost Per Trip Calculator SEO Content
 export const costPerTripSEO = {
   'pt-BR': {
+    story: {
+      title: 'A corrida que parece boa',
+      content: 'Aquela corrida de 15 km por R$ 18 parece boa à primeira vista. Mas e o trajeto de volta? E o tempo de espera? Aprenda a dizer "não" para corridas que tiram dinheiro do seu bolso e foque no que realmente traz lucro.',
+    },
     intro: {
       title: 'Você sabe se suas corridas estão realmente dando lucro?',
       content: 'Aceitar uma corrida parece simples: aparece no app, você aceita. Mas nem toda corrida vale a pena. Quando você considera combustível, desgaste do veículo e a taxa da plataforma, algumas corridas podem dar prejuízo. Esta calculadora revela o custo real de cada corrida e mostra o valor mínimo que você deveria aceitar para não perder dinheiro. Pare de trabalhar no escuro — saiba exatamente quando vale a pena apertar "aceitar".',
@@ -693,6 +726,10 @@ export const costPerTripSEO = {
     },
   },
   'en-US': {
+    story: {
+      title: 'The ride that looks good',
+      content: 'That 9-mile trip for $12 looks fine at first glance. But what about the return route? And the waiting time? Learn to say "no" to rides that drain your pocket and focus on what truly brings profit.',
+    },
     intro: {
       title: 'Do you know if your rides are actually profitable?',
       content: 'Accepting a ride seems simple: it appears in the app, you accept it. But not every ride is worth it. When you factor in fuel, vehicle wear, and platform fees, some rides can result in losses. This calculator reveals the real cost of each trip and shows the minimum fare you should accept to not lose money. Stop working in the dark — know exactly when it\'s worth hitting "accept".',
@@ -794,6 +831,10 @@ export const costPerTripSEO = {
 // Fuel Calculator SEO Content
 export const fuelCalculatorSEO = {
   'pt-BR': {
+    story: {
+      title: 'No posto, a dúvida de sempre',
+      content: 'Você chega no posto e vê o etanol mais barato na placa. Mas será que ele realmente compensa no seu carro e no seu trajeto? Alguns centavos por litro podem virar dezenas de reais ao longo da semana.',
+    },
     intro: {
       title: 'Gasolina ou etanol: qual compensa mais para você?',
       content: 'A dúvida é comum: devo abastecer com gasolina ou etanol? A regra dos 70% que todo mundo repete nem sempre funciona na prática. Depende do consumo real do seu veículo, que varia com trânsito, ar-condicionado e estilo de direção. Esta calculadora faz a conta exata para você, considerando os preços atuais e o consumo específico do seu carro — sem achismos, só matemática.',
@@ -891,6 +932,10 @@ export const fuelCalculatorSEO = {
     },
   },
   'en-US': {
+    story: {
+      title: 'At the gas station, the usual doubt',
+      content: 'You pull up and ethanol looks cheaper on the sign. But does it really pay off for your car and route? A few cents per liter can turn into real money over the week.',
+    },
     intro: {
       title: 'Gas or ethanol: which one pays off for you?',
       content: 'The question is common: should I fill up with gasoline or ethanol? The 70% rule everyone repeats doesn\'t always work in practice. It depends on your vehicle\'s actual fuel economy, which varies with traffic, air conditioning, and driving style. This calculator does the exact math for you, considering current prices and your car\'s specific consumption — no guessing, just math.',
@@ -992,6 +1037,10 @@ export const fuelCalculatorSEO = {
 // Monthly Goal Simulator SEO Content
 export const monthlyGoalSEO = {
   'pt-BR': {
+    story: {
+      title: 'Quando a meta aperta',
+      content: 'Faltam poucos dias para o fim do mês e a meta ainda está longe. Você trabalha mais horas ou muda a estratégia? Com um plano claro, você deixa de adivinhar e passa a decidir com base em números.',
+    },
     intro: {
       title: 'Quanto você precisa trabalhar para alcançar sua meta?',
       content: 'Ter uma meta é importante. Mas saber exatamente como alcançá-la é o que transforma sonho em realidade. Quantas horas por dia? Quantas corridas por semana? Este simulador transforma sua meta de renda em um plano concreto — com números reais baseados no seu ganho médio. Pare de trabalhar no escuro e tenha clareza sobre o esforço necessário para atingir seus objetivos financeiros.',
@@ -1089,6 +1138,10 @@ export const monthlyGoalSEO = {
     },
   },
   'en-US': {
+    story: {
+      title: 'When the goal feels far',
+      content: 'There are only a few days left in the month and your goal is still far away. Do you work more hours or change your strategy? With a clear plan, you stop guessing and start deciding with numbers.',
+    },
     intro: {
       title: 'How much do you need to work to reach your goal?',
       content: 'Having a goal is important. But knowing exactly how to achieve it is what turns dreams into reality. How many hours per day? How many rides per week? This simulator transforms your income goal into a concrete plan — with real numbers based on your average earnings. Stop working in the dark and gain clarity about the effort needed to reach your financial objectives.',
@@ -1190,6 +1243,10 @@ export const monthlyGoalSEO = {
 // Hidden Costs Calculator SEO Content
 export const hiddenCostsSEO = {
   'pt-BR': {
+    story: {
+      title: 'O custo que aparece do nada',
+      content: 'Quando chega a troca de pneus ou a revisão, parece um gasto inesperado. Mas ele estava sendo acumulado a cada km rodado. Se você não registra isso, seu lucro real some sem você perceber.',
+    },
     intro: {
       title: 'Você está ignorando custos que comem seu lucro?',
       content: 'Combustível e taxas da plataforma são óbvios. Mas e a depreciação do carro? O desgaste dos pneus? A manutenção que você vai precisar fazer? Esses custos "invisíveis" corroem seu lucro silenciosamente. Muitos motoristas descobrem tarde demais que estavam trabalhando com margem negativa. Esta calculadora revela todos os custos que você pode estar esquecendo — para que você saiba de verdade quanto está ganhando.',
@@ -1287,6 +1344,10 @@ export const hiddenCostsSEO = {
     },
   },
   'en-US': {
+    story: {
+      title: 'The cost that appears out of nowhere',
+      content: 'When tire replacement or a big service bill arrives, it feels unexpected. But it was accumulating with every mile. If you don\'t track it, your real profit disappears without you noticing.',
+    },
     intro: {
       title: 'Are you ignoring costs that eat into your profit?',
       content: 'Fuel and platform fees are obvious. But what about car depreciation? Tire wear? Maintenance you\'ll need to do? These "invisible" costs silently erode your profit. Many drivers discover too late they were working at a negative margin. This calculator reveals all the costs you might be forgetting — so you truly know how much you\'re earning.',
@@ -1388,6 +1449,10 @@ export const hiddenCostsSEO = {
 // Break-Even Calculator SEO Content
 export const breakEvenSEO = {
   'pt-BR': {
+    story: {
+      title: 'Antes de sair para rodar',
+      content: 'Você liga o app de manhã sem saber qual é o mínimo que precisa faturar para não sair no prejuízo. O ponto de equilíbrio te dá esse número e muda completamente a forma de planejar o seu dia.',
+    },
     intro: {
       title: 'Quanto você precisa faturar para não ter prejuízo?',
       content: 'O ponto de equilíbrio é o número mágico que todo motorista deveria conhecer: é o faturamento mínimo necessário para cobrir todos os seus custos. Abaixo dele, você está perdendo dinheiro. Acima, começa a lucrar. Esta calculadora soma todos os seus custos — fixos e variáveis — e mostra exatamente quanto você precisa faturar por mês, semana e dia para chegar ao zero. É o primeiro passo para sair do vermelho e começar a construir lucro real.',
@@ -1485,6 +1550,10 @@ export const breakEvenSEO = {
     },
   },
   'en-US': {
+    story: {
+      title: 'Before you go online',
+      content: 'You open the app in the morning without knowing the minimum you must earn to avoid losing money. The break-even point gives you that number and changes how you plan your day.',
+    },
     intro: {
       title: 'How much do you need to earn to break even?',
       content: 'The break-even point is the magic number every driver should know: it\'s the minimum revenue needed to cover all your costs. Below it, you\'re losing money. Above it, you start profiting. This calculator adds up all your costs — fixed and variable — and shows exactly how much you need to earn per month, week, and day to reach zero. It\'s the first step to getting out of the red and building real profit.',
@@ -1586,6 +1655,10 @@ export const breakEvenSEO = {
 // Driver Budget Simulator SEO Content
 export const driverBudgetSEO = {
   'pt-BR': {
+    story: {
+      title: 'No fim do mês, a conta não fecha',
+      content: 'Você trabalhou o mês inteiro, mas o dinheiro não sobrou. Entre combustível, manutenção, alimentação e contas de casa, tudo se mistura. Um orçamento claro mostra para onde cada real vai e o que precisa mudar.',
+    },
     intro: {
       title: 'Você sabe exatamente para onde vai seu dinheiro?',
       content: 'Motoristas de aplicativo têm dezenas de despesas: do IPVA ao plano de celular, da gasolina ao lanche na rua. Quando você não tem clareza sobre todas elas, o dinheiro some e você não sabe explicar para onde foi. Este simulador organiza TODAS as suas despesas — pessoais e profissionais — em um só lugar, mostrando exatamente quanto você precisa faturar para sobreviver e quanto sobra para realizar seus objetivos.',
@@ -1683,6 +1756,10 @@ export const driverBudgetSEO = {
     },
   },
   'en-US': {
+    story: {
+      title: 'At month\'s end, the numbers don\'t add up',
+      content: 'You worked all month, but there\'s nothing left. Fuel, maintenance, meals, and household bills blend together. A clear budget shows where every dollar goes and what needs to change.',
+    },
     intro: {
       title: 'Do you know exactly where your money goes?',
       content: 'Rideshare drivers have dozens of expenses: from vehicle registration to phone plan, from gas to snacks on the road. When you don\'t have clarity on all of them, money disappears and you can\'t explain where it went. This simulator organizes ALL your expenses — personal and professional — in one place, showing exactly how much you need to earn to survive and how much is left to achieve your goals.',

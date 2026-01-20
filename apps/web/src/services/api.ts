@@ -396,7 +396,7 @@ export async function getMenu(
     const response = await fetch(
       `${API_URL}/api/menu?${params.toString()}`,
       {
-        next: { revalidate: 3600 }, // Cache for 1 hour
+        // next: { revalidate: 3600 }, // Cache for 1 hour
       }
     );
 

@@ -88,7 +88,7 @@ export default function HomeClient({
       icon: '⚠️',
       color: 'orange',
       badge: 'popular',
-      stats: locale === 'pt-BR' ? '10k+ usos' : '10k+ uses',
+      stats: locale === 'pt-BR' ? 'Ferramenta gratuita' : 'Free tool',
       link: locale === 'pt-BR' ? '/ferramentas/simulador-perda-renda' : '/tools/loss-income-simulator',
     },
     {
@@ -100,7 +100,7 @@ export default function HomeClient({
       icon: '💰',
       color: 'emerald',
       badge: 'trending',
-      stats: locale === 'pt-BR' ? '15k+ usos' : '15k+ uses',
+      stats: locale === 'pt-BR' ? 'Sem cadastro' : 'No signup',
       link: locale === 'pt-BR' ? '/ferramentas/calculadora-lucro-diario' : '/tools/daily-profit-calculator',
     },
     {
@@ -112,7 +112,7 @@ export default function HomeClient({
       icon: '🔍',
       color: 'rose',
       badge: 'recommended',
-      stats: locale === 'pt-BR' ? '8k+ usos' : '8k+ uses',
+      stats: locale === 'pt-BR' ? 'Resultado imediato' : 'Instant results',
       link: locale === 'pt-BR' ? '/ferramentas/calculadora-custos-ocultos' : '/tools/hidden-costs-calculator',
     },
     {
@@ -123,7 +123,7 @@ export default function HomeClient({
         : 'Plan how to reach your goal. How many hours and trips do you need?',
       icon: '🎯',
       color: 'purple',
-      stats: locale === 'pt-BR' ? '6k+ usos' : '6k+ uses',
+      stats: locale === 'pt-BR' ? '100% gratuito' : '100% free',
       link: locale === 'pt-BR' ? '/ferramentas/simulador-meta-mensal' : '/tools/monthly-goal-simulator',
     },
     {
@@ -134,7 +134,7 @@ export default function HomeClient({
         : 'Is this trip worth it? Find out before accepting.',
       icon: '🚗',
       color: 'cyan',
-      stats: locale === 'pt-BR' ? '12k+ usos' : '12k+ uses',
+      stats: locale === 'pt-BR' ? 'Sem pegadinhas' : 'No tricks',
       link: locale === 'pt-BR' ? '/ferramentas/calculadora-custo-corrida' : '/tools/cost-per-trip-calculator',
     },
     {
@@ -145,7 +145,7 @@ export default function HomeClient({
         : 'Gas or ethanol? Compare and save on fuel.',
       icon: '⛽',
       color: 'amber',
-      stats: locale === 'pt-BR' ? '9k+ usos' : '9k+ uses',
+      stats: locale === 'pt-BR' ? 'Rápido e simples' : 'Fast and simple',
       link: locale === 'pt-BR' ? '/ferramentas/calculadora-combustivel' : '/tools/fuel-calculator',
     },
     {
@@ -156,7 +156,7 @@ export default function HomeClient({
         : 'How much do you need to earn to cover all costs?',
       icon: '⚖️',
       color: 'blue',
-      stats: locale === 'pt-BR' ? '5k+ usos' : '5k+ uses',
+      stats: locale === 'pt-BR' ? 'Dados claros' : 'Clear data',
       link: locale === 'pt-BR' ? '/ferramentas/calculadora-ponto-equilibrio' : '/tools/break-even-calculator',
     },
     {
@@ -167,7 +167,7 @@ export default function HomeClient({
         : 'Build your complete budget: fixed, variable and personal costs.',
       icon: '📊',
       color: 'violet',
-      stats: locale === 'pt-BR' ? '4k+ usos' : '4k+ uses',
+      stats: locale === 'pt-BR' ? 'Foco no lucro' : 'Profit focused',
       link: locale === 'pt-BR' ? '/ferramentas/simulador-orcamento' : '/tools/driver-budget-simulator',
     },
   ];
@@ -300,29 +300,29 @@ export default function HomeClient({
 
               <p className={`mt-4 max-w-2xl mx-auto text-lg sm:text-xl md:text-2xl text-slate-200 leading-relaxed ${shouldAnimate ? 'animate-fade-in-up delay-100' : ''}`}>
                 {locale === 'pt-BR'
-                  ? 'Calculadoras gratuitas para motoristas de Uber, 99, iFood e outros apps. Descubra seu lucro real, custos ocultos e como proteger sua renda.'
-                  : 'Free calculators for Uber, Lyft, DoorDash and other app drivers. Discover your real profit, hidden costs and how to protect your income.'}
+                  ? 'Você sabe quanto do seu faturamento realmente vira lucro no final do dia?'
+                  : 'Do you know how much of your earnings actually becomes profit at the end of the day?'}
               </p>
 
               {/* Quick Stats */}
               <div className={`mt-8 flex items-center justify-center gap-6 text-sm text-slate-300 ${shouldAnimate ? 'animate-fade-in-up delay-150' : ''}`}>
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
-                  <span>{locale === 'pt-BR' ? '69k+ Cálculos' : '69k+ Calculations'}</span>
+                  <span>{locale === 'pt-BR' ? '8 ferramentas gratuitas' : '8 free tools'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
-                  <span>{locale === 'pt-BR' ? '50k+ Usuários' : '50k+ Users'}</span>
+                  <span>{locale === 'pt-BR' ? 'Sem cadastro' : 'No signup'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span>{locale === 'pt-BR' ? '100% Gratuito' : '100% Free'}</span>
+                  <span>{locale === 'pt-BR' ? '100% gratuito' : '100% free'}</span>
                 </div>
               </div>
 
@@ -672,12 +672,12 @@ export default function HomeClient({
                     </svg>
                     <span>{locale === 'pt-BR' ? 'Vagas Verificadas' : 'Verified Jobs'}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                     </svg>
                     <span>{locale === 'pt-BR' ? 'Atualizado Diariamente' : 'Updated Daily'}</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />

@@ -23,6 +23,14 @@ const Footer: React.FC = () => {
   const guidesRoot = findBySlug(locale === 'pt-BR' ? 'guias' : 'guides', locale);
   const guidesPath = guidesRoot ? buildPath(guidesRoot, locale) : null;
 
+  // Get blog subcategories that should appear in footer
+  const blogRoot = findBySlug('blog', locale);
+  const blogCategories = blogRoot
+    ? categories
+        .filter(cat => cat.parentId === blogRoot.id && cat.isActive && cat.showInFooter)
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+    : [];
+
   return (
     <footer className="bg-slate-900 text-slate-400 py-12 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -149,6 +157,17 @@ const Footer: React.FC = () => {
                   {locale === 'pt-BR' ? 'Blog' : 'Blog'}
                 </Link>
               </li>
+              {blogCategories.map((category) => {
+                const categoryPath = buildPath(category, locale);
+                const categoryLink = categoryPath ? `/${categoryPath}` : `/${category.slug}`;
+                return (
+                  <li key={category.id}>
+                    <Link href={getLink(categoryLink)} className="hover:text-white transition-colors">
+                      {category.name}
+                    </Link>
+                  </li>
+                );
+              })}
               {guidesPath && (
               <li>
                   <Link href={getLink(`/${guidesPath}`)} className="hover:text-white transition-colors">

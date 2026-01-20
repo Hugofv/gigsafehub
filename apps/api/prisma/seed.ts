@@ -357,6 +357,26 @@ async function main() {
     },
   });
 
+  const blogRealExperiences = await prisma.category.upsert({
+    where: { slug: 'real-experiences' },
+    update: {},
+    create: {
+      name: 'Real Experiences',
+      nameEn: 'Real Experiences',
+      namePt: 'Experiências Reais',
+      slug: 'real-experiences',
+      slugEn: 'real-experiences',
+      slugPt: 'experiencias-reais',
+      description: 'Real stories from gig workers',
+      descriptionEn: 'Real stories from gig workers',
+      descriptionPt: 'Histórias reais de trabalhadores da gig economy',
+      level: 1,
+      parentId: blogRoot.id,
+      order: 3,
+      isActive: true,
+    },
+  });
+
   // ============================================
   // Level 1: Jobs Subcategories
   // ============================================

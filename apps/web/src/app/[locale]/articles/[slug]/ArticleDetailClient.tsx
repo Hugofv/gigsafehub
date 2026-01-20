@@ -708,6 +708,11 @@ export default function ArticleDetailClient({
                 </>
               )}
             </p>
+            <p className="text-sm text-slate-500 italic mt-3">
+              {locale === 'pt-BR'
+                ? 'Este guia foi escrito por quem acredita que todo trabalhador merece transparência. Se foi útil, compartilhe com um colega.'
+                : 'This guide was written by someone who believes every worker deserves transparency. If it helped, share it with a colleague.'}
+            </p>
           </div>
         </div>
 
