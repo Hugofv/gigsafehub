@@ -3,6 +3,19 @@
  * Treats dates as local dates (date-only) to avoid timezone conversion issues
  */
 
+/** Normalize locale to BCP 47 (e.g. pt_BR -> pt-BR) and return a safe fallback if invalid */
+function toValidLocale(locale: string | undefined): string {
+  if (!locale || typeof locale !== 'string') return 'pt-BR';
+  const normalized = locale.trim().replace(/_/g, '-');
+  if (!normalized) return 'pt-BR';
+  try {
+    new Intl.DateTimeFormat(normalized);
+    return normalized;
+  } catch {
+    return normalized.startsWith('en') ? 'en-US' : 'pt-BR';
+  }
+}
+
 /**
  * Parse a date string and return a Date object in local timezone
  * Handles both ISO strings and date-only strings (YYYY-MM-DD)
@@ -37,9 +50,10 @@ export function parseLocalDate(dateString: string | Date): Date {
  */
 export function formatArticleDate(date: string | Date, locale: string = 'pt-BR'): string {
   const localDate = parseLocalDate(date);
+  const validLocale = toValidLocale(locale);
 
   // Format without timezone conversion since we're already using local date
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(validLocale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -54,9 +68,10 @@ export function formatArticleDate(date: string | Date, locale: string = 'pt-BR')
  */
 export function formatArticleDateLong(date: string | Date, locale: string = 'pt-BR'): string {
   const localDate = parseLocalDate(date);
+  const validLocale = toValidLocale(locale);
 
   // Format without timezone conversion since we're already using local date
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(validLocale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -71,9 +86,10 @@ export function formatArticleDateLong(date: string | Date, locale: string = 'pt-
  */
 export function formatArticleDateNumeric(date: string | Date, locale: string = 'pt-BR'): string {
   const localDate = parseLocalDate(date);
+  const validLocale = toValidLocale(locale);
 
   // Format without timezone conversion since we're already using local date
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(validLocale, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

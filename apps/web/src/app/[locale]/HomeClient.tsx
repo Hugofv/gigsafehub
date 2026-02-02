@@ -360,6 +360,39 @@ export default function HomeClient({
           </div>
         </section>
 
+        {/* Quiz Section - Descubra em 2 minutos */}
+        <section className="py-12 md:py-16 bg-slate-900 border-y border-white/5">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-amber-500/20 text-amber-400 text-sm font-medium mb-4">
+                ~3 min
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                {locale === 'pt-BR' ? 'Quizzes com valor real' : 'Quizzes with real value'}
+              </h2>
+              <p className="text-slate-400 max-w-xl mx-auto">
+                {locale === 'pt-BR'
+                  ? 'Descubra seu risco de burnout ou sua proposta de valor única — quizzes rápidos para freelancers e gig workers.'
+                  : 'Discover your burnout risk or your unique value proposition — quick quizzes for freelancers and gig workers.'}
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href={getLink('/quiz/risco-burnout')}
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-lg hover:from-amber-400 hover:to-orange-400 transition-all shadow-xl shadow-amber-500/30 transform hover:-translate-y-0.5"
+              >
+                {locale === 'pt-BR' ? 'Risco de Burnout' : 'Burnout Risk'}
+              </Link>
+              <Link
+                href={getLink('/quiz')}
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold hover:bg-white/20 transition-all"
+              >
+                {locale === 'pt-BR' ? 'Ver todos os quizzes' : 'View all quizzes'}
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Tools Section - Main Focus */}
         <section className="py-16 md:py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
           {/* Decorative elements */}

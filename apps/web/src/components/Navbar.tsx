@@ -176,6 +176,12 @@ const Navbar: React.FC = () => {
               })}
 
               <Link
+                href={getLink('/quiz')}
+                className={linkClass('/quiz')}
+              >
+                {locale === 'pt-BR' ? 'Quizzes' : 'Quizzes'}
+              </Link>
+              <Link
                 href={getLink(locale === 'pt-BR' ? '/sobre-nos' : '/about')}
                 className={linkClass(locale === 'pt-BR' ? '/sobre-nos' : '/about')}
               >
@@ -276,6 +282,17 @@ const Navbar: React.FC = () => {
               }`}
             >
               {t('nav.home')}
+            </Link>
+            <Link
+              href={getLink('/quiz')}
+              onClick={closeMobileMenu}
+              className={`block px-3 py-2 text-sm font-medium rounded-md ${
+                isActive('/quiz')
+                  ? 'bg-navy-50 text-navy-700'
+                  : 'text-slate-600 hover:text-teal-500 hover:bg-slate-50'
+              }`}
+            >
+              {locale === 'pt-BR' ? 'Quizzes' : 'Quizzes'}
             </Link>
 
             {/* Dynamic Mobile Menu Items from Database */}

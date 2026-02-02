@@ -504,6 +504,77 @@ export default async function FerramentasPage({ params }: PageProps) {
           </Link>
         </div>
 
+        {/* Quizzes Section */}
+        <section className="mt-20">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Quizzes
+            </h2>
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              Descubra seu risco de burnout e sua proposta de valor única em poucos minutos.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <Link
+              href={`/${locale}/quiz/risco-burnout`}
+              className="group relative bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 hover:border-amber-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-500/10"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-6 shadow-lg shadow-amber-500/30 text-2xl">
+                  ?
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">
+                  Calculador de Risco de Burnout
+                </h2>
+                <p className="text-slate-400 mb-6">
+                  Em poucos minutos, avalie sinais de sobrecarga e exaustão e receba orientações práticas para cuidar da sua saúde e do seu trabalho.
+                </p>
+                <div className="flex items-center text-amber-400 font-semibold">
+                  Fazer quiz
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </div>
+            </Link>
+            <Link
+              href={`/${locale}/quiz/proposta-valor-unica`}
+              className="group relative bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 hover:border-teal-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-teal-500/10"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-emerald-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center mb-6 shadow-lg shadow-teal-500/30 text-2xl">
+                  ?
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors">
+                  Qual é o Seu Verdadeiro Diferencial no Mercado?
+                </h2>
+                <p className="text-slate-400 mb-6">
+                  Descubra sua Proposta de Valor Única e saia da briga por preço — identifique o que te torna especial e como comunicar isso aos clientes.
+                </p>
+                <div className="flex items-center text-teal-400 font-semibold">
+                  Fazer quiz
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </div>
+            </Link>
+          </div>
+          <div className="text-center">
+            <Link
+              href={`/${locale}/quiz`}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold hover:bg-white/20 transition-colors"
+            >
+              Ver todos os quizzes
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+        </section>
+
         {/* Tool Relationships Section */}
         <section className="mt-20">
           <div className="text-center mb-12">
