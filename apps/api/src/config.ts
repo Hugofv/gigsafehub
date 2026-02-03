@@ -34,5 +34,9 @@ export const config = {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
     bucket: process.env.AWS_S3_BUCKET || '',
   },
+  indexNow: {
+    /** API key for IndexNow (Bing, etc.). Generate at https://www.bing.com/webmasters/indexnow */
+    key: process.env.INDEXNOW_KEY || '',
+  },
 };
 

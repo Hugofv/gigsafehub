@@ -6,4 +6,5 @@ export { adminCategories } from './categories';
 export { adminProducts } from './products';
 export { adminArticles, type SocialMediaPlatform } from './articles';
 export { adminStats } from './stats';
+export { adminSeo } from './seo';
 

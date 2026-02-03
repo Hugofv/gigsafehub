@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 import { I18nProvider, useTranslation } from '@/contexts/I18nContext';
 import { CategoriesProvider } from '@/contexts/CategoriesContext';
 import { MenuProvider } from '@/contexts/MenuContext';
@@ -9,6 +10,7 @@ import Footer from '@/components/Footer';
 
 interface LocaleLayoutClientProps {
   children: ReactNode;
+  htmlLang?: string;
 }
 
 function LayoutContent({ children }: { children: ReactNode }) {
@@ -29,7 +31,13 @@ function LayoutContent({ children }: { children: ReactNode }) {
   );
 }
 
-export default function LocaleLayoutClient({ children }: LocaleLayoutClientProps) {
+export default function LocaleLayoutClient({ children, htmlLang }: LocaleLayoutClientProps) {
+  useEffect(() => {
+    if (htmlLang && typeof document !== 'undefined') {
+      document.documentElement.lang = htmlLang;
+    }
+  }, [htmlLang]);
+
   return (
     <I18nProvider>
       <LayoutContent>{children}</LayoutContent>

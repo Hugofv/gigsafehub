@@ -29,6 +29,19 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl, 301);
   }
 
+  // Serve IndexNow key file for Bing/search engine ownership verification
+  // Must be at root: https://example.com/{key}.txt per IndexNow spec
+  const indexNowKey = process.env.INDEXNOW_KEY;
+  if (indexNowKey && pathname === `/${indexNowKey}.txt`) {
+    return new NextResponse(indexNowKey, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'public, max-age=86400',
+      },
+    });
+  }
+
   // Block search routes - they don't exist and should return 404
   if (pathname.startsWith('/search')) {
     return new NextResponse(null, { status: 404 });

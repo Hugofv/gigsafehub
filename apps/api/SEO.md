@@ -179,7 +179,40 @@ The API automatically generates JSON-LD structured data:
 
 ```env
 BASE_URL=https://gigsafehub.com  # Used for canonical URLs and sitemap
+INDEXNOW_KEY=your-indexnow-api-key  # For IndexNow (Bing) fast indexing
 ```
+
+## IndexNow Configuration (Bing / Search Engines)
+
+IndexNow lets you notify search engines (Bing, Yandex, etc.) immediately when content changes, for faster indexing.
+
+### Setup
+
+1. **Generate API Key** at [Bing Webmaster Tools - IndexNow](https://www.bing.com/webmasters/indexnow/getstarted#implementation)
+2. **Add to environment**:
+   - `apps/api/.env`: `INDEXNOW_KEY=your-generated-key`
+   - `apps/web/.env`: `INDEXNOW_KEY=your-generated-key` (for key file hosting)
+3. **Key file hosting**: The key file is automatically served at `https://yourdomain.com/{key}.txt` via middleware when `INDEXNOW_KEY` is set.
+
+### Submit URLs
+
+**Option A – Submit full sitemap (admin only)**:
+```bash
+curl -X POST https://your-api/api/admin/indexnow/submit \
+  -H "Authorization: Bearer <admin-jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{"submitSitemap": true}'
+```
+
+**Option B – Submit specific URLs**:
+```bash
+curl -X POST https://your-api/api/admin/indexnow/submit \
+  -H "Authorization: Bearer <admin-jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{"urls": ["https://gigsafehub.com/en-US/articles/my-article"]}'
+```
+
+Submit after publishing or updating content for faster indexing.
 
 ## Testing SEO
 

@@ -698,6 +698,8 @@ adminRouter.post('/upload/image', upload.single('image'), async (req: Request, r
 // ============================================
 
 import { postArticleToSocialMedia, type SocialMediaPlatform } from '../services/socialMedia';
+import { submitToIndexNow } from '../services/indexNow';
+import { config } from '../config';
 
 const socialMediaPostSchema = z.object({
   platforms: z.array(z.enum(['facebook', 'instagram', 'twitter'])),
@@ -725,6 +727,62 @@ adminRouter.post('/articles/:id/publish-social', async (req: Request, res: Respo
     }
     console.error('Error publishing to social media:', error);
     res.status(500).json({ error: error.message || 'Failed to publish to social media' });
+  }
+});
+
+// ============================================
+// IndexNow (Bing / Search Engine Indexing)
+// ============================================
+
+const indexNowSubmitSchema = z.object({
+  urls: z.array(z.string().url()).optional(),
+  submitSitemap: z.boolean().optional(),
+});
+
+adminRouter.post('/indexnow/submit', async (req: Request, res: Response) => {
+  try {
+    const data = indexNowSubmitSchema.parse(req.body);
+    let urls: string[] = [];
+
+    if (data.submitSitemap) {
+      // Fetch sitemap and parse URLs
+      const base = config.baseUrl.startsWith('http') ? config.baseUrl : `https://${config.baseUrl}`;
+      const sitemapUrl = `${base.replace(/\/$/, '')}/sitemap.xml`;
+      const sitemapRes = await fetch(sitemapUrl);
+      if (!sitemapRes.ok) {
+        return res.status(502).json({ error: 'Failed to fetch sitemap', url: sitemapUrl });
+      }
+      const xml = await sitemapRes.text();
+      const locMatches = xml.matchAll(/<loc>([^<]+)<\/loc>/g);
+      urls = [...locMatches].map((m) => m[1]);
+    } else if (data.urls?.length) {
+      urls = data.urls;
+    } else {
+      return res.status(400).json({
+        error: 'Provide either urls array or submitSitemap: true',
+      });
+    }
+
+    const result = await submitToIndexNow(urls);
+    if (result.success) {
+      res.json({
+        success: true,
+        submitted: urls.length,
+        statusCode: result.statusCode,
+        endpoint: result.endpoint,
+      });
+    } else {
+      res.status(502).json({
+        success: false,
+        error: result.error,
+      });
+    }
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Validation error', details: error.errors });
+    }
+    console.error('Error submitting to IndexNow:', error);
+    res.status(500).json({ error: error.message || 'IndexNow submission failed' });
   }
 });
 

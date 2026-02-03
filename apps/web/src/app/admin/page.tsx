@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
-import { adminStats, type DashboardStats } from '@/services/admin';
+import { adminStats, adminSeo, type DashboardStats } from '@/services/admin';
+import { Send } from 'lucide-react';
 
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
@@ -13,6 +14,8 @@ export default function AdminDashboard() {
     articles: 0,
   });
   const [loadingStats, setLoadingStats] = useState(true);
+  const [indexNowLoading, setIndexNowLoading] = useState(false);
+  const [indexNowResult, setIndexNowResult] = useState<{ success: boolean; message: string } | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -28,6 +31,32 @@ export default function AdminDashboard() {
       console.error('Error fetching stats:', error);
     } finally {
       setLoadingStats(false);
+    }
+  };
+
+  const handleSubmitToIndexNow = async () => {
+    setIndexNowLoading(true);
+    setIndexNowResult(null);
+    try {
+      const result = await adminSeo.submitToIndexNow(true);
+      if (result.success) {
+        setIndexNowResult({
+          success: true,
+          message: `Submitted ${result.submitted ?? 0} URLs to IndexNow (Bing)`,
+        });
+      } else {
+        setIndexNowResult({
+          success: false,
+          message: result.error ?? 'IndexNow submission failed',
+        });
+      }
+    } catch (error: unknown) {
+      setIndexNowResult({
+        success: false,
+        message: error instanceof Error ? error.message : 'IndexNow submission failed',
+      });
+    } finally {
+      setIndexNowLoading(false);
     }
   };
 
@@ -120,6 +149,26 @@ export default function AdminDashboard() {
           >
             + New Article
           </Link>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-slate-200">
+          <h3 className="text-sm font-semibold text-slate-700 mb-2">SEO</h3>
+          <button
+            onClick={handleSubmitToIndexNow}
+            disabled={indexNowLoading}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm font-medium"
+            title="Notify Bing and other search engines about your sitemap URLs"
+          >
+            <Send className="w-4 h-4" />
+            {indexNowLoading ? 'Submitting...' : 'Submit to IndexNow (Bing)'}
+          </button>
+          {indexNowResult && (
+            <p
+              className={`mt-2 text-sm ${indexNowResult.success ? 'text-green-600' : 'text-red-600'}`}
+            >
+              {indexNowResult.message}
+            </p>
+          )}
         </div>
       </div>
     </div>

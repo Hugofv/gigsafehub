@@ -31,11 +31,7 @@ export default async function LocaleLayout({
   const htmlLang = locale === 'pt-BR' ? 'pt-BR' : 'en-US';
 
   return (
-    <html lang={htmlLang} suppressHydrationWarning>
-      <body>
-        <LocaleLayoutClient>{children}</LocaleLayoutClient>
-      </body>
-    </html>
+    <LocaleLayoutClient htmlLang={htmlLang}>{children}</LocaleLayoutClient>
   );
 }
 
