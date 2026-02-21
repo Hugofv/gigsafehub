@@ -77,13 +77,6 @@ enum CoverageType {
   premium
 }
 
-enum LeadStatus {
-  new
-  contacted
-  converted
-  rejected
-}
-
 enum ContentLocale {
   en_US
   pt_BR
@@ -290,22 +283,6 @@ model QuoteFeature {
   @@map("quote_features")
 }
 
-model Lead {
-  id            String     @id @default(uuid())
-  userId        String?
-  email         String
-  name          String
-  phone         String?
-  productInterest String
-  status        LeadStatus @default(new)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-
-  user          User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@map("leads")
-}
-
 model FAQ {
   id              String            @id @default(uuid())
   question        String            @db.Text
@@ -338,4 +315,306 @@ model Comment {
   @@index([isApproved])
   @@index([createdAt])
   @@map("comments")
+}
+
+model Lead {
+  id                     String   @id @default(uuid())
+  userId                 String?
+
+  // Core
+  country                String   @db.VarChar(2)
+  language               String   @db.VarChar(5)
+  productType            String   @db.VarChar(50)
+  status                 String   @db.VarChar(50) @default("created")
+
+  // Scoring / AI
+  riskScore              Float?
+  leadQualityScore       Int?
+
+  // Estimated output
+  estimatedPremiumMin    Float?
+  estimatedPremiumMax    Float?
+
+  meta                   Json?
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  // Relations
+  user                   User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  person                 LeadPerson?
+  address                LeadAddress?
+  vehicles               Vehicle[]
+  drivers                Driver[]
+  gigProfile             GigProfile?
+  coverageRequest        CoverageRequest?
+  countryExtension       CountryExtension?
+  tracking               LeadTracking?
+  consent                LeadConsent?
+  dispatches             PartnerDispatch[]
+  payloadSnapshots       LeadPayloadSnapshot[]
+
+  @@index([userId])
+  @@index([country])
+  @@index([productType])
+  @@index([status])
+  @@index([createdAt])
+  @@map("leads")
+}
+
+model LeadPerson {
+  id            String   @id @default(uuid())
+  leadId        String   @unique
+  lead          Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  firstName     String
+  lastName      String
+  email         String
+  phone         String
+  dateOfBirth   DateTime
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([email])
+  @@map("lead_persons")
+}
+
+model LeadAddress {
+  id         String   @id @default(uuid())
+  leadId     String   @unique
+  lead       Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  street     String?
+  number     String?
+  city       String
+  state      String
+  zipCode    String
+  country    String   @db.VarChar(2)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([zipCode])
+  @@index([state])
+  @@map("lead_addresses")
+}
+
+model Vehicle {
+  id             String   @id @default(uuid())
+  leadId         String
+  lead           Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  year           Int
+  make           String
+  model          String
+  trim           String?
+
+  ownership      String?  @db.VarChar(50)
+  primaryUse     String?  @db.VarChar(50)
+  annualMileage  Int?
+
+  garageType     String?
+  hasAntiTheft   Boolean  @default(false)
+
+  meta           Json?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([primaryUse])
+  @@map("vehicles")
+}
+
+model Driver {
+  id                      String   @id @default(uuid())
+  leadId                  String
+  lead                    Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  yearsLicensed           Int?
+  licenseState            String?
+
+  maritalStatus           String?
+  homeOwner               Boolean?
+
+  creditTier              String?
+
+  accidentsLast5Years     Int      @default(0)
+  violationsLast5Years    Int      @default(0)
+  sr22Required            Boolean  @default(false)
+
+  meta                    Json?
+
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([leadId])
+  @@map("drivers")
+}
+
+model GigProfile {
+  id                String   @id @default(uuid())
+  leadId            String   @unique
+  lead              Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  gigType           String   @db.VarChar(50)
+  hoursPerWeek      Int?
+  incomeDependency  String?  @db.VarChar(50)
+  fullTime          Boolean?
+
+  platforms         String[]
+
+  meta              Json?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([gigType])
+  @@map("gig_profiles")
+}
+
+model CoverageRequest {
+  id                    String   @id @default(uuid())
+  leadId                String   @unique
+  lead                  Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  currentInsured        Boolean?
+  currentProvider       String?
+
+  liabilityLimit        String?
+  deductiblePreference  Int?
+  wantsFullCoverage     Boolean?
+
+  meta                  Json?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("coverage_requests")
+}
+
+model CountryExtension {
+  id             String   @id @default(uuid())
+  leadId         String   @unique
+  lead           Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  // US
+  ssnLast4       String?
+  militaryStatus Boolean?
+
+  // BR
+  cpf            String?
+  cnhNumber      String?
+
+  meta           Json?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("country_extensions")
+}
+
+model LeadTracking {
+  id            String   @id @default(uuid())
+  leadId        String   @unique
+  lead          Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+
+  referrer      String?
+  landingPage   String?
+
+  ipAddress     String?
+  userAgent     String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([utmSource, utmCampaign])
+  @@map("lead_trackings")
+}
+
+model LeadConsent {
+  id               String   @id @default(uuid())
+  leadId           String   @unique
+  lead             Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  termsAccepted    Boolean
+  privacyAccepted  Boolean
+  marketingOptIn   Boolean?
+
+  consentIp        String?
+  consentTimestamp DateTime
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("lead_consents")
+}
+
+model Partner {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  country     String   @db.VarChar(2)
+  active      Boolean  @default(true)
+
+  apiEndpoint String?
+  apiKey      String?
+
+  meta        Json?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dispatches  PartnerDispatch[]
+
+  @@index([country])
+  @@index([active])
+  @@map("partners")
+}
+
+model PartnerDispatch {
+  id               String   @id @default(uuid())
+
+  leadId           String
+  partnerId        String
+
+  lead             Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  partner          Partner  @relation(fields: [partnerId], references: [id])
+
+  status           String   @db.VarChar(50) @default("pending")
+
+  requestPayload   Json?
+  responsePayload  Json?
+
+  responseCode     Int?
+  errorMessage     String?  @db.Text
+
+  retryCount       Int      @default(0)
+
+  sentAt           DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([status])
+  @@index([partnerId])
+  @@map("partner_dispatches")
+}
+
+model LeadPayloadSnapshot {
+  id         String   @id @default(uuid())
+  leadId     String
+  lead       Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  payload    Json
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([createdAt])
+  @@map("lead_payload_snapshots")
 }
