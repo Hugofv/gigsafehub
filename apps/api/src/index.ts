@@ -26,6 +26,7 @@ import { categoriesRouter } from './routes/categories';
 import { menuRouter } from './routes/menu';
 import { seoRouter } from './routes/seo';
 import { adminRouter } from './routes/admin';
+import { leadsRouter } from './routes/leads';
 import { seoHeaders, structuredDataHeaders } from './middleware/seo';
 import { errorHandler } from './middleware/errorHandler';
 import { config } from './config';
@@ -138,6 +139,7 @@ app.use('/api/categories', categoriesRouter); // No rate limiting
 app.use('/api/menu', menuRouter); // No rate limiting
 app.use('/', seoRouter); // SEO routes (sitemap.xml, robots.txt, /api/seo/meta)
 app.use('/api/admin', adminRouter);
+app.use('/api/leads', leadsRouter);
 
 // Root route
 app.get('/', (req: Request, res: Response) => {
